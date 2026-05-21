@@ -1,0 +1,67 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter/
+.metadata
+
+# Code generation outputs (regenerated via build_runner)
+# Komentarz: w naszym projekcie commitujemy .g.dart / .freezed.dart? CLAUDE.md sec. 14.2:
+# "Generated .g.dart / .freezed.dart autogen — w .gitignore: NIE — commitujemy"
+# Zostawiamy je w repo, więc NIE ignorujemy.
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# macOS / Linux / Windows
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+
+# Native iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Native Android
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/GeneratedPluginRegistrant.java
+android/key.properties
+android/app/google-services.json
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# Environment files (none for MVP, but future-proof)
+.env
+.env.*
+
+# Generated splash assets (kept out — flutter_native_splash regenerates)
+ios/Runner/Assets.xcassets/LaunchImage.imageset/
+android/app/src/main/res/drawable-*/splash.png
+android/app/src/main/res/drawable/splash.png

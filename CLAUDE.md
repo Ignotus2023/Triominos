@@ -149,16 +149,19 @@ Ustalenia z fazy odkrywania:
 | Platformy           | iOS (priorytet) + Android (równolegle dzięki Flutter)                   |
 | Stack               | **Flutter** (Dart) — jeden kod, dwie platformy                          |
 | Zakres              | Pomocnik do liczenia punktów (bez cyfrowej rozgrywki)                   |
-| Wariant zasad       | Klasyczny 56 płytek (Goliath); bonusy konfigurowalne w kodzie           |
+| Wariant zasad       | Klasyczny 56 płytek; **Goliath + Pressman** — wybór w Setup od v1.0     |
 | Liczba graczy       | 2-6                                                                     |
-| Profile / historia  | Pełne profile + nielimitowana historia + statystyki                     |
+| Profile / historia  | Goście default; opcjonalny zapis jako profil; nielimitowana historia    |
 | Tryb końca gry      | Limit punktów + ustalona liczba rund (oba do wyboru w setup)            |
 | Input wyników       | Smart input: 3 narożniki (0-5) + checkboxy bonusów                      |
 | Storage             | Tylko lokalnie — SQLite (drift) + SharedPreferences                     |
 | Backend             | Brak                                                                    |
 | Branding            | Glassmorphism premium, kolor wiodący **Indigo / Royal Purple**          |
 | Tematy              | Light + Dark (auto z systemu, override w ustawieniach)                  |
-| Responsive          | iPhone + iPad + Android phone + Android tablet (LayoutBuilder)          |
+| Responsive          | Phone-first (iPhone + Android phone); tablet layouty w v1.1             |
+| Scenariusz użycia   | Solo score-keeper — jedna osoba wpisuje wyniki za wszystkich            |
+| Tura                | Autopilot — app prowadzi turę (kolejność przez seatIndex)               |
+| Walidacja płytek    | Licznik widoczny (np. 23/56) bez blokady duplikatów                     |
 | Języki              | PL, EN, DE, FR, ES, IT (6 lokalizacji)                                  |
 | Audio / Haptics     | Tak — subtelne sound effects + HapticFeedback per platforma             |
 | Onboarding          | Pełny tutorial przy pierwszym uruchomieniu + ekran "Zasady"             |
@@ -1312,7 +1315,7 @@ Plan na v1.1:
 
 ### 18.8 Git
 
-- **Branch developmentu:** `claude/triominos-score-app-GhLyu` (aktywny)
+- **Branch developmentu:** `claude/triominos-score-app-Hvuph` (aktywny)
 - **Commit messages:**
   - Style: `feat(game): add bridge bonus auto-detection`
   - Kategorie: `feat`, `fix`, `refactor`, `test`, `docs`, `style`, `chore`, `perf`

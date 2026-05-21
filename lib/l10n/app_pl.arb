@@ -1,0 +1,219 @@
+{
+  "@@locale": "pl",
+
+  "appTitle": "TriominoScore",
+  "appTagline": "Twój profesjonalny pomocnik do liczenia punktów",
+
+  "commonCancel": "Anuluj",
+  "commonConfirm": "Zatwierdź",
+  "commonSave": "Zapisz",
+  "commonDelete": "Usuń",
+  "commonEdit": "Edytuj",
+  "commonNext": "Dalej",
+  "commonBack": "Wstecz",
+  "commonClose": "Zamknij",
+  "commonContinue": "Kontynuuj",
+  "commonYes": "Tak",
+  "commonNo": "Nie",
+  "commonReset": "Resetuj",
+  "commonRetry": "Spróbuj ponownie",
+  "commonSkip": "Pomiń",
+  "commonStart": "Zacznij",
+  "commonAdd": "Dodaj",
+  "commonRemove": "Usuń",
+
+  "homeWelcome": "Witaj!",
+  "homeWelcomeSubtitle": "Co dziś zagramy?",
+  "homeNewGame": "Nowa gra",
+  "homeResumeGame": "Wznów grę",
+  "homeResumeGameSubtitle": "Runda {round} • {players} graczy",
+  "@homeResumeGameSubtitle": {
+    "placeholders": {
+      "round": {"type": "int"},
+      "players": {"type": "int"}
+    }
+  },
+  "homePlayers": "Gracze",
+  "homeHistory": "Historia",
+  "homeStatistics": "Statystyki",
+  "homeRules": "Zasady",
+  "homeSettings": "Ustawienia",
+
+  "onboardingWelcomeTitle": "TriominoScore",
+  "onboardingWelcomeBody": "Profesjonalny pomocnik do liczenia punktów w Triominos. Twoja gra, bez kalkulatora i kartki papieru.",
+  "onboardingSmartInputTitle": "Smart Input",
+  "onboardingSmartInputBody": "Wpisz 3 cyfry narożników płytki i tapnij bonusy. App liczy resztę.",
+  "onboardingBonusesTitle": "Auto-bonusy",
+  "onboardingBonusesBody": "Triplet, most, hexagon — automatyczne wykrywanie i premie zgodne z zasadami.",
+  "onboardingReadyTitle": "Gotowy do gry",
+  "onboardingReadyBody": "Twoje dane zostają na urządzeniu. Bez konta, bez chmury, bez reklam.",
+  "onboardingStart": "Zaczynamy",
+
+  "playersTitle": "Gracze",
+  "playersEmptyTitle": "Brak zapisanych graczy",
+  "playersEmptyBody": "Dodaj profile gdy chcesz śledzić statystyki w historii. W każdej grze możesz też korzystać z gości jednorazowych.",
+  "playersAdd": "Dodaj gracza",
+  "playersFormTitleNew": "Nowy gracz",
+  "playersFormTitleEdit": "Edytuj gracza",
+  "playersFormName": "Imię",
+  "playersFormNameHint": "Maks. 32 znaki",
+  "playersFormInitials": "Inicjały",
+  "playersFormAvatarColor": "Kolor awatara",
+  "playersFormGuestToggle": "Tylko gość (nie zapisuj profilu)",
+  "playersErrorNameRequired": "Podaj imię gracza",
+  "playersErrorNameTooLong": "Maksymalnie 32 znaki",
+  "playersDeleteConfirmTitle": "Usunąć profil?",
+  "playersDeleteConfirmBody": "Historia tej osoby w zakończonych grach pozostanie zapisana.",
+
+  "gameSetupTitle": "Nowa gra",
+  "gameSetupStepPlayers": "Gracze",
+  "gameSetupStepVariant": "Wariant",
+  "gameSetupStepEndMode": "Tryb końca gry",
+  "gameSetupStepReview": "Podsumowanie",
+  "gameSetupSelectPlayers": "Wybierz lub dodaj graczy",
+  "gameSetupSelectPlayersHint": "Wymagane: 2 do 6 graczy",
+  "gameSetupAddGuest": "Dodaj gościa",
+  "gameSetupGuestNameLabel": "Imię gościa",
+  "gameSetupVariantTitle": "Wariant zasad",
+  "gameSetupVariantGoliath": "Goliath",
+  "gameSetupVariantGoliathDescription": "Z osobnym bonusem startowym (+10) za pierwszy ruch w grze.",
+  "gameSetupVariantPressman": "Pressman",
+  "gameSetupVariantPressmanDescription": "Bez bonusu startowego — pierwszy ruch liczy się normalnie.",
+  "gameSetupEndModeTitle": "Kiedy kończy się gra?",
+  "gameSetupEndModeScoreLimit": "Limit punktów",
+  "gameSetupEndModeScoreLimitDescription": "Wygrywa pierwszy gracz, który osiągnie próg.",
+  "gameSetupEndModeRounds": "Ustalona liczba rund",
+  "gameSetupEndModeRoundsDescription": "Po wszystkich rundach wygrywa najlepszy wynik.",
+  "gameSetupEndModeFreeform": "Dowolnie",
+  "gameSetupEndModeFreeformDescription": "Kończysz grę ręcznie kiedy chcesz.",
+  "gameSetupScoreLimit": "Próg punktów",
+  "gameSetupRoundsCount": "Liczba rund",
+  "gameSetupStart": "Zaczynam grę",
+
+  "gameRoundLabel": "Runda {number}",
+  "@gameRoundLabel": {
+    "placeholders": {"number": {"type": "int"}}
+  },
+  "gameMoveLabel": "Ruch #{number}",
+  "@gameMoveLabel": {
+    "placeholders": {"number": {"type": "int"}}
+  },
+  "gameTurnIndicator": "Twoja kolej",
+  "gameActivePlayerLabel": "Tura: {name}",
+  "@gameActivePlayerLabel": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "gameAddMove": "Dodaj ruch",
+  "gameActionPass": "Pas",
+  "gameActionDraw": "Dobranie",
+  "gameActionEndOfHand": "Wyjście",
+  "gameTilesPlayedLabel": "Zagranych płytek: {played} / {total}",
+  "@gameTilesPlayedLabel": {
+    "placeholders": {
+      "played": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "gameDuplicateTileWarningTitle": "Ta płytka była już zagrana",
+  "gameDuplicateTileWarningBody": "Kombinacja {key} pojawiła się wcześniej w tej grze. Czy na pewno?",
+  "@gameDuplicateTileWarningBody": {
+    "placeholders": {"key": {"type": "String"}}
+  },
+
+  "smartInputTitle": "Ruch gracza: {name}",
+  "@smartInputTitle": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "smartInputCornersLabel": "Cyfry narożników płytki",
+  "smartInputBonusesLabel": "Bonusy",
+  "smartInputBaseLabel": "Bazowo",
+  "smartInputTotalLabel": "Razem",
+  "smartInputConfirm": "Zatwierdź ruch",
+  "smartInputAutoTripletHint": "Auto wykryto triplet",
+  "smartInputOtherActions": "Inne akcje",
+
+  "bonusTriplet": "Triplet",
+  "bonusBridge": "Most",
+  "bonusHexagon": "Hexagon",
+  "bonusDoubleHexagon": "Podwójny hex",
+  "bonusStarter": "Bonus startowy",
+  "bonusEndOfHand": "Wyjście",
+
+  "penaltyDraw": "Dobranie z puli",
+  "penaltyPass": "Pas",
+
+  "endRoundTitle": "Kto wyczerpał rękę?",
+  "endRoundChoosePlayer": "Wybierz gracza, który skończył jako pierwszy",
+  "endRoundOpponentsHandTitle": "Sumy rąk przeciwników",
+  "endRoundOpponentsHandBody": "Wpisz sumę cyfr na płytkach pozostałych w ręku każdego gracza. App doda je do wyniku zwycięzcy.",
+  "endRoundHandSumLabel": "Suma na ręku",
+  "endRoundBonusPlus25": "Bonus +25",
+  "endRoundConfirm": "Zatwierdź koniec rundy",
+
+  "starterPromptTitle": "Kto rozpoczyna?",
+  "starterPromptBody": "Najwyższy triplet rozpoczyna grę. Sprawdź w rękach.",
+  "starterByTriplet": "Triplet {value}-{value}-{value}",
+  "@starterByTriplet": {
+    "placeholders": {"value": {"type": "int"}}
+  },
+  "starterByHighestSum": "Najwyższa suma na płytce",
+  "starterNoTripletHint": "Nikt nie ma tripleta? Użyj 'Najwyższa suma'.",
+
+  "summaryTitle": "Koniec gry",
+  "summaryWinner": "Zwycięzca: {name}",
+  "@summaryWinner": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "summaryRematch": "Rewanż",
+  "summaryShare": "Udostępnij",
+  "summaryBackHome": "Wróć do menu",
+  "summaryDuration": "Czas gry",
+  "summaryRoundsPlayed": "Rund rozegranych",
+  "summaryBestMove": "Najlepszy ruch",
+
+  "historyTitle": "Historia",
+  "historyEmpty": "Twoje rozgrywki pojawią się tutaj",
+  "historyResume": "Wznów",
+
+  "statisticsTitle": "Statystyki",
+  "statisticsGlobalTab": "Globalne",
+  "statisticsPlayerTab": "Per gracz",
+  "statisticsTotalGames": "Rozegrane gry",
+  "statisticsBestScore": "Najlepszy wynik",
+  "statisticsMostHexagons": "Najwięcej hexagonów w grze",
+  "statisticsWinRate": "Procent zwycięstw",
+  "statisticsAvgScore": "Średnia punktów/grę",
+  "statisticsAvgMoveScore": "Średnia punktów/ruch",
+
+  "rulesTitle": "Zasady Triominos",
+  "rulesTocSetup": "Konfiguracja",
+  "rulesTocTurn": "Tura",
+  "rulesTocBonuses": "Bonusy",
+  "rulesTocPenalties": "Kary",
+  "rulesTocEndOfRound": "Koniec rundy",
+  "rulesTocEndOfGame": "Koniec gry",
+
+  "settingsTitle": "Ustawienia",
+  "settingsLanguage": "Język",
+  "settingsTheme": "Motyw",
+  "settingsThemeSystem": "Systemowy",
+  "settingsThemeLight": "Jasny",
+  "settingsThemeDark": "Ciemny",
+  "settingsSounds": "Dźwięki",
+  "settingsHaptics": "Wibracje",
+  "settingsDefaultVariant": "Domyślny wariant",
+  "settingsDefaultScoreLimit": "Domyślny próg punktów",
+  "settingsAbout": "O aplikacji",
+  "settingsResetData": "Wyczyść wszystkie dane",
+  "settingsResetConfirmTitle": "Wyczyścić dane?",
+  "settingsResetConfirmBody": "Wszystkie gry, gracze i statystyki zostaną trwale usunięte.",
+  "settingsAppVersion": "Wersja {version}",
+  "@settingsAppVersion": {
+    "placeholders": {"version": {"type": "String"}}
+  },
+
+  "errorGeneric": "Coś poszło nie tak",
+  "errorMinPlayers": "Wymagane co najmniej 2 graczy",
+  "errorMaxPlayers": "Maksimum to 6 graczy",
+  "errorInvalidScore": "Niepoprawna wartość wyniku"
+}

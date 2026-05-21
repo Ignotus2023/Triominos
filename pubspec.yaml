@@ -1,0 +1,91 @@
+name: triomino_score
+description: TriominoScore — profesjonalny pomocnik do liczenia punktów w Triominos.
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  go_router: ^14.2.0
+
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.3
+  path: ^1.9.0
+
+  shared_preferences: ^2.2.3
+
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+
+  intl: any
+  uuid: ^4.4.0
+
+  just_audio: ^0.9.38
+  vibration: ^2.0.0
+
+  flutter_animate: ^4.5.0
+  confetti: ^0.7.0
+  fl_chart: ^0.68.0
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  very_good_analysis: ^6.0.0
+
+  build_runner: ^2.4.11
+  drift_dev: ^2.18.0
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.0
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.10
+
+  mocktail: ^1.0.4
+  golden_toolkit: ^0.15.0
+
+  flutter_native_splash: ^2.4.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/images/onboarding/
+    - assets/images/tiles/
+    - assets/sounds/
+
+flutter_native_splash:
+  color: "#0F0A2E"
+  color_dark: "#0F0A2E"
+  image: assets/images/splash_logo.png
+  android_12:
+    color: "#0F0A2E"
+    image: assets/images/splash_logo.png
+  android: true
+  ios: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#6366F1"
+  adaptive_icon_foreground: "assets/images/app_icon_foreground.png"
