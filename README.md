@@ -44,8 +44,8 @@ flutter test --coverage            # + coverage
 
 ## Wymagane wersje
 
-- Flutter ≥ 3.19
-- Dart ≥ 3.3
+- Flutter ≥ 3.27
+- Dart ≥ 3.6
 - iOS 13+ (Xcode 15+)
 - Android 6+ (API 23+)
 
