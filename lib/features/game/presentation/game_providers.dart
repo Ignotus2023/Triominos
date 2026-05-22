@@ -8,6 +8,8 @@ import '../domain/move.dart';
 import '../domain/round.dart';
 import 'game_actions.dart';
 
+export '../domain/game_repository.dart' show GameDetails;
+
 final gameRepositoryProvider = Provider<GameRepository>((ref) {
   final db = ref.watch(appDatabaseProvider);
   return GameRepositoryImpl(db, db.gamesDao);
@@ -44,3 +46,8 @@ final roundMovesProvider = StreamProvider.family<List<Move>, String>((ref, round
 final gameActionsProvider = Provider<GameActions>((ref) {
   return GameActions(ref.watch(gameRepositoryProvider));
 });
+
+final gameDetailsProvider = FutureProvider.family<GameDetails?, String>((ref, gameId) {
+  return ref.watch(gameRepositoryProvider).loadDetails(gameId);
+});
+

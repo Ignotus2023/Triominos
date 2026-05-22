@@ -162,4 +162,30 @@ class GameActions {
     }
     await _repo.finishGame(gameId, winnerId);
   }
+
+  Future<String> rematch({required String gameId}) async {
+    final old = await _repo.getGame(gameId);
+    if (old == null) throw StateError('Game $gameId not found');
+    final players = old.players
+        .map(
+          (p) => GamePlayerSnapshot(
+            playerId: p.playerId,
+            seatIndex: p.seatIndex,
+            displayName: p.displayName,
+            avatarColor: p.avatarColor,
+            initials: p.initials,
+            totalScore: 0,
+          ),
+        )
+        .toList();
+    final next = Game.newDraft(
+      endMode: old.endMode,
+      scoringVariant: old.scoringVariant,
+      scoreLimit: old.scoreLimit,
+      totalRounds: old.totalRounds,
+      players: players,
+    );
+    await _repo.createGame(next);
+    return next.id;
+  }
 }
