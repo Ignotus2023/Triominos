@@ -135,4 +135,32 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
       [delta, gameId],
     );
   }
+
+  Future<int> setSeat(String gameId, int seatIndex) {
+    return customStatement(
+      'UPDATE games SET current_seat_index = ? WHERE id = ?',
+      [seatIndex, gameId],
+    );
+  }
+
+  Future<int> setCurrentRound(String gameId, int roundNumber) {
+    return customStatement(
+      'UPDATE games SET current_round = ? WHERE id = ?',
+      [roundNumber, gameId],
+    );
+  }
+
+  Future<void> finishGame(String gameId, String? winnerId) {
+    return (update(games)..where((t) => t.id.equals(gameId))).write(
+      GamesCompanion(
+        status: const Value(GameStatus.finished),
+        winnerId: Value(winnerId),
+        finishedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  Future<void> replaceMove(MovesCompanion entry) async {
+    await update(moves).replace(entry);
+  }
 }

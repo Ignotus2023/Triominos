@@ -48,5 +48,16 @@ abstract class GameRepository {
 
   Future<void> deleteMove(String moveId);
 
+  Future<void> setTurnSeat(String gameId, int seatIndex);
+  Future<void> advanceRound(String gameId, int nextRoundNumber);
+  Future<void> finishGame(String gameId, String? winnerId);
+
+  Future<void> undoMove({required String gameId, required Move move});
+  Future<void> replaceMove({
+    required String gameId,
+    required Move oldMove,
+    required Move newMove,
+  });
+
   Future<GameDetails?> loadDetails(String gameId);
 }

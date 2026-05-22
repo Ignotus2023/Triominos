@@ -77,4 +77,27 @@ class Move {
   final DateTime createdAt;
 
   int get totalScore => baseScore + bonusScore;
+
+  Move withId(String newId) {
+    return Move(
+      id: newId,
+      roundId: roundId,
+      playerId: playerId,
+      moveIndex: moveIndex,
+      type: type,
+      corner1: corner1,
+      corner2: corner2,
+      corner3: corner3,
+      tileKey: tileKey,
+      baseScore: baseScore,
+      bonusScore: bonusScore,
+      opponentsHandSum: opponentsHandSum,
+      isTriplet: isTriplet,
+      isBridge: isBridge,
+      isHexagon: isHexagon,
+      isDoubleHexagon: isDoubleHexagon,
+      isStarter: isStarter,
+      createdAt: createdAt,
+    );
+  }
 }

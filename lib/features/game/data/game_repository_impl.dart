@@ -7,6 +7,7 @@ import '../../../core/database/tables/games_table.dart' as games_table;
 import '../../../core/database/tables/moves_table.dart';
 import '../../../core/database/tables/rounds_table.dart';
 import '../../../core/game/game_status.dart';
+import '../../../core/game/move_input.dart';
 import '../domain/game.dart';
 import '../domain/game_repository.dart';
 import '../domain/move.dart';
@@ -175,6 +176,61 @@ class GameRepositoryImpl implements GameRepository {
   @override
   Future<void> deleteMove(String moveId) async {
     await _dao.deleteMove(moveId);
+  }
+
+  @override
+  Future<void> setTurnSeat(String gameId, int seatIndex) async {
+    await _dao.setSeat(gameId, seatIndex);
+  }
+
+  @override
+  Future<void> advanceRound(String gameId, int nextRoundNumber) async {
+    await _dao.setCurrentRound(gameId, nextRoundNumber);
+  }
+
+  @override
+  Future<void> finishGame(String gameId, String? winnerId) async {
+    await _dao.finishGame(gameId, winnerId);
+  }
+
+  @override
+  Future<void> undoMove({required String gameId, required Move move}) async {
+    await _db.transaction(() async {
+      await _dao.updatePlayerScore(
+        gameId: gameId,
+        playerId: move.playerId,
+        delta: -move.totalScore,
+      );
+      if (move.type == MoveType.play) {
+        await _dao.incrementPlayedTiles(gameId, -1);
+      }
+      await _dao.deleteMove(move.id);
+    });
+  }
+
+  @override
+  Future<void> replaceMove({
+    required String gameId,
+    required Move oldMove,
+    required Move newMove,
+  }) async {
+    await _db.transaction(() async {
+      await _dao.updatePlayerScore(
+        gameId: gameId,
+        playerId: oldMove.playerId,
+        delta: -oldMove.totalScore,
+      );
+      final wasPlay = oldMove.type == MoveType.play;
+      final isPlay = newMove.type == MoveType.play;
+      if (wasPlay && !isPlay) await _dao.incrementPlayedTiles(gameId, -1);
+      if (!wasPlay && isPlay) await _dao.incrementPlayedTiles(gameId, 1);
+      await _dao.replaceMove(_moveToCompanion(newMove));
+      await _dao.updatePlayerScore(
+        gameId: gameId,
+        playerId: newMove.playerId,
+        delta: newMove.totalScore,
+      );
+    });
   }
 
   @override

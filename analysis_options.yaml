@@ -23,6 +23,8 @@ linter:
     one_member_abstracts: false
     sort_pub_dependencies: false
     cascade_invocations: false
+    discarded_futures: false
+    flutter_style_todos: false
 
 formatter:
   page_width: 100

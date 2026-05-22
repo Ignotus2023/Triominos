@@ -8,6 +8,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../game/presentation/game_providers.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -51,6 +52,8 @@ class HomePage extends ConsumerWidget {
                   icon: Icons.add_rounded,
                   onPressed: () => context.pushNamed(AppRoute.gameSetup),
                 ),
+                AppSpacing.h12,
+                const _ResumeBanner(),
                 AppSpacing.h16,
                 _HomeTile(
                   icon: Icons.group_outlined,
@@ -79,6 +82,38 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ResumeBanner extends ConsumerWidget {
+  const _ResumeBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final games = ref.watch(activeGamesProvider).valueOrNull ?? const [];
+    if (games.isEmpty) return const SizedBox.shrink();
+    final game = games.first;
+
+    return GlassContainer(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        leading: Icon(Icons.play_circle_outline_rounded, color: context.colors.primary),
+        title: Text(l10n.homeResumeGame, style: context.textStyles.titleMedium),
+        subtitle: Text(
+          l10n.homeResumeGameSubtitle(game.currentRound, game.players.length),
+          style: context.textStyles.bodyMedium,
+        ),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: () => context.pushNamed(
+          AppRoute.game,
+          pathParameters: {'gameId': game.id},
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        ),
       ),
     );
   }
