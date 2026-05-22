@@ -5,6 +5,7 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'daos/games_dao.dart';
 import 'daos/players_dao.dart';
 import 'tables/game_players_table.dart';
 import 'tables/games_table.dart';
@@ -16,7 +17,7 @@ part 'app_database.g.dart';
 
 @DriftDatabase(
   tables: [Players, Games, GamePlayers, Rounds, Moves],
-  daos: [PlayersDao],
+  daos: [PlayersDao, GamesDao],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

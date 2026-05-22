@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/haptics/haptics_service.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/color_hex.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
@@ -107,7 +108,7 @@ class _PlayerTile extends ConsumerWidget {
         ),
         leading: PlayerAvatar(
           initials: player.initials,
-          color: _parseColor(player.avatarColor),
+          color: colorFromHex(player.avatarColor),
         ),
         title: Text(player.name, style: context.textStyles.titleMedium),
         trailing: PopupMenuButton<_TileAction>(
@@ -180,9 +181,3 @@ class _PlayerTile extends ConsumerWidget {
 }
 
 enum _TileAction { edit, delete }
-
-Color _parseColor(String hex) {
-  final cleaned = hex.replaceFirst('#', '');
-  final value = int.parse(cleaned, radix: 16);
-  return Color(cleaned.length == 6 ? 0xFF000000 | value : value);
-}

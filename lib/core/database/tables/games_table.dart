@@ -1,9 +1,8 @@
 import 'package:drift/drift.dart';
 
 import '../../game/end_game_evaluator.dart';
+import '../../game/game_status.dart';
 import '../../game/scoring_rules.dart';
-
-enum GameStatus { inProgress, finished, abandoned }
 
 @DataClassName('GameRow')
 class Games extends Table {

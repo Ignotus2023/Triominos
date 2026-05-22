@@ -6,6 +6,7 @@ import '../../../core/constants.dart';
 import '../../../core/haptics/haptics_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/color_hex.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -45,7 +46,7 @@ class _PlayerFormPageState extends ConsumerState<PlayerFormPage> {
             _editing = player;
             _nameController.text = player.name;
             _initialsController.text = player.initials;
-            _selectedColor = _parseColor(player.avatarColor);
+            _selectedColor = colorFromHex(player.avatarColor);
             _isGuest = player.isGuest;
             _initialsTouched = true;
           });
@@ -85,7 +86,7 @@ class _PlayerFormPageState extends ConsumerState<PlayerFormPage> {
     final initials = _initialsController.text.trim().isEmpty
         ? PlayerValidator.initialsFromName(name)
         : _initialsController.text.trim();
-    final colorHex = '#${_selectedColor.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+    final colorHex = hexFromColor(_selectedColor);
 
     final existing = _editing;
     if (existing == null) {
@@ -192,10 +193,4 @@ class _PlayerFormPageState extends ConsumerState<PlayerFormPage> {
       ),
     );
   }
-}
-
-Color _parseColor(String hex) {
-  final cleaned = hex.replaceFirst('#', '');
-  final value = int.parse(cleaned, radix: 16);
-  return Color(cleaned.length == 6 ? 0xFF000000 | value : value);
 }
