@@ -114,6 +114,17 @@
 
   "rulesTitle": "Rules",
 
+  "onboardingSkip": "Skip",
+  "onboardingStart": "Let's go",
+  "onb1Title": "Welcome to TriominoScore",
+  "onb1Body": "Your professional scorekeeper for the Triominos board game.",
+  "onb2Title": "Smart Input",
+  "onb2Body": "Enter the three corner digits and tap a bonus — done.",
+  "onb3Title": "Auto bonuses",
+  "onb3Body": "The app counts triplet, bridge and hexagon bonuses for you.",
+  "onb4Title": "Ready to play",
+  "onb4Body": "Add players and start your first game.",
+
   "settingsTitle": "Settings",
   "settingsLanguage": "Language",
   "settingsTheme": "Theme",

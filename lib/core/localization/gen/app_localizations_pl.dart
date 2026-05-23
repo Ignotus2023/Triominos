@@ -308,6 +308,38 @@ class AppLocalizationsPl extends AppLocalizations {
   String get rulesTitle => 'Zasady';
 
   @override
+  String get onboardingSkip => 'Pomiń';
+
+  @override
+  String get onboardingStart => 'Zaczynamy';
+
+  @override
+  String get onb1Title => 'Witaj w TriominoScore';
+
+  @override
+  String get onb1Body =>
+      'Twój profesjonalny pomocnik do liczenia punktów w grze Triominos.';
+
+  @override
+  String get onb2Title => 'Smart Input';
+
+  @override
+  String get onb2Body => 'Wpisz trzy cyfry narożników i tapnij bonus — gotowe.';
+
+  @override
+  String get onb3Title => 'Auto-bonusy';
+
+  @override
+  String get onb3Body =>
+      'Aplikacja sama liczy premie za triplet, most i hexagon.';
+
+  @override
+  String get onb4Title => 'Gotowi do gry';
+
+  @override
+  String get onb4Body => 'Dodaj graczy i rozpocznij pierwszą grę.';
+
+  @override
   String get settingsTitle => 'Ustawienia';
 
   @override

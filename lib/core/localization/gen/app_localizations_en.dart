@@ -307,6 +307,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rulesTitle => 'Rules';
 
   @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingStart => 'Let\'s go';
+
+  @override
+  String get onb1Title => 'Welcome to TriominoScore';
+
+  @override
+  String get onb1Body =>
+      'Your professional scorekeeper for the Triominos board game.';
+
+  @override
+  String get onb2Title => 'Smart Input';
+
+  @override
+  String get onb2Body =>
+      'Enter the three corner digits and tap a bonus — done.';
+
+  @override
+  String get onb3Title => 'Auto bonuses';
+
+  @override
+  String get onb3Body =>
+      'The app counts triplet, bridge and hexagon bonuses for you.';
+
+  @override
+  String get onb4Title => 'Ready to play';
+
+  @override
+  String get onb4Body => 'Add players and start your first game.';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

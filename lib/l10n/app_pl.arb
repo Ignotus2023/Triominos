@@ -103,6 +103,17 @@
 
   "rulesTitle": "Zasady",
 
+  "onboardingSkip": "Pomiń",
+  "onboardingStart": "Zaczynamy",
+  "onb1Title": "Witaj w TriominoScore",
+  "onb1Body": "Twój profesjonalny pomocnik do liczenia punktów w grze Triominos.",
+  "onb2Title": "Smart Input",
+  "onb2Body": "Wpisz trzy cyfry narożników i tapnij bonus — gotowe.",
+  "onb3Title": "Auto-bonusy",
+  "onb3Body": "Aplikacja sama liczy premie za triplet, most i hexagon.",
+  "onb4Title": "Gotowi do gry",
+  "onb4Body": "Dodaj graczy i rozpocznij pierwszą grę.",
+
   "settingsTitle": "Ustawienia",
   "settingsLanguage": "Język",
   "settingsTheme": "Motyw",

@@ -6,20 +6,34 @@ import '../../features/game_setup/presentation/game_setup_page.dart';
 import '../../features/game_summary/presentation/game_summary_page.dart';
 import '../../features/history/presentation/history_page.dart';
 import '../../features/home/presentation/home_page.dart';
+import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/players/presentation/players_list_page.dart';
 import '../../features/rules/presentation/rules_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/statistics/presentation/statistics_page.dart';
+import '../settings/settings_provider.dart';
 import 'app_routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.homePath,
+    redirect: (context, state) {
+      final done = ref.read(settingsRepositoryProvider).onboardingCompleted;
+      final atOnboarding = state.matchedLocation == AppRoutes.onboardingPath;
+      if (!done && !atOnboarding) return AppRoutes.onboardingPath;
+      if (done && atOnboarding) return AppRoutes.homePath;
+      return null;
+    },
     routes: [
       GoRoute(
         path: AppRoutes.homePath,
         name: AppRoutes.home,
         builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.onboardingPath,
+        name: AppRoutes.onboarding,
+        builder: (context, state) => const OnboardingPage(),
       ),
       GoRoute(
         path: AppRoutes.playersPath,

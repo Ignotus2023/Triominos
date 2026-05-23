@@ -644,6 +644,66 @@ abstract class AppLocalizations {
   /// **'Rules'**
   String get rulesTitle;
 
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s go'**
+  String get onboardingStart;
+
+  /// No description provided for @onb1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to TriominoScore'**
+  String get onb1Title;
+
+  /// No description provided for @onb1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your professional scorekeeper for the Triominos board game.'**
+  String get onb1Body;
+
+  /// No description provided for @onb2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Input'**
+  String get onb2Title;
+
+  /// No description provided for @onb2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the three corner digits and tap a bonus — done.'**
+  String get onb2Body;
+
+  /// No description provided for @onb3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto bonuses'**
+  String get onb3Title;
+
+  /// No description provided for @onb3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The app counts triplet, bridge and hexagon bonuses for you.'**
+  String get onb3Body;
+
+  /// No description provided for @onb4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to play'**
+  String get onb4Title;
+
+  /// No description provided for @onb4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Add players and start your first game.'**
+  String get onb4Body;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

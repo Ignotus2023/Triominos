@@ -3,6 +3,9 @@ abstract class AppRoutes {
   static const home = 'home';
   static const homePath = '/';
 
+  static const onboarding = 'onboarding';
+  static const onboardingPath = '/onboarding';
+
   static const players = 'players';
   static const playersPath = '/players';
 
