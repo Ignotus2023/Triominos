@@ -26,6 +26,7 @@ dependencies:
   flutter_animate: ^4.5.2
   collection: ^1.19.1
   intl: any
+  drift_flutter: ^0.3.0
 
 dev_dependencies:
   flutter_test:
