@@ -66,6 +66,10 @@ class SettingsPage extends ConsumerWidget {
                     ),
                     DropdownMenuItem(value: 'pl', child: Text(l10n.languagePolish)),
                     DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
+                    DropdownMenuItem(value: 'de', child: Text(l10n.languageGerman)),
+                    DropdownMenuItem(value: 'fr', child: Text(l10n.languageFrench)),
+                    DropdownMenuItem(value: 'es', child: Text(l10n.languageSpanish)),
+                    DropdownMenuItem(value: 'it', child: Text(l10n.languageItalian)),
                   ],
                   onChanged: (code) => notifier.setLocale(
                     code == null || code == 'system' ? null : Locale(code),
