@@ -87,6 +87,7 @@
   "@inputDrawPile": { "placeholders": { "penalty": { "type": "int" } } },
   "inputPassPenalty": "Pass ({penalty})",
   "@inputPassPenalty": { "placeholders": { "penalty": { "type": "int" } } },
+  "moveDraw": "Draw",
   "inputEndHand": "Hand out (round end)",
   "inputOpponentsHandSum": "Sum of opponents' hands",
   "inputOpponentsHandSumHint": "Total of corner digits left in opponents' hands",

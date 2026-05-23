@@ -242,6 +242,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get moveDraw => 'Draw';
+
+  @override
   String get inputEndHand => 'Hand out (round end)';
 
   @override

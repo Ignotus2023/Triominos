@@ -78,6 +78,7 @@
   "inputOtherActions": "Inne akcje",
   "inputDrawPile": "Dobranie z puli ({penalty})",
   "inputPassPenalty": "Pas ({penalty})",
+  "moveDraw": "Dobranie",
   "inputEndHand": "Wyjście (koniec rundy)",
   "inputOpponentsHandSum": "Suma rąk przeciwników",
   "inputOpponentsHandSumHint": "Suma cyfr na płytkach pozostałych w rękach przeciwników",

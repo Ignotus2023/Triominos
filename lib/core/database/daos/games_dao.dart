@@ -135,6 +135,18 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
     });
   }
 
+  Future<void> setRoundFinisher({
+    required String roundId,
+    required String finisherId,
+  }) {
+    return (update(rounds)..where((r) => r.id.equals(roundId))).write(
+      RoundsCompanion(
+        finisherPlayerId: Value(finisherId),
+        finishedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   Future<void> finishGame({
     required String gameId,
     required String winnerId,

@@ -243,6 +243,9 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String get moveDraw => 'Dobranie';
+
+  @override
   String get inputEndHand => 'Wyjście (koniec rundy)';
 
   @override

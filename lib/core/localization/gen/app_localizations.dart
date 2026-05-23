@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'Pass ({penalty})'**
   String inputPassPenalty(int penalty);
 
+  /// No description provided for @moveDraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw'**
+  String get moveDraw;
+
   /// No description provided for @inputEndHand.
   ///
   /// In en, this message translates to:

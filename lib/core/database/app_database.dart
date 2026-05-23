@@ -34,4 +34,15 @@ class AppDatabase extends _$AppDatabase {
           await customStatement('PRAGMA foreign_keys = ON');
         },
       );
+
+  /// Usuwa wszystkie dane (gry i graczy) — opcja "Reset danych" w ustawieniach.
+  Future<void> resetAllData() {
+    return transaction(() async {
+      await delete(moves).go();
+      await delete(rounds).go();
+      await delete(gamePlayers).go();
+      await delete(games).go();
+      await delete(players).go();
+    });
+  }
 }
