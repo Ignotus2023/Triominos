@@ -19,7 +19,16 @@ part 'app_database.g.dart';
   daos: [PlayersDao, GamesDao, StatsDao],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(driftDatabase(name: 'triomino_score'));
+  AppDatabase()
+      : super(
+          driftDatabase(
+            name: 'triomino_score',
+            web: DriftWebOptions(
+              sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+              driftWorker: Uri.parse('drift_worker.js'),
+            ),
+          ),
+        );
 
   /// Konstruktor dla testów (baza w pamięci).
   AppDatabase.forTesting(super.executor);
