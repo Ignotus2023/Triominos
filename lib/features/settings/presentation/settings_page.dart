@@ -111,6 +111,21 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.x12),
           GlassContainer(
+            padding: EdgeInsets.zero,
+            glow: settings.isPremium,
+            child: SwitchListTile(
+              secondary: Icon(
+                Icons.workspace_premium_outlined,
+                color: context.colors.primary,
+              ),
+              title: Text(l10n.settingsPremium),
+              subtitle: Text(l10n.settingsPremiumDesc),
+              value: settings.isPremium,
+              onChanged: notifier.setPremium,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x12),
+          GlassContainer(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

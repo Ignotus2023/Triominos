@@ -94,6 +94,31 @@ void main() {
     expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 22 - 10);
   });
 
+  test('editMove zmienia zagranie i koryguje punkty o różnicę', () async {
+    await seed(endMode: EndMode.freeform);
+    final (game, round) = await current();
+    await controller.addPlay(
+      game: game,
+      round: round,
+      playerId: 'p1',
+      move: Move.play(corner1: 4, corner2: 4, corner3: 4),
+    );
+    final original = (await db.gamesDao.getMoves('r1')).single;
+
+    await controller.editMove(
+      game: game,
+      original: original,
+      updated: Move.play(corner1: 5, corner2: 5, corner3: 5),
+    );
+
+    // 4-4-4 (12+10=22) -> 5-5-5 (15+10=25): różnica +3.
+    final seats = await db.gamesDao.getGamePlayers('g1');
+    expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 25);
+    final updated = (await db.gamesDao.getMoves('r1')).single;
+    expect(updated.corner1, 5);
+    expect(updated.baseScore + updated.bonusScore, 25);
+  });
+
   test('tryb scoreLimit NIE kończy się automatycznie po przekroczeniu progu',
       () async {
     await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);

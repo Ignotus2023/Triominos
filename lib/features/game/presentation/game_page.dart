@@ -7,6 +7,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/move.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/ad_banner.dart';
@@ -60,6 +61,7 @@ class GamePage extends ConsumerWidget {
             : ref.watch(roundMovesProvider(round.id)).value ?? [];
 
         final colors = ref.watch(playerColorsProvider);
+        final premium = ref.watch(settingsProvider.select((s) => s.isPremium));
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
         final leader = seats.isEmpty
@@ -83,7 +85,7 @@ class GamePage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (AppConstants.isFreeVersion)
+                if (AppConstants.isFreeVersion && !premium)
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.x16),
                     child: AdBanner(height: 48),
@@ -157,6 +159,15 @@ class GamePage extends ConsumerWidget {
                   onUndoLast: () => ref
                       .read(gameControllerProvider)
                       .undo(game: game, round: round),
+                  onEdit: (move) => _editMove(
+                    context,
+                    ref,
+                    game: game,
+                    round: round,
+                    seats: seats,
+                    premium: premium,
+                    move: move,
+                  ),
                 ),
               const SizedBox(height: AppSpacing.x48),
             ],
@@ -205,5 +216,41 @@ class GamePage extends ConsumerWidget {
 
   Future<void> _finishNow(BuildContext context, WidgetRef ref, Game game) async {
     await ref.read(gameControllerProvider).finishNow(game);
+  }
+
+  void _editMove(
+    BuildContext context,
+    WidgetRef ref, {
+    required Game game,
+    required Round round,
+    required List<GamePlayer> seats,
+    required bool premium,
+    required MoveRow move,
+  }) {
+    if (!premium) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(context.l10n.premiumEditHint)));
+      return;
+    }
+    final seat = seats.firstWhere(
+      (s) => s.playerId == move.playerId,
+      orElse: () => seats.first,
+    );
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => SmartInputSheet(
+        game: game,
+        round: round,
+        playerId: move.playerId,
+        playerName: seat.displayNameSnapshot,
+        moveNumber: move.moveIndex + 1,
+        isStarterMove: move.isStarter,
+        opponentsCount: seats.length - 1,
+        editing: move,
+      ),
+    );
   }
 }

@@ -22,6 +22,7 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.moveNumber,
     required this.isStarterMove,
     required this.opponentsCount,
+    this.editing,
     super.key,
   });
 
@@ -32,6 +33,9 @@ class SmartInputSheet extends ConsumerStatefulWidget {
   final int moveNumber;
   final bool isStarterMove;
   final int opponentsCount;
+
+  /// Gdy ustawione — tryb edycji istniejącego ruchu (Premium).
+  final MoveRow? editing;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -57,9 +61,23 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
           isBridge: _bridge,
           isHexagon: _hexagon,
           isDoubleHexagon: _doubleHex,
-          isStarter: widget.isStarterMove,
+          isStarter: widget.editing?.isStarter ?? widget.isStarterMove,
         )
       : null;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.editing;
+    if (e != null) {
+      _c1 = e.corner1;
+      _c2 = e.corner2;
+      _c3 = e.corner3;
+      _bridge = e.isBridge;
+      _hexagon = e.isHexagon;
+      _doubleHex = e.isDoubleHexagon;
+    }
+  }
 
   @override
   void dispose() {
@@ -108,8 +126,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                   icon: Icons.check,
                   onPressed: _complete ? _confirmPlay : null,
                 ),
-                const SizedBox(height: AppSpacing.x12),
-                _buildOtherActions(context),
+                if (widget.editing == null) ...[
+                  const SizedBox(height: AppSpacing.x12),
+                  _buildOtherActions(context),
+                ],
               ] else
                 _buildEndHand(context),
             ],
@@ -291,12 +311,22 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     if (move == null) return;
     ref.read(hapticsProvider).medium();
     ref.read(audioServiceProvider).play(_soundFor(move));
-    await ref.read(gameControllerProvider).addPlay(
-          game: widget.game,
-          round: widget.round,
-          playerId: widget.playerId,
-          move: move,
-        );
+    final editing = widget.editing;
+    final controller = ref.read(gameControllerProvider);
+    if (editing != null) {
+      await controller.editMove(
+        game: widget.game,
+        original: editing,
+        updated: move,
+      );
+    } else {
+      await controller.addPlay(
+        game: widget.game,
+        round: widget.round,
+        playerId: widget.playerId,
+        move: move,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 

@@ -384,6 +384,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsHaptics => 'Retour haptique';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Débloquez la modification de tout coup et supprimez les pubs';
+
+  @override
+  String get premiumEditHint =>
+      'Modifier un coup quelconque est une fonction Premium';
+
+  @override
   String get settingsDefaultScoreLimit => 'Seuil de points par défaut';
 
   @override

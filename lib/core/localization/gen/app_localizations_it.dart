@@ -383,6 +383,17 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsHaptics => 'Vibrazione';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Sblocca la modifica di qualsiasi mossa e rimuovi gli annunci';
+
+  @override
+  String get premiumEditHint =>
+      'Modificare qualsiasi mossa è una funzione Premium';
+
+  @override
   String get settingsDefaultScoreLimit => 'Soglia di punti predefinita';
 
   @override

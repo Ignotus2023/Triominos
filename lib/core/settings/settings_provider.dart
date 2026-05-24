@@ -46,6 +46,11 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _repo.saveDefaultScoreLimit(value);
     state = state.copyWith(defaultScoreLimit: value);
   }
+
+  Future<void> setPremium(bool value) async {
+    await _repo.savePremium(value);
+    state = state.copyWith(isPremium: value);
+  }
 }
 
 final settingsProvider =

@@ -381,6 +381,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHaptics => 'Haptics';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc => 'Unlock editing any move and remove ads';
+
+  @override
+  String get premiumEditHint => 'Editing any move is a Premium feature';
+
+  @override
   String get settingsDefaultScoreLimit => 'Default score threshold';
 
   @override

@@ -384,6 +384,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsHaptics => 'Vibración';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Desbloquea editar cualquier jugada y quita los anuncios';
+
+  @override
+  String get premiumEditHint =>
+      'Editar cualquier jugada es una función Premium';
+
+  @override
   String get settingsDefaultScoreLimit => 'Umbral de puntos predeterminado';
 
   @override

@@ -14,6 +14,7 @@ class SettingsRepository {
   static const _kSounds = 'soundsEnabled';
   static const _kHaptics = 'hapticsEnabled';
   static const _kScoreLimit = 'defaultScoreLimit';
+  static const _kPremium = 'isPremium';
   static const _kOnboarding = 'onboardingCompleted';
 
   AppSettings load() {
@@ -25,8 +26,11 @@ class SettingsRepository {
       hapticsEnabled: _prefs.getBool(_kHaptics) ?? true,
       defaultScoreLimit:
           _prefs.getInt(_kScoreLimit) ?? const AppSettings().defaultScoreLimit,
+      isPremium: _prefs.getBool(_kPremium) ?? false,
     );
   }
+
+  Future<void> savePremium(bool value) => _prefs.setBool(_kPremium, value);
 
   Future<void> saveThemeMode(ThemeMode mode) =>
       _prefs.setString(_kThemeMode, mode.name);

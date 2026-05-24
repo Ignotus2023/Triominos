@@ -45,6 +45,33 @@ class GameController {
     );
   }
 
+  /// Edycja zagranego ruchu (funkcja Premium). Przelicza różnicę punktów.
+  Future<void> editMove({
+    required Game game,
+    required MoveRow original,
+    required Move updated,
+  }) {
+    final delta =
+        updated.totalScore - (original.baseScore + original.bonusScore);
+    return _dao.editMove(
+      moveId: original.id,
+      gameId: game.id,
+      playerId: original.playerId,
+      scoreDelta: delta,
+      changes: MovesCompanion(
+        corner1: Value(updated.corner1),
+        corner2: Value(updated.corner2),
+        corner3: Value(updated.corner3),
+        baseScore: Value(updated.baseScore),
+        bonusScore: Value(updated.bonusScore),
+        isTriplet: Value(updated.isTriplet),
+        isBridge: Value(updated.isBridge),
+        isHexagon: Value(updated.isHexagon),
+        isDoubleHexagon: Value(updated.isDoubleHexagon),
+      ),
+    );
+  }
+
   Future<void> addPenalty({
     required Game game,
     required Round round,

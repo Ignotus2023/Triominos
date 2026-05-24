@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/ad_banner.dart';
@@ -20,6 +21,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final activeGame = ref.watch(activeGameProvider).value;
+    final premium = ref.watch(settingsProvider.select((s) => s.isPremium));
 
     return AppScaffold(
       body: ListView(
@@ -100,7 +102,7 @@ class HomePage extends ConsumerWidget {
               ),
             ],
           ),
-          if (AppConstants.isFreeVersion) ...[
+          if (AppConstants.isFreeVersion && !premium) ...[
             const SizedBox(height: AppSpacing.x16),
             const AdBanner(),
           ],

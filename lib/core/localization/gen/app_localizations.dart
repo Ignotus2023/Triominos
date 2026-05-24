@@ -790,6 +790,24 @@ abstract class AppLocalizations {
   /// **'Haptics'**
   String get settingsHaptics;
 
+  /// No description provided for @settingsPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get settingsPremium;
+
+  /// No description provided for @settingsPremiumDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock editing any move and remove ads'**
+  String get settingsPremiumDesc;
+
+  /// No description provided for @premiumEditHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing any move is a Premium feature'**
+  String get premiumEditHint;
+
   /// No description provided for @settingsDefaultScoreLimit.
   ///
   /// In en, this message translates to:

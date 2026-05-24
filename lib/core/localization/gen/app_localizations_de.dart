@@ -381,6 +381,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsHaptics => 'Haptik';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Bearbeiten beliebiger Züge freischalten und Werbung entfernen';
+
+  @override
+  String get premiumEditHint =>
+      'Das Bearbeiten beliebiger Züge ist eine Premium-Funktion';
+
+  @override
   String get settingsDefaultScoreLimit => 'Standard-Punktegrenze';
 
   @override

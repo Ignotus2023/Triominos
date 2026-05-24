@@ -381,6 +381,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsHaptics => 'Wibracje';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Odblokuj edycję dowolnego ruchu i usuń reklamy';
+
+  @override
+  String get premiumEditHint => 'Edycja dowolnego ruchu to funkcja Premium';
+
+  @override
   String get settingsDefaultScoreLimit => 'Domyślny próg punktowy';
 
   @override
