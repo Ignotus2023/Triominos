@@ -22,7 +22,7 @@ class PlayersListPage extends ConsumerWidget {
     return AppScaffold(
       title: l10n.playersTitle,
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showPlayerSheet(context, ref),
+        onPressed: () => _showPlayerDialog(context, ref),
         icon: const Icon(Icons.add),
         label: Text(l10n.playersAdd),
       ),
@@ -42,7 +42,7 @@ class PlayersListPage extends ConsumerWidget {
             itemBuilder: (context, i) {
               final p = list[i];
               return GlassContainer(
-                onTap: () => _showPlayerSheet(context, ref, player: p),
+                onTap: () => _showPlayerDialog(context, ref, player: p),
                 child: Row(
                   children: [
                     PlayerAvatar(initials: p.initials, colorHex: p.avatarColor),
@@ -91,7 +91,7 @@ class PlayersListPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _showPlayerSheet(
+  Future<void> _showPlayerDialog(
     BuildContext context,
     WidgetRef ref, {
     Player? player,
@@ -100,62 +100,43 @@ class PlayersListPage extends ConsumerWidget {
     final controller = TextEditingController(text: player?.name ?? '');
     final formKey = GlobalKey<FormState>();
 
-    await showModalBottomSheet<void>(
+    await showDialog<void>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.viewInsetsOf(context).bottom,
-          left: AppSpacing.x16,
-          right: AppSpacing.x16,
-          top: AppSpacing.x16,
-        ),
-        child: GlassContainer(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  player == null ? l10n.playerNew : l10n.playerEdit,
-                  style: context.text.titleLarge,
-                ),
-                const SizedBox(height: AppSpacing.x16),
-                TextFormField(
-                  controller: controller,
-                  autofocus: true,
-                  maxLength: AppConstants.maxPlayerNameLength,
-                  decoration: InputDecoration(
-                    labelText: l10n.playerName,
-                    hintText: l10n.playerNameHint,
-                  ),
-                  validator: (value) {
-                    final v = value?.trim() ?? '';
-                    if (v.isEmpty) return l10n.playerErrorNameEmpty;
-                    if (v.length > AppConstants.maxPlayerNameLength) {
-                      return l10n.playerErrorNameTooLong;
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: (_) =>
-                      _submit(context, ref, formKey, controller, player),
-                ),
-                const SizedBox(height: AppSpacing.x12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilledButton(
-                    onPressed: () =>
-                        _submit(context, ref, formKey, controller, player),
-                    child: Text(l10n.commonSave),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.x8),
-              ],
+      builder: (context) => AlertDialog(
+        title: Text(player == null ? l10n.playerNew : l10n.playerEdit),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            maxLength: AppConstants.maxPlayerNameLength,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              labelText: l10n.playerName,
+              hintText: l10n.playerNameHint,
             ),
+            validator: (value) {
+              final v = value?.trim() ?? '';
+              if (v.isEmpty) return l10n.playerErrorNameEmpty;
+              if (v.length > AppConstants.maxPlayerNameLength) {
+                return l10n.playerErrorNameTooLong;
+              }
+              return null;
+            },
+            onFieldSubmitted: (_) =>
+                _submit(context, ref, formKey, controller, player),
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => _submit(context, ref, formKey, controller, player),
+            child: Text(l10n.commonSave),
+          ),
+        ],
       ),
     );
     controller.dispose();
