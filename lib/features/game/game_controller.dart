@@ -43,6 +43,19 @@ class GameController {
         createdAt: DateTime.now(),
       ),
     );
+    await _maybeFinishOnScoreLimit(game);
+  }
+
+  /// W trybie "limit punktów" gra kończy się, gdy ktokolwiek osiągnie próg —
+  /// sprawdzane po każdym zagraniu, nie tylko na koniec rundy.
+  Future<void> _maybeFinishOnScoreLimit(Game game) async {
+    if (game.endMode != EndMode.scoreLimit) return;
+    final seats = await _dao.getGamePlayers(game.id);
+    if (seats.isEmpty) return;
+    final leader = _highest(seats);
+    if (leader.totalScore >= (game.scoreLimit ?? 1 << 30)) {
+      await _dao.finishGame(gameId: game.id, winnerId: leader.playerId);
+    }
   }
 
   Future<void> addPenalty({

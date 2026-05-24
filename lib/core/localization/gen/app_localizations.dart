@@ -298,6 +298,12 @@ abstract class AppLocalizations {
   /// **'Select players'**
   String get setupSelectPlayers;
 
+  /// No description provided for @setupOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn order (drag to reorder)'**
+  String get setupOrder;
+
   /// No description provided for @setupPlayersRange.
   ///
   /// In en, this message translates to:
