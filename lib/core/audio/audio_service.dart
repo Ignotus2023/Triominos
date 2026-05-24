@@ -1,18 +1,19 @@
-import 'dart:async';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../settings/settings_provider.dart';
 
 /// Krótkie efekty dźwiękowe (§13.1).
+///
+/// Ścieżki są względne do katalogu `assets/` — `audioplayers` sam dokleja
+/// prefiks `assets/`, a na web ładuje plik jako blob (odporne na base-href).
 enum AppSound {
-  tap('assets/sounds/tap.wav'),
-  triplet('assets/sounds/triplet.wav'),
-  bridge('assets/sounds/bridge.wav'),
-  hexagon('assets/sounds/hexagon.wav'),
-  win('assets/sounds/win.wav'),
-  roundEnd('assets/sounds/round_end.wav');
+  tap('sounds/tap.wav'),
+  triplet('sounds/triplet.wav'),
+  bridge('sounds/bridge.wav'),
+  hexagon('sounds/hexagon.wav'),
+  win('sounds/win.wav'),
+  roundEnd('sounds/round_end.wav');
 
   const AppSound(this.asset);
 
@@ -31,14 +32,12 @@ class AudioService {
   Future<void> play(AppSound sound) async {
     if (!_enabled) return;
     try {
-      final player = _players[sound] ??= AudioPlayer();
-      if (player.audioSource == null) {
-        await player.setAsset(sound.asset);
-      }
-      await player.seek(Duration.zero);
-      unawaited(player.play());
+      final player = _players[sound] ??=
+          (AudioPlayer()..setReleaseMode(ReleaseMode.stop));
+      await player.stop();
+      await player.play(AssetSource(sound.asset));
     } catch (_) {
-      // Dźwięk to dodatek — ignorujemy błędy (np. polityka autoplay w web).
+      // Dźwięk to dodatek — ignorujemy ewentualne błędy odtwarzania.
     }
   }
 

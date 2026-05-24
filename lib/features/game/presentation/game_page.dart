@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/move.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
+import '../../../shared/widgets/ad_banner.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -78,24 +80,35 @@ class GamePage extends ConsumerWidget {
               ),
           ],
           bottomBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.x16),
-              child: PrimaryButton(
-                label: l10n.gameAddMove,
-                icon: Icons.add,
-                onPressed: (activeSeat == null || round == null)
-                    ? null
-                    : () => _openSmartInput(
-                          context,
-                          ref,
-                          game: game,
-                          round: round,
-                          seat: activeSeat,
-                          moveNumber: moves.length + 1,
-                          isStarterMove: game.currentRound == 1 && moves.isEmpty,
-                          opponentsCount: seats.length - 1,
-                        ),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (AppConstants.isFreeVersion)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.x16),
+                    child: AdBanner(height: 48),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.x16),
+                  child: PrimaryButton(
+                    label: l10n.gameAddMove,
+                    icon: Icons.add,
+                    onPressed: (activeSeat == null || round == null)
+                        ? null
+                        : () => _openSmartInput(
+                              context,
+                              ref,
+                              game: game,
+                              round: round,
+                              seat: activeSeat,
+                              moveNumber: moves.length + 1,
+                              isStarterMove:
+                                  game.currentRound == 1 && moves.isEmpty,
+                              opponentsCount: seats.length - 1,
+                            ),
+                  ),
+                ),
+              ],
             ),
           ),
           body: ListView(
