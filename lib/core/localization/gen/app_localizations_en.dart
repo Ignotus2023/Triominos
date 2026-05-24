@@ -108,6 +108,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupSelectPlayers => 'Select players';
 
   @override
+  String get setupOrder => 'Turn order (drag to reorder)';
+
+  @override
   String setupPlayersRange(int min, int max) {
     return 'Pick $min–$max players';
   }

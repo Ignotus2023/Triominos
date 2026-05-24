@@ -38,6 +38,7 @@
 
   "setupTitle": "New game",
   "setupSelectPlayers": "Select players",
+  "setupOrder": "Turn order (drag to reorder)",
   "setupPlayersRange": "Pick {min}–{max} players",
   "@setupPlayersRange": { "placeholders": { "min": { "type": "int" }, "max": { "type": "int" } } },
   "setupEndMode": "End condition",

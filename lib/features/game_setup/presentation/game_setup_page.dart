@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
+import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/scoring_rules.dart';
 import '../../../core/routing/app_routes.dart';
@@ -78,6 +79,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
               ],
             );
           }
+          final byId = {for (final p in list) p.id: p};
           return ListView(
             children: [
               Text(
@@ -93,8 +95,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
               ),
               const SizedBox(height: AppSpacing.x12),
               ...list.map((p) {
-                final index = _selected.indexOf(p.id);
-                final selected = index != -1;
+                final selected = _selected.contains(p.id);
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.x8),
                   child: GlassContainer(
@@ -111,25 +112,32 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
                         Expanded(
                           child: Text(p.name, style: context.text.titleLarge),
                         ),
-                        if (selected)
-                          CircleAvatar(
-                            radius: 14,
-                            backgroundColor: context.colors.primary,
-                            child: Text(
-                              '${index + 1}',
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
-                            ),
-                          )
-                        else
-                          Icon(
-                            Icons.circle_outlined,
-                            color: context.colors.onSurface.withValues(alpha: 0.3),
-                          ),
+                        Icon(
+                          selected ? Icons.check_circle : Icons.circle_outlined,
+                          color: selected
+                              ? context.colors.primary
+                              : context.colors.onSurface.withValues(alpha: 0.3),
+                        ),
                       ],
                     ),
                   ),
                 );
               }),
+              if (_selected.length >= 2) ...[
+                const SizedBox(height: AppSpacing.x24),
+                Text(l10n.setupOrder, style: context.text.titleLarge),
+                const SizedBox(height: AppSpacing.x12),
+                ReorderableListView(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  buildDefaultDragHandles: false,
+                  onReorderItem: _onReorder,
+                  children: [
+                    for (var i = 0; i < _selected.length; i++)
+                      _orderTile(context, i, byId[_selected[i]]),
+                  ],
+                ),
+              ],
               const SizedBox(height: AppSpacing.x24),
               Text(l10n.setupEndMode, style: context.text.titleLarge),
               const SizedBox(height: AppSpacing.x12),
@@ -172,6 +180,56 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
         _selected.add(id);
       }
     });
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      final id = _selected.removeAt(oldIndex);
+      _selected.insert(newIndex, id);
+    });
+  }
+
+  Widget _orderTile(BuildContext context, int index, Player? player) {
+    final initials = player == null ? '?' : initialsFor(player.name);
+    return Padding(
+      key: ValueKey(player?.id ?? 'seat_$index'),
+      padding: const EdgeInsets.only(bottom: AppSpacing.x8),
+      child: GlassContainer(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x16,
+          vertical: AppSpacing.x12,
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 14,
+              backgroundColor: context.colors.primary,
+              child: Text(
+                '${index + 1}',
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.x12),
+            PlayerAvatar(
+              initials: initials,
+              colorHex: player?.avatarColor ?? '#6366F1',
+              size: 36,
+            ),
+            const SizedBox(width: AppSpacing.x12),
+            Expanded(
+              child: Text(player?.name ?? '?', style: context.text.titleLarge),
+            ),
+            ReorderableDragStartListener(
+              index: index,
+              child: Icon(
+                Icons.drag_handle,
+                color: context.colors.onSurface.withValues(alpha: 0.5),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _start() async {

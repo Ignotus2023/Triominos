@@ -37,6 +37,7 @@
 
   "setupTitle": "Nouvelle partie",
   "setupSelectPlayers": "Sélectionner les joueurs",
+  "setupOrder": "Ordre des tours (glisser pour réordonner)",
   "setupPlayersRange": "Choisissez {min} à {max} joueurs",
   "setupEndMode": "Condition de fin",
   "setupEndModeScoreLimit": "Limite de points",

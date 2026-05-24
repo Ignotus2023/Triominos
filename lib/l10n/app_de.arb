@@ -37,6 +37,7 @@
 
   "setupTitle": "Neues Spiel",
   "setupSelectPlayers": "Spieler auswählen",
+  "setupOrder": "Reihenfolge (zum Ändern ziehen)",
   "setupPlayersRange": "Wähle {min}–{max} Spieler",
   "setupEndMode": "Endbedingung",
   "setupEndModeScoreLimit": "Punktelimit",

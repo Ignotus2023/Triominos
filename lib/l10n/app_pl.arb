@@ -37,6 +37,7 @@
 
   "setupTitle": "Nowa gra",
   "setupSelectPlayers": "Wybierz graczy",
+  "setupOrder": "Kolejność (przeciągnij, aby zmienić)",
   "setupPlayersRange": "Wybierz {min}–{max} graczy",
   "setupEndMode": "Warunek końca",
   "setupEndModeScoreLimit": "Limit punktów",
