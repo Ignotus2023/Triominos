@@ -89,6 +89,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get playerEdit => 'Edytuj gracza';
 
   @override
+  String get playerColor => 'Kolor';
+
+  @override
   String get playerDeleteConfirm =>
       'Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.';
 

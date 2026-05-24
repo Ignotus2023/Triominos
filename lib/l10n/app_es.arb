@@ -30,6 +30,7 @@
   "playerNameHint": "p. ej. Anna",
   "playerNew": "Nuevo jugador",
   "playerEdit": "Editar jugador",
+  "playerColor": "Color",
   "playerDeleteConfirm": "¿Eliminar este jugador? Su historial de partidas se conserva.",
   "playerErrorNameEmpty": "Introduce un nombre",
   "playerErrorNameTooLong": "El nombre es demasiado largo (máx. 32 caracteres)",

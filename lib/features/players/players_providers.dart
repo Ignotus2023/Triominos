@@ -6,7 +6,7 @@ import '../../core/database/database_provider.dart';
 import '../../core/utils/id.dart';
 
 /// Paleta kolorów awatarów (Indigo / Violet i akcenty).
-const _avatarColors = <String>[
+const avatarPalette = <String>[
   '#6366F1',
   '#8B5CF6',
   '#A78BFA',
@@ -18,9 +18,9 @@ const _avatarColors = <String>[
 ];
 
 String avatarColorFor(String seed) {
-  if (seed.isEmpty) return _avatarColors.first;
+  if (seed.isEmpty) return avatarPalette.first;
   final hash = seed.codeUnits.fold<int>(0, (a, b) => a + b);
-  return _avatarColors[hash % _avatarColors.length];
+  return avatarPalette[hash % avatarPalette.length];
 }
 
 String initialsFor(String name) {
@@ -38,14 +38,14 @@ class PlayersService {
 
   final PlayersDao _dao;
 
-  Future<void> create(String name) {
+  Future<void> create(String name, String color) {
     final trimmed = name.trim();
     final now = DateTime.now();
     return _dao.upsert(
       PlayersCompanion.insert(
         id: newId(),
         name: trimmed,
-        avatarColor: avatarColorFor(trimmed),
+        avatarColor: color,
         initials: initialsFor(trimmed),
         createdAt: now,
         updatedAt: now,
@@ -53,12 +53,13 @@ class PlayersService {
     );
   }
 
-  Future<void> rename(Player player, String name) {
+  Future<void> update(Player player, String name, String color) {
     final trimmed = name.trim();
     return _dao.upsert(
       player
           .copyWith(
             name: trimmed,
+            avatarColor: color,
             initials: initialsFor(trimmed),
             updatedAt: DateTime.now(),
           )

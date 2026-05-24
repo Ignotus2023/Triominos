@@ -30,6 +30,7 @@
   "playerNameHint": "np. Anna",
   "playerNew": "Nowy gracz",
   "playerEdit": "Edytuj gracza",
+  "playerColor": "Kolor",
   "playerDeleteConfirm": "Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.",
   "playerErrorNameEmpty": "Podaj imię",
   "playerErrorNameTooLong": "Imię jest za długie (maks. 32 znaki)",
