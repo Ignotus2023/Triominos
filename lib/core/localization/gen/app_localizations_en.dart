@@ -186,6 +186,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gameFinish => 'Finish game';
 
   @override
+  String gameThresholdReached(String name) {
+    return 'Threshold reached: $name';
+  }
+
+  @override
   String get gameNextRound => 'Next round';
 
   @override

@@ -66,6 +66,8 @@
   "gameLastMove": "last: {points}",
   "@gameLastMove": { "placeholders": { "points": { "type": "String" } } },
   "gameFinish": "Finish game",
+  "gameThresholdReached": "Threshold reached: {name}",
+  "@gameThresholdReached": { "placeholders": { "name": { "type": "String" } } },
   "gameNextRound": "Next round",
 
   "inputTitle": "{player}'s move",

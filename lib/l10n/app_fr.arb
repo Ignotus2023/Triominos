@@ -61,6 +61,7 @@
   "gameUndoLast": "Annuler le dernier coup",
   "gameLastMove": "dernier : {points}",
   "gameFinish": "Terminer la partie",
+  "gameThresholdReached": "Seuil atteint : {name}",
   "gameNextRound": "Manche suivante",
 
   "inputTitle": "Coup de {player}",

@@ -61,6 +61,7 @@
   "gameUndoLast": "Letzten Zug rückgängig",
   "gameLastMove": "zuletzt: {points}",
   "gameFinish": "Spiel beenden",
+  "gameThresholdReached": "Grenze erreicht: {name}",
   "gameNextRound": "Nächste Runde",
 
   "inputTitle": "Zug von {player}",

@@ -61,6 +61,7 @@
   "gameUndoLast": "Deshacer última jugada",
   "gameLastMove": "última: {points}",
   "gameFinish": "Terminar partida",
+  "gameThresholdReached": "Umbral alcanzado: {name}",
   "gameNextRound": "Siguiente ronda",
 
   "inputTitle": "Jugada de {player}",

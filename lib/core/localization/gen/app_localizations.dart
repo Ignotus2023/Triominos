@@ -436,6 +436,12 @@ abstract class AppLocalizations {
   /// **'Finish game'**
   String get gameFinish;
 
+  /// No description provided for @gameThresholdReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold reached: {name}'**
+  String gameThresholdReached(String name);
+
   /// No description provided for @gameNextRound.
   ///
   /// In en, this message translates to:

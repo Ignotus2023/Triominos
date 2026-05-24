@@ -94,23 +94,7 @@ void main() {
     expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 22 - 10);
   });
 
-  test('tryb scoreLimit kończy grę po przekroczeniu progu', () async {
-    await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
-    final (game, round) = await current();
-
-    await controller.endHand(
-      game: game,
-      round: round,
-      finisherId: 'p1',
-      opponentsHandSum: 20,
-    );
-
-    final updated = (await db.gamesDao.getGame('g1'))!;
-    expect(updated.status, GameStatus.finished);
-    expect(updated.winnerId, 'p1');
-  });
-
-  test('tryb scoreLimit kończy grę po zwykłym ruchu przekraczającym próg',
+  test('tryb scoreLimit NIE kończy się automatycznie po przekroczeniu progu',
       () async {
     await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
     final (game, round) = await current();
@@ -121,6 +105,22 @@ void main() {
       playerId: 'p1',
       move: Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true),
     );
+
+    final updated = (await db.gamesDao.getGame('g1'))!;
+    expect(updated.status, GameStatus.inProgress);
+  });
+
+  test('finishNow kończy grę i wybiera lidera jako zwycięzcę', () async {
+    await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
+    final (game, round) = await current();
+
+    await controller.addPlay(
+      game: game,
+      round: round,
+      playerId: 'p1',
+      move: Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true),
+    );
+    await controller.finishNow(game);
 
     final updated = (await db.gamesDao.getGame('g1'))!;
     expect(updated.status, GameStatus.finished);
