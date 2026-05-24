@@ -262,6 +262,12 @@ abstract class AppLocalizations {
   /// **'Edit player'**
   String get playerEdit;
 
+  /// No description provided for @playerColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Color'**
+  String get playerColor;
+
   /// No description provided for @playerDeleteConfirm.
   ///
   /// In en, this message translates to:

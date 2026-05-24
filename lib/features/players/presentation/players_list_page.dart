@@ -95,67 +95,190 @@ class PlayersListPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref, {
     Player? player,
-  }) async {
-    final l10n = context.l10n;
-    final controller = TextEditingController(text: player?.name ?? '');
-    final formKey = GlobalKey<FormState>();
-
-    await showDialog<void>(
+  }) {
+    final service = ref.read(playersServiceProvider);
+    return showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(player == null ? l10n.playerNew : l10n.playerEdit),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            autofocus: true,
-            maxLength: AppConstants.maxPlayerNameLength,
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-              labelText: l10n.playerName,
-              hintText: l10n.playerNameHint,
-            ),
-            validator: (value) {
-              final v = value?.trim() ?? '';
-              if (v.isEmpty) return l10n.playerErrorNameEmpty;
-              if (v.length > AppConstants.maxPlayerNameLength) {
-                return l10n.playerErrorNameTooLong;
-              }
-              return null;
-            },
-            onFieldSubmitted: (_) =>
-                _submit(context, ref, formKey, controller, player),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => _submit(context, ref, formKey, controller, player),
-            child: Text(l10n.commonSave),
-          ),
-        ],
+      builder: (context) => _PlayerFormDialog(
+        player: player,
+        onSubmit: (name, color) async {
+          if (player == null) {
+            await service.create(name, color);
+          } else {
+            await service.update(player, name, color);
+          }
+        },
       ),
     );
-    controller.dispose();
+  }
+}
+
+class _PlayerFormDialog extends StatefulWidget {
+  const _PlayerFormDialog({required this.onSubmit, this.player});
+
+  final Player? player;
+  final Future<void> Function(String name, String color) onSubmit;
+
+  @override
+  State<_PlayerFormDialog> createState() => _PlayerFormDialogState();
+}
+
+class _PlayerFormDialogState extends State<_PlayerFormDialog> {
+  late final TextEditingController _controller;
+  final _formKey = GlobalKey<FormState>();
+  late String _color;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.player?.name ?? '');
+    _color = widget.player?.avatarColor ?? avatarPalette.first;
   }
 
-  Future<void> _submit(
-    BuildContext context,
-    WidgetRef ref,
-    GlobalKey<FormState> formKey,
-    TextEditingController controller,
-    Player? player,
-  ) async {
-    if (!(formKey.currentState?.validate() ?? false)) return;
-    final service = ref.read(playersServiceProvider);
-    if (player == null) {
-      await service.create(controller.text);
-    } else {
-      await service.rename(player, controller.text);
-    }
-    if (context.mounted) Navigator.pop(context);
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    await widget.onSubmit(_controller.text.trim(), _color);
+    if (mounted) Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return Dialog(
+      alignment: Alignment.topCenter,
+      insetPadding: const EdgeInsets.only(
+        top: 72,
+        left: AppSpacing.x24,
+        right: AppSpacing.x24,
+        bottom: AppSpacing.x24,
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.x24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  PlayerAvatar(
+                    initials: initialsFor(_controller.text),
+                    colorHex: _color,
+                    size: 48,
+                  ),
+                  const SizedBox(width: AppSpacing.x16),
+                  Text(
+                    widget.player == null ? l10n.playerNew : l10n.playerEdit,
+                    style: context.text.titleLarge,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.x16),
+              Form(
+                key: _formKey,
+                child: TextFormField(
+                  controller: _controller,
+                  autofocus: true,
+                  maxLength: AppConstants.maxPlayerNameLength,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(
+                    labelText: l10n.playerName,
+                    hintText: l10n.playerNameHint,
+                  ),
+                  onChanged: (_) => setState(() {}),
+                  validator: (value) {
+                    final v = value?.trim() ?? '';
+                    if (v.isEmpty) return l10n.playerErrorNameEmpty;
+                    if (v.length > AppConstants.maxPlayerNameLength) {
+                      return l10n.playerErrorNameTooLong;
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (_) => _submit(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              Text(l10n.playerColor, style: context.text.labelLarge),
+              const SizedBox(height: AppSpacing.x12),
+              Wrap(
+                spacing: AppSpacing.x12,
+                runSpacing: AppSpacing.x12,
+                children: [
+                  for (final hex in avatarPalette)
+                    _ColorSwatch(
+                      hex: hex,
+                      selected: hex == _color,
+                      onTap: () => setState(() => _color = hex),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.x24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(l10n.commonCancel),
+                  ),
+                  const SizedBox(width: AppSpacing.x8),
+                  FilledButton(onPressed: _submit, child: Text(l10n.commonSave)),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ColorSwatch extends StatelessWidget {
+  const _ColorSwatch({
+    required this.hex,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String hex;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _parseHex(hex);
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: selected ? context.colors.onSurface : Colors.transparent,
+            width: 3,
+          ),
+          boxShadow: [
+            BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 6),
+          ],
+        ),
+        child: selected
+            ? const Icon(Icons.check, color: Colors.white, size: 20)
+            : null,
+      ),
+    );
+  }
+
+  static Color _parseHex(String hex) {
+    final value = hex.replaceFirst('#', '');
+    return Color(int.parse('FF$value', radix: 16));
   }
 }

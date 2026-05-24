@@ -89,6 +89,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get playerEdit => 'Modifica giocatore';
 
   @override
+  String get playerColor => 'Colore';
+
+  @override
   String get playerDeleteConfirm =>
       'Eliminare questo giocatore? La cronologia delle partite resta intatta.';
 
