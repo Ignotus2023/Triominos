@@ -12,6 +12,7 @@ import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../game/game_providers.dart';
+import '../../players/players_providers.dart';
 
 class GameSummaryPage extends ConsumerWidget {
   const GameSummaryPage({required this.gameId, super.key});
@@ -22,6 +23,7 @@ class GameSummaryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final game = ref.watch(gameProvider(gameId)).value;
+    final colors = ref.watch(playerColorsProvider);
     final seats = [...?ref.watch(gamePlayersProvider(gameId)).value]
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
@@ -86,7 +88,12 @@ class GameSummaryPage extends ConsumerWidget {
           for (var i = 0; i < seats.length; i++)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.x8),
-              child: _ScoreboardRow(seat: seats[i], position: i),
+              child: _ScoreboardRow(
+                seat: seats[i],
+                position: i,
+                colorHex: colors[seats[i].playerId] ??
+                    avatarColorFor(seats[i].displayNameSnapshot),
+              ),
             ),
           const SizedBox(height: AppSpacing.x16),
           GlassContainer(
@@ -105,10 +112,15 @@ class GameSummaryPage extends ConsumerWidget {
 }
 
 class _ScoreboardRow extends StatelessWidget {
-  const _ScoreboardRow({required this.seat, required this.position});
+  const _ScoreboardRow({
+    required this.seat,
+    required this.position,
+    required this.colorHex,
+  });
 
   final GamePlayer seat;
   final int position;
+  final String colorHex;
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +137,8 @@ class _ScoreboardRow extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.x8),
           PlayerAvatar(
-            initials: seat.displayNameSnapshot.isNotEmpty
-                ? seat.displayNameSnapshot[0].toUpperCase()
-                : '?',
-            colorHex: '#6366F1',
+            initials: initialsFor(seat.displayNameSnapshot),
+            colorHex: colorHex,
           ),
           const SizedBox(width: AppSpacing.x16),
           Expanded(

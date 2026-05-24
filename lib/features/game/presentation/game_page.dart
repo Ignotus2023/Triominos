@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../players/players_providers.dart';
 import '../game_controller.dart';
 import '../game_providers.dart';
 import 'widgets/player_score_card.dart';
@@ -55,6 +56,7 @@ class GamePage extends ConsumerWidget {
             ? const <MoveRow>[]
             : ref.watch(roundMovesProvider(round.id)).value ?? [];
 
+        final colors = ref.watch(playerColorsProvider);
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
 
@@ -96,6 +98,8 @@ class GamePage extends ConsumerWidget {
                   child: PlayerScoreCard(
                     seat: seats[i],
                     active: i == activeIndex,
+                    colorHex: colors[seats[i].playerId] ??
+                        avatarColorFor(seats[i].displayNameSnapshot),
                   ),
                 ),
               const SizedBox(height: AppSpacing.x16),

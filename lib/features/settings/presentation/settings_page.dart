@@ -29,18 +29,31 @@ class SettingsPage extends ConsumerWidget {
                 Text(l10n.settingsTheme, style: context.text.titleLarge),
                 const SizedBox(height: AppSpacing.x12),
                 SegmentedButton<ThemeMode>(
+                  showSelectedIcon: false,
                   segments: [
                     ButtonSegment(
                       value: ThemeMode.system,
-                      label: Text(l10n.settingsThemeSystem),
+                      label: Text(
+                        l10n.settingsThemeSystem,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     ButtonSegment(
                       value: ThemeMode.light,
-                      label: Text(l10n.settingsThemeLight),
+                      label: Text(
+                        l10n.settingsThemeLight,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     ButtonSegment(
                       value: ThemeMode.dark,
-                      label: Text(l10n.settingsThemeDark),
+                      label: Text(
+                        l10n.settingsThemeDark,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                   selected: {settings.themeMode},
