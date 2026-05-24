@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/audio/audio_service.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -31,6 +32,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
   void initState() {
     super.initState();
     _confetti = ConfettiController(duration: const Duration(seconds: 3))..play();
+    ref.read(audioServiceProvider).play(AppSound.win);
   }
 
   @override

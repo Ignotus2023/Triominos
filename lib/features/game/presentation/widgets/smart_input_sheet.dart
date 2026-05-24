@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/audio/audio_service.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/game/move.dart';
 import '../../../../core/game/scoring_rules.dart';
@@ -278,10 +279,18 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     }
   }
 
+  AppSound _soundFor(Move m) {
+    if (m.isHexagon || m.isDoubleHexagon) return AppSound.hexagon;
+    if (m.isBridge) return AppSound.bridge;
+    if (m.isTriplet) return AppSound.triplet;
+    return AppSound.tap;
+  }
+
   Future<void> _confirmPlay() async {
     final move = _previewMove;
     if (move == null) return;
     ref.read(hapticsProvider).medium();
+    ref.read(audioServiceProvider).play(_soundFor(move));
     await ref.read(gameControllerProvider).addPlay(
           game: widget.game,
           round: widget.round,
@@ -293,6 +302,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Future<void> _confirmPenalty(MoveType type) async {
     ref.read(hapticsProvider).light();
+    ref.read(audioServiceProvider).play(AppSound.tap);
     await ref.read(gameControllerProvider).addPenalty(
           game: widget.game,
           round: widget.round,
@@ -305,6 +315,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   Future<void> _confirmEndHand() async {
     final sum = int.tryParse(_handSumController.text.trim()) ?? 0;
     ref.read(hapticsProvider).medium();
+    ref.read(audioServiceProvider).play(AppSound.roundEnd);
     await ref.read(gameControllerProvider).endHand(
           game: widget.game,
           round: widget.round,
