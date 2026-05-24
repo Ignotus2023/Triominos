@@ -110,6 +110,23 @@ void main() {
     expect(updated.winnerId, 'p1');
   });
 
+  test('tryb scoreLimit kończy grę po zwykłym ruchu przekraczającym próg',
+      () async {
+    await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
+    final (game, round) = await current();
+
+    await controller.addPlay(
+      game: game,
+      round: round,
+      playerId: 'p1',
+      move: Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true),
+    );
+
+    final updated = (await db.gamesDao.getGame('g1'))!;
+    expect(updated.status, GameStatus.finished);
+    expect(updated.winnerId, 'p1');
+  });
+
   test('tryb rounds rozpoczyna kolejną rundę, dopóki nie osiągnie limitu',
       () async {
     await seed(endMode: EndMode.rounds, totalRounds: 2);
