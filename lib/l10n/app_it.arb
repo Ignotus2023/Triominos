@@ -61,6 +61,7 @@
   "gameUndoLast": "Annulla ultima mossa",
   "gameLastMove": "ultima: {points}",
   "gameFinish": "Termina partita",
+  "gameThresholdReached": "Soglia raggiunta: {name}",
   "gameNextRound": "Round successivo",
 
   "inputTitle": "Mossa di {player}",

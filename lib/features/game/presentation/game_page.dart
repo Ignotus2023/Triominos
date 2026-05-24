@@ -9,6 +9,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../players/players_providers.dart';
 import '../game_controller.dart';
@@ -59,6 +60,13 @@ class GamePage extends ConsumerWidget {
         final colors = ref.watch(playerColorsProvider);
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
+        final leader = seats.isEmpty
+            ? null
+            : seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
+        final thresholdReached = game.endMode == EndMode.scoreLimit &&
+            game.scoreLimit != null &&
+            leader != null &&
+            leader.totalScore >= game.scoreLimit!;
 
         return AppScaffold(
           title: l10n.gameRound(game.currentRound),
@@ -92,6 +100,30 @@ class GamePage extends ConsumerWidget {
           ),
           body: ListView(
             children: [
+              if (thresholdReached)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.x16),
+                  child: GlassContainer(
+                    glow: true,
+                    child: Row(
+                      children: [
+                        const Text('🏆', style: TextStyle(fontSize: 28)),
+                        const SizedBox(width: AppSpacing.x12),
+                        Expanded(
+                          child: Text(
+                            l10n.gameThresholdReached(leader.displayNameSnapshot),
+                            style: context.text.titleLarge,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.x8),
+                        FilledButton(
+                          onPressed: () => _finishNow(context, ref, game),
+                          child: Text(l10n.gameFinish),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               for (var i = 0; i < seats.length; i++)
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.x12),

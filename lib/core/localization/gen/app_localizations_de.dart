@@ -186,6 +186,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get gameFinish => 'Spiel beenden';
 
   @override
+  String gameThresholdReached(String name) {
+    return 'Grenze erreicht: $name';
+  }
+
+  @override
   String get gameNextRound => 'Nächste Runde';
 
   @override

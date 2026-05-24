@@ -43,19 +43,6 @@ class GameController {
         createdAt: DateTime.now(),
       ),
     );
-    await _maybeFinishOnScoreLimit(game);
-  }
-
-  /// W trybie "limit punktów" gra kończy się, gdy ktokolwiek osiągnie próg —
-  /// sprawdzane po każdym zagraniu, nie tylko na koniec rundy.
-  Future<void> _maybeFinishOnScoreLimit(Game game) async {
-    if (game.endMode != EndMode.scoreLimit) return;
-    final seats = await _dao.getGamePlayers(game.id);
-    if (seats.isEmpty) return;
-    final leader = _highest(seats);
-    if (leader.totalScore >= (game.scoreLimit ?? 1 << 30)) {
-      await _dao.finishGame(gameId: game.id, winnerId: leader.playerId);
-    }
   }
 
   Future<void> addPenalty({
@@ -124,12 +111,11 @@ class GameController {
 
   Future<void> _evaluateEnd(Game game, Round round) async {
     final seats = await _dao.getGamePlayers(game.id);
-    final shouldFinish = switch (game.endMode) {
-      EndMode.scoreLimit =>
-        seats.any((s) => s.totalScore >= (game.scoreLimit ?? 1 << 30)),
-      EndMode.rounds => round.roundNumber >= (game.totalRounds ?? 1),
-      EndMode.freeform => false,
-    };
+    // Tylko tryb "liczba rund" kończy grę automatycznie. W trybie "limit
+    // punktów" gracz kończy grę ręcznie (po osiągnięciu progu pojawia się
+    // opcja zakończenia), dzięki czemu można dograć rundę do końca.
+    final shouldFinish = game.endMode == EndMode.rounds &&
+        round.roundNumber >= (game.totalRounds ?? 1);
 
     if (shouldFinish) {
       await _dao.finishGame(gameId: game.id, winnerId: _highest(seats).playerId);

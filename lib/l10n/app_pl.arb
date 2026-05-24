@@ -61,6 +61,7 @@
   "gameUndoLast": "Cofnij ostatni ruch",
   "gameLastMove": "ostatnio: {points}",
   "gameFinish": "Zakończ grę",
+  "gameThresholdReached": "Próg osiągnięty: {name}",
   "gameNextRound": "Następna runda",
 
   "inputTitle": "Ruch gracza: {player}",
