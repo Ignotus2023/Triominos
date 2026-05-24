@@ -76,3 +76,9 @@ final playersServiceProvider =
 final playersStreamProvider = StreamProvider<List<Player>>(
   (ref) => ref.watch(playersDaoProvider).watchAll(),
 );
+
+/// Mapa playerId -> kolor awatara (do pokazania kolorów w rozgrywce).
+final playerColorsProvider = Provider<Map<String, String>>((ref) {
+  final players = ref.watch(playersStreamProvider).value ?? [];
+  return {for (final p in players) p.id: p.avatarColor};
+});

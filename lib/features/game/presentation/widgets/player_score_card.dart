@@ -6,16 +6,19 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/extensions/build_context.dart';
 import '../../../../shared/widgets/glass_container.dart';
 import '../../../../shared/widgets/player_avatar.dart';
+import '../../../players/players_providers.dart';
 
 class PlayerScoreCard extends StatelessWidget {
   const PlayerScoreCard({
     required this.seat,
     required this.active,
+    required this.colorHex,
     super.key,
   });
 
   final GamePlayer seat;
   final bool active;
+  final String colorHex;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +28,8 @@ class PlayerScoreCard extends StatelessWidget {
       child: Row(
         children: [
           PlayerAvatar(
-            initials: seat.displayNameSnapshot.isNotEmpty
-                ? seat.displayNameSnapshot[0].toUpperCase()
-                : '?',
-            colorHex: '#6366F1',
+            initials: initialsFor(seat.displayNameSnapshot),
+            colorHex: colorHex,
             active: active,
             size: 44,
           ),
