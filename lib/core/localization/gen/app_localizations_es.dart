@@ -12,6 +12,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get scoreSuffix => 'pts';
+
+  @override
+  String get adPlaceholder => 'Publicidad';
+
+  @override
   String get commonCancel => 'Cancelar';
 
   @override

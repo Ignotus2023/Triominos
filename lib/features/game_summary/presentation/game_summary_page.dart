@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,17 +15,36 @@ import '../../../shared/widgets/primary_button.dart';
 import '../../game/game_providers.dart';
 import '../../players/players_providers.dart';
 
-class GameSummaryPage extends ConsumerWidget {
+class GameSummaryPage extends ConsumerStatefulWidget {
   const GameSummaryPage({required this.gameId, super.key});
 
   final String gameId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GameSummaryPage> createState() => _GameSummaryPageState();
+}
+
+class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
+  late final ConfettiController _confetti;
+
+  @override
+  void initState() {
+    super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 3))..play();
+  }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final game = ref.watch(gameProvider(gameId)).value;
+    final game = ref.watch(gameProvider(widget.gameId)).value;
     final colors = ref.watch(playerColorsProvider);
-    final seats = [...?ref.watch(gamePlayersProvider(gameId)).value]
+    final seats = [...?ref.watch(gamePlayersProvider(widget.gameId)).value]
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
     if (game == null || seats.isEmpty) {
@@ -58,50 +78,79 @@ class GameSummaryPage extends ConsumerWidget {
           ),
         ),
       ),
-      body: ListView(
+      body: Stack(
         children: [
-          const SizedBox(height: AppSpacing.x32),
-          Center(
-            child: Column(
-              children: [
-                const Text('🏆', style: TextStyle(fontSize: 64))
-                    .animate()
-                    .scale(duration: 400.ms, curve: Curves.elasticOut),
-                const SizedBox(height: AppSpacing.x16),
-                Text(
-                  l10n.summaryWinner(winner.displayNameSnapshot),
-                  style: context.text.headlineLarge,
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: 200.ms),
-                const SizedBox(height: AppSpacing.x4),
-                Text(
-                  l10n.scoreUnit(winner.totalScore),
-                  style: context.text.displayMedium
-                      ?.copyWith(color: context.colors.primary),
-                ).animate().fadeIn(delay: 300.ms),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.x32),
-          Text(l10n.summaryScoreboard, style: context.text.titleLarge),
-          const SizedBox(height: AppSpacing.x12),
-          for (var i = 0; i < seats.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.x8),
-              child: _ScoreboardRow(
-                seat: seats[i],
-                position: i,
-                colorHex: colors[seats[i].playerId] ??
-                    avatarColorFor(seats[i].displayNameSnapshot),
+          ListView(
+            children: [
+              const SizedBox(height: AppSpacing.x32),
+              Center(
+                child: Column(
+                  children: [
+                    const Text('🏆', style: TextStyle(fontSize: 64))
+                        .animate()
+                        .scale(duration: 400.ms, curve: Curves.elasticOut),
+                    const SizedBox(height: AppSpacing.x16),
+                    Text(
+                      l10n.summaryWinner(winner.displayNameSnapshot),
+                      style: context.text.headlineLarge,
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 200.ms),
+                    const SizedBox(height: AppSpacing.x4),
+                    TweenAnimationBuilder<int>(
+                      tween: IntTween(begin: 0, end: winner.totalScore),
+                      duration: const Duration(milliseconds: 900),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, _) => Text(
+                        l10n.scoreUnit(value),
+                        style: context.text.displayMedium
+                            ?.copyWith(color: context.colors.primary),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          const SizedBox(height: AppSpacing.x16),
-          GlassContainer(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.summaryRoundsPlayed, style: context.text.bodyLarge),
-                Text('${game.currentRound}', style: context.text.titleLarge),
+              const SizedBox(height: AppSpacing.x32),
+              Text(l10n.summaryScoreboard, style: context.text.titleLarge),
+              const SizedBox(height: AppSpacing.x12),
+              for (var i = 0; i < seats.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.x8),
+                  child: _ScoreboardRow(
+                    seat: seats[i],
+                    position: i,
+                    colorHex: colors[seats[i].playerId] ??
+                        avatarColorFor(seats[i].displayNameSnapshot),
+                  ),
+                ),
+              const SizedBox(height: AppSpacing.x16),
+              GlassContainer(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(l10n.summaryRoundsPlayed, style: context.text.bodyLarge),
+                    Text('${game.currentRound}', style: context.text.titleLarge),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confetti,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              emissionFrequency: 0.05,
+              numberOfParticles: 20,
+              maxBlastForce: 22,
+              minBlastForce: 8,
+              gravity: 0.25,
+              colors: const [
+                Color(0xFF6366F1),
+                Color(0xFF8B5CF6),
+                Color(0xFFEC4899),
+                Color(0xFFF59E0B),
+                Color(0xFF10B981),
               ],
             ),
           ),

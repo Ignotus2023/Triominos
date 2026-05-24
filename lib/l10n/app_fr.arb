@@ -1,6 +1,8 @@
 {
   "@@locale": "fr",
   "appTitle": "TriominoScore",
+  "scoreSuffix": "pts",
+  "adPlaceholder": "Publicité",
 
   "commonCancel": "Annuler",
   "commonSave": "Enregistrer",

@@ -112,6 +112,18 @@ abstract class AppLocalizations {
   /// **'TriominoScore'**
   String get appTitle;
 
+  /// No description provided for @scoreSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get scoreSuffix;
+
+  /// No description provided for @adPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement'**
+  String get adPlaceholder;
+
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:

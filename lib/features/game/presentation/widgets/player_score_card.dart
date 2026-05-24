@@ -1,3 +1,4 @@
+import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -50,9 +51,12 @@ class PlayerScoreCard extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            l10n.scoreUnit(seat.totalScore),
-            style: context.text.headlineSmall,
+          AnimatedFlipCounter(
+            value: seat.totalScore,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutCubic,
+            suffix: ' ${l10n.scoreSuffix}',
+            textStyle: context.text.headlineSmall,
           ),
         ],
       ),

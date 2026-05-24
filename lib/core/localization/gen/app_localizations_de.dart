@@ -12,6 +12,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get scoreSuffix => 'Pkt.';
+
+  @override
+  String get adPlaceholder => 'Werbung';
+
+  @override
   String get commonCancel => 'Abbrechen';
 
   @override

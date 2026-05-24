@@ -1,6 +1,8 @@
 {
   "@@locale": "de",
   "appTitle": "TriominoScore",
+  "scoreSuffix": "Pkt.",
+  "adPlaceholder": "Werbung",
 
   "commonCancel": "Abbrechen",
   "commonSave": "Speichern",
