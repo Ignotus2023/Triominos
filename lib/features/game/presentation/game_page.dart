@@ -6,11 +6,11 @@ import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/move.dart';
+import '../../../core/monetization/ads.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
-import '../../../shared/widgets/ad_banner.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -150,9 +150,9 @@ class GamePage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (AppConstants.isFreeVersion && !premium)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.x16),
-                    child: AdBanner(height: 48),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x16),
+                    child: adBannerWidget(height: 48),
                   ),
                 Padding(
                   padding: const EdgeInsets.all(AppSpacing.x16),

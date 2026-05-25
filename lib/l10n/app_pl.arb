@@ -146,6 +146,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Odblokuj edycję dowolnego ruchu i usuń reklamy",
   "premiumEditHint": "Edycja dowolnego ruchu to funkcja Premium",
+  "premiumBuy": "Kup Premium",
+  "premiumRestore": "Przywróć zakupy",
   "settingsDefaultScoreLimit": "Domyślny próg punktowy",
   "settingsHouseRules": "Zasady domowe",
   "rulesStarterBonus": "Bonus startowy",

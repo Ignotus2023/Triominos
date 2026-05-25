@@ -444,6 +444,12 @@ class AppLocalizationsDe extends AppLocalizations {
       'Das Bearbeiten beliebiger Züge ist eine Premium-Funktion';
 
   @override
+  String get premiumBuy => 'Premium kaufen';
+
+  @override
+  String get premiumRestore => 'Käufe wiederherstellen';
+
+  @override
   String get settingsDefaultScoreLimit => 'Standard-Punktegrenze';
 
   @override

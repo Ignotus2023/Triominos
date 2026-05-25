@@ -146,6 +146,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Sblocca la modifica di qualsiasi mossa e rimuovi gli annunci",
   "premiumEditHint": "Modificare qualsiasi mossa è una funzione Premium",
+  "premiumBuy": "Acquista Premium",
+  "premiumRestore": "Ripristina acquisti",
   "settingsDefaultScoreLimit": "Soglia di punti predefinita",
   "settingsHouseRules": "Regole della casa",
   "rulesStarterBonus": "Bonus iniziale",

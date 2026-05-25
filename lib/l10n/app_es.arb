@@ -146,6 +146,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Desbloquea editar cualquier jugada y quita los anuncios",
   "premiumEditHint": "Editar cualquier jugada es una función Premium",
+  "premiumBuy": "Comprar Premium",
+  "premiumRestore": "Restaurar compras",
   "settingsDefaultScoreLimit": "Umbral de puntos predeterminado",
   "settingsHouseRules": "Reglas de la casa",
   "rulesStarterBonus": "Bono inicial",

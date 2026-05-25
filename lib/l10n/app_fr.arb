@@ -146,6 +146,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Débloquez la modification de tout coup et supprimez les pubs",
   "premiumEditHint": "Modifier un coup quelconque est une fonction Premium",
+  "premiumBuy": "Acheter Premium",
+  "premiumRestore": "Restaurer les achats",
   "settingsDefaultScoreLimit": "Seuil de points par défaut",
   "settingsHouseRules": "Règles maison",
   "rulesStarterBonus": "Bonus de départ",

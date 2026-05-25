@@ -443,6 +443,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get premiumEditHint => 'Edycja dowolnego ruchu to funkcja Premium';
 
   @override
+  String get premiumBuy => 'Kup Premium';
+
+  @override
+  String get premiumRestore => 'Przywróć zakupy';
+
+  @override
   String get settingsDefaultScoreLimit => 'Domyślny próg punktowy';
 
   @override

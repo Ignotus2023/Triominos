@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-/// Skala typograficzna (§11.3) oparta o font Inter.
+/// Skala typograficzna (§11.3) oparta o lokalny font Inter (offline).
 abstract class AppTypography {
+  /// Rodzina fontu — zadeklarowana w pubspec (assets/fonts/Inter-*.ttf).
+  static const fontFamily = 'Inter';
+
   static TextTheme textTheme(Color color, Color secondary) {
-    final base = TextTheme(
+    return TextTheme(
       displayLarge: TextStyle(
         fontSize: 56,
         fontWeight: FontWeight.w700,
@@ -53,7 +55,5 @@ abstract class AppTypography {
         color: secondary,
       ),
     );
-
-    return GoogleFonts.interTextTheme(base);
   }
 }

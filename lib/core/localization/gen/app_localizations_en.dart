@@ -442,6 +442,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumEditHint => 'Editing any move is a Premium feature';
 
   @override
+  String get premiumBuy => 'Buy Premium';
+
+  @override
+  String get premiumRestore => 'Restore purchases';
+
+  @override
   String get settingsDefaultScoreLimit => 'Default score threshold';
 
   @override

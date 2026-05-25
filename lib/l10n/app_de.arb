@@ -146,6 +146,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Bearbeiten beliebiger Züge freischalten und Werbung entfernen",
   "premiumEditHint": "Das Bearbeiten beliebiger Züge ist eine Premium-Funktion",
+  "premiumBuy": "Premium kaufen",
+  "premiumRestore": "Käufe wiederherstellen",
   "settingsDefaultScoreLimit": "Standard-Punktegrenze",
   "settingsHouseRules": "Hausregeln",
   "rulesStarterBonus": "Startbonus",

@@ -904,6 +904,18 @@ abstract class AppLocalizations {
   /// **'Editing any move is a Premium feature'**
   String get premiumEditHint;
 
+  /// No description provided for @premiumBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Premium'**
+  String get premiumBuy;
+
+  /// No description provided for @premiumRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get premiumRestore;
+
   /// No description provided for @settingsDefaultScoreLimit.
   ///
   /// In en, this message translates to:

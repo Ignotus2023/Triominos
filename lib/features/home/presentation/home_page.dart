@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../core/monetization/ads.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
-import '../../../shared/widgets/ad_banner.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -125,7 +125,7 @@ class HomePage extends ConsumerWidget {
           ),
           if (AppConstants.isFreeVersion && !premium) ...[
             const SizedBox(height: AppSpacing.x16),
-            const AdBanner(),
+            adBannerWidget(),
           ],
         ],
       ),

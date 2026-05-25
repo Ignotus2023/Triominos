@@ -445,6 +445,12 @@ class AppLocalizationsIt extends AppLocalizations {
       'Modificare qualsiasi mossa è una funzione Premium';
 
   @override
+  String get premiumBuy => 'Acquista Premium';
+
+  @override
+  String get premiumRestore => 'Ripristina acquisti';
+
+  @override
   String get settingsDefaultScoreLimit => 'Soglia di punti predefinita';
 
   @override

@@ -158,6 +158,8 @@
   "settingsPremium": "Premium",
   "settingsPremiumDesc": "Unlock editing any move and remove ads",
   "premiumEditHint": "Editing any move is a Premium feature",
+  "premiumBuy": "Buy Premium",
+  "premiumRestore": "Restore purchases",
   "settingsDefaultScoreLimit": "Default score threshold",
   "settingsHouseRules": "House rules",
   "rulesStarterBonus": "Starter bonus",

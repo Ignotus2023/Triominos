@@ -446,6 +446,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Editar cualquier jugada es una función Premium';
 
   @override
+  String get premiumBuy => 'Comprar Premium';
+
+  @override
+  String get premiumRestore => 'Restaurar compras';
+
+  @override
   String get settingsDefaultScoreLimit => 'Umbral de puntos predeterminado';
 
   @override

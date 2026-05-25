@@ -447,6 +447,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Modifier un coup quelconque est une fonction Premium';
 
   @override
+  String get premiumBuy => 'Acheter Premium';
+
+  @override
+  String get premiumRestore => 'Restaurer les achats';
+
+  @override
   String get settingsDefaultScoreLimit => 'Seuil de points par défaut';
 
   @override
