@@ -98,6 +98,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerColor => 'Color';
 
   @override
+  String get playerPhoto => 'Photo';
+
+  @override
+  String get premiumPhotoHint => 'Profile photos are a Premium feature';
+
+  @override
   String get playerDeleteConfirm =>
       'Delete this player? Their game history stays intact.';
 
@@ -226,6 +232,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inputBonusDoubleHexagon => 'Double hex';
+
+  @override
+  String get bonusInfoTitle => 'What do the bonuses mean?';
+
+  @override
+  String get bonusTripletDesc =>
+      'A tile with three identical digits (e.g. 4-4-4). +10, or +30 for 0-0-0.';
+
+  @override
+  String get bonusBridgeDesc =>
+      'Connects two previously separate regions at a single corner. +40.';
+
+  @override
+  String get bonusHexagonDesc =>
+      'Completes a hexagon made of 6 triangles. +50.';
+
+  @override
+  String get bonusDoubleHexagonDesc =>
+      'One tile completes two hexagons at once. +110 in total.';
 
   @override
   String get inputTripletDetected => 'Triplet detected';

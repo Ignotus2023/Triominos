@@ -27,6 +27,13 @@ class RulesPage extends StatelessWidget {
       (l10n.inputPassPenalty(ScoringRules.passPenalty), '${ScoringRules.passPenalty}'),
     ];
 
+    final descs = <(String, String)>[
+      (l10n.inputBonusTriplet, l10n.bonusTripletDesc),
+      (l10n.inputBonusBridge, l10n.bonusBridgeDesc),
+      (l10n.inputBonusHexagon, l10n.bonusHexagonDesc),
+      (l10n.inputBonusDoubleHexagon, l10n.bonusDoubleHexagonDesc),
+    ];
+
     return AppScaffold(
       title: l10n.rulesTitle,
       body: ListView(
@@ -55,6 +62,26 @@ class RulesPage extends StatelessWidget {
                   ),
                   if (row != rows.last)
                     Divider(color: context.colors.onSurface.withValues(alpha: 0.1)),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x12),
+          GlassContainer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.bonusInfoTitle, style: context.text.titleLarge),
+                const SizedBox(height: AppSpacing.x16),
+                for (final d in descs) ...[
+                  Text(
+                    d.$1,
+                    style: context.text.labelLarge
+                        ?.copyWith(color: context.colors.primary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(d.$2, style: context.text.bodyMedium),
+                  const SizedBox(height: AppSpacing.x12),
                 ],
               ],
             ),

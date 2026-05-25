@@ -98,6 +98,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get playerColor => 'Colore';
 
   @override
+  String get playerPhoto => 'Foto';
+
+  @override
+  String get premiumPhotoHint => 'Le foto profilo sono una funzione Premium';
+
+  @override
   String get playerDeleteConfirm =>
       'Eliminare questo giocatore? La cronologia delle partite resta intatta.';
 
@@ -228,6 +234,24 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get inputBonusDoubleHexagon => 'Doppio esa';
+
+  @override
+  String get bonusInfoTitle => 'Cosa significano i bonus?';
+
+  @override
+  String get bonusTripletDesc =>
+      'Una tessera con tre cifre uguali (es. 4-4-4). +10, o +30 per 0-0-0.';
+
+  @override
+  String get bonusBridgeDesc =>
+      'Collega due regioni separate tramite un angolo. +40.';
+
+  @override
+  String get bonusHexagonDesc => 'Completa un esagono di 6 triangoli. +50.';
+
+  @override
+  String get bonusDoubleHexagonDesc =>
+      'Una tessera completa due esagoni insieme. +110 in totale.';
 
   @override
   String get inputTripletDetected => 'Triplet rilevato';

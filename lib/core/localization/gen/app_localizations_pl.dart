@@ -98,6 +98,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get playerColor => 'Kolor';
 
   @override
+  String get playerPhoto => 'Zdjęcie';
+
+  @override
+  String get premiumPhotoHint => 'Zdjęcia profilowe to funkcja Premium';
+
+  @override
   String get playerDeleteConfirm =>
       'Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.';
 
@@ -227,6 +233,25 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get inputBonusDoubleHexagon => 'Podwójny hex';
+
+  @override
+  String get bonusInfoTitle => 'Co oznaczają bonusy?';
+
+  @override
+  String get bonusTripletDesc =>
+      'Płytka z trzema takimi samymi cyframi (np. 4-4-4). +10, a 0-0-0 daje +30.';
+
+  @override
+  String get bonusBridgeDesc =>
+      'Łączy narożnikiem dwa wcześniej rozłączone regiony. +40.';
+
+  @override
+  String get bonusHexagonDesc =>
+      'Domyka sześciokąt złożony z 6 trójkątów. +50.';
+
+  @override
+  String get bonusDoubleHexagonDesc =>
+      'Jedna płytka domyka dwa hexagony naraz. Łącznie +110.';
 
   @override
   String get inputTripletDetected => 'Wykryto triplet';

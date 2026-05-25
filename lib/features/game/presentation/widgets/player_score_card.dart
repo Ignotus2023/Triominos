@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -14,12 +16,14 @@ class PlayerScoreCard extends StatelessWidget {
     required this.seat,
     required this.active,
     required this.colorHex,
+    this.image,
     super.key,
   });
 
   final GamePlayer seat;
   final bool active;
   final String colorHex;
+  final Uint8List? image;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +35,7 @@ class PlayerScoreCard extends StatelessWidget {
           PlayerAvatar(
             initials: initialsFor(seat.displayNameSnapshot),
             colorHex: colorHex,
+            image: image,
             active: active,
             size: 44,
           ),

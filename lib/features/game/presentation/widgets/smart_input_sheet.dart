@@ -115,7 +115,24 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                 _CornerRow(value: _c2, onSelected: (v) => _setCorner(1, v)),
                 _CornerRow(value: _c3, onSelected: (v) => _setCorner(2, v)),
                 const SizedBox(height: AppSpacing.x16),
-                Text(l10n.inputBonuses, style: context.text.labelLarge),
+                Row(
+                  children: [
+                    Text(l10n.inputBonuses, style: context.text.labelLarge),
+                    const SizedBox(width: AppSpacing.x4),
+                    InkWell(
+                      onTap: () => _showBonusInfo(context),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: context.colors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.x8),
                 _buildBonuses(context, move),
                 const SizedBox(height: AppSpacing.x16),
@@ -304,6 +321,49 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     if (m.isBridge) return AppSound.bridge;
     if (m.isTriplet) return AppSound.triplet;
     return AppSound.tap;
+  }
+
+  void _showBonusInfo(BuildContext context) {
+    final l10n = context.l10n;
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.bonusInfoTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _bonusInfoRow(context, l10n.inputBonusTriplet, l10n.bonusTripletDesc),
+              _bonusInfoRow(context, l10n.inputBonusBridge, l10n.bonusBridgeDesc),
+              _bonusInfoRow(
+                  context, l10n.inputBonusHexagon, l10n.bonusHexagonDesc),
+              _bonusInfoRow(context, l10n.inputBonusDoubleHexagon,
+                  l10n.bonusDoubleHexagonDesc),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.commonClose),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bonusInfoRow(BuildContext context, String name, String desc) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(name, style: context.text.titleLarge),
+          Text(desc, style: context.text.bodyMedium),
+        ],
+      ),
+    );
   }
 
   Future<void> _confirmPlay() async {

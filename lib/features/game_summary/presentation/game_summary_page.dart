@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -46,6 +48,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
     final l10n = context.l10n;
     final game = ref.watch(gameProvider(widget.gameId)).value;
     final colors = ref.watch(playerColorsProvider);
+    final images = ref.watch(playerImagesProvider);
     final seats = [...?ref.watch(gamePlayersProvider(widget.gameId)).value]
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
@@ -122,6 +125,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
                     position: i,
                     colorHex: colors[seats[i].playerId] ??
                         avatarColorFor(seats[i].displayNameSnapshot),
+                    image: images[seats[i].playerId],
                   ),
                 ),
               const SizedBox(height: AppSpacing.x16),
@@ -167,11 +171,13 @@ class _ScoreboardRow extends StatelessWidget {
     required this.seat,
     required this.position,
     required this.colorHex,
+    this.image,
   });
 
   final GamePlayer seat;
   final int position;
   final String colorHex;
+  final Uint8List? image;
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +196,7 @@ class _ScoreboardRow extends StatelessWidget {
           PlayerAvatar(
             initials: initialsFor(seat.displayNameSnapshot),
             colorHex: colorHex,
+            image: image,
           ),
           const SizedBox(width: AppSpacing.x16),
           Expanded(

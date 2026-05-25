@@ -1,8 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -45,7 +49,11 @@ class PlayersListPage extends ConsumerWidget {
                 onTap: () => _showPlayerDialog(context, ref, player: p),
                 child: Row(
                   children: [
-                    PlayerAvatar(initials: p.initials, colorHex: p.avatarColor),
+                    PlayerAvatar(
+                      initials: p.initials,
+                      colorHex: p.avatarColor,
+                      image: p.avatarImage,
+                    ),
                     const SizedBox(width: AppSpacing.x16),
                     Expanded(
                       child: Text(p.name, style: context.text.titleLarge),
@@ -97,15 +105,17 @@ class PlayersListPage extends ConsumerWidget {
     Player? player,
   }) {
     final service = ref.read(playersServiceProvider);
+    final premium = ref.read(settingsProvider).isPremium;
     return showDialog<void>(
       context: context,
       builder: (context) => _PlayerFormDialog(
         player: player,
-        onSubmit: (name, color) async {
+        premium: premium,
+        onSubmit: (name, color, image) async {
           if (player == null) {
-            await service.create(name, color);
+            await service.create(name, color, image: image);
           } else {
-            await service.update(player, name, color);
+            await service.update(player, name, color, image: image);
           }
         },
       ),
@@ -114,10 +124,16 @@ class PlayersListPage extends ConsumerWidget {
 }
 
 class _PlayerFormDialog extends StatefulWidget {
-  const _PlayerFormDialog({required this.onSubmit, this.player});
+  const _PlayerFormDialog({
+    required this.onSubmit,
+    required this.premium,
+    this.player,
+  });
 
   final Player? player;
-  final Future<void> Function(String name, String color) onSubmit;
+  final bool premium;
+  final Future<void> Function(String name, String color, Uint8List? image)
+      onSubmit;
 
   @override
   State<_PlayerFormDialog> createState() => _PlayerFormDialogState();
@@ -127,12 +143,14 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
   late final TextEditingController _controller;
   final _formKey = GlobalKey<FormState>();
   late String _color;
+  Uint8List? _image;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.player?.name ?? '');
     _color = widget.player?.avatarColor ?? avatarPalette.first;
+    _image = widget.player?.avatarImage;
   }
 
   @override
@@ -141,9 +159,27 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    if (!widget.premium) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(context.l10n.premiumPhotoHint)));
+      return;
+    }
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 256,
+      maxHeight: 256,
+      imageQuality: 80,
+    );
+    if (picked == null) return;
+    final bytes = await picked.readAsBytes();
+    if (mounted) setState(() => _image = bytes);
+  }
+
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await widget.onSubmit(_controller.text.trim(), _color);
+    await widget.onSubmit(_controller.text.trim(), _color, _image);
     if (mounted) Navigator.pop(context);
   }
 
@@ -168,15 +204,66 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
             children: [
               Row(
                 children: [
-                  PlayerAvatar(
-                    initials: initialsFor(_controller.text),
-                    colorHex: _color,
-                    size: 48,
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        PlayerAvatar(
+                          initials: initialsFor(_controller.text),
+                          colorHex: _color,
+                          image: _image,
+                          size: 56,
+                        ),
+                        Positioned(
+                          right: -2,
+                          bottom: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: context.colors.primary,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: context.colors.surface,
+                                width: 2,
+                              ),
+                            ),
+                            child: Icon(
+                              widget.premium
+                                  ? Icons.photo_camera
+                                  : Icons.lock_outline,
+                              size: 13,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.x16),
-                  Text(
-                    widget.player == null ? l10n.playerNew : l10n.playerEdit,
-                    style: context.text.titleLarge,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.player == null
+                              ? l10n.playerNew
+                              : l10n.playerEdit,
+                          style: context.text.titleLarge,
+                        ),
+                        if (_image != null)
+                          TextButton.icon(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              visualDensity: VisualDensity.compact,
+                              foregroundColor: context.colors.error,
+                            ),
+                            onPressed: () => setState(() => _image = null),
+                            icon: const Icon(Icons.delete_outline, size: 16),
+                            label: Text('${l10n.commonDelete} ${l10n.playerPhoto}'),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),

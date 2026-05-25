@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/app_database.dart';
@@ -38,7 +41,7 @@ class PlayersService {
 
   final PlayersDao _dao;
 
-  Future<void> create(String name, String color) {
+  Future<void> create(String name, String color, {Uint8List? image}) {
     final trimmed = name.trim();
     final now = DateTime.now();
     return _dao.upsert(
@@ -47,13 +50,19 @@ class PlayersService {
         name: trimmed,
         avatarColor: color,
         initials: initialsFor(trimmed),
+        avatarImage: Value(image),
         createdAt: now,
         updatedAt: now,
       ),
     );
   }
 
-  Future<void> update(Player player, String name, String color) {
+  Future<void> update(
+    Player player,
+    String name,
+    String color, {
+    required Uint8List? image,
+  }) {
     final trimmed = name.trim();
     return _dao.upsert(
       player
@@ -61,6 +70,7 @@ class PlayersService {
             name: trimmed,
             avatarColor: color,
             initials: initialsFor(trimmed),
+            avatarImage: Value(image),
             updatedAt: DateTime.now(),
           )
           .toCompanion(true),
@@ -81,4 +91,10 @@ final playersStreamProvider = StreamProvider<List<Player>>(
 final playerColorsProvider = Provider<Map<String, String>>((ref) {
   final players = ref.watch(playersStreamProvider).value ?? [];
   return {for (final p in players) p.id: p.avatarColor};
+});
+
+/// Mapa playerId -> zdjęcie profilowe (do pokazania w rozgrywce).
+final playerImagesProvider = Provider<Map<String, Uint8List?>>((ref) {
+  final players = ref.watch(playersStreamProvider).value ?? [];
+  return {for (final p in players) p.id: p.avatarImage};
 });

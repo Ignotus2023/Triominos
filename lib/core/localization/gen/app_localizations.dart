@@ -280,6 +280,18 @@ abstract class AppLocalizations {
   /// **'Color'**
   String get playerColor;
 
+  /// No description provided for @playerPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get playerPhoto;
+
+  /// No description provided for @premiumPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photos are a Premium feature'**
+  String get premiumPhotoHint;
+
   /// No description provided for @playerDeleteConfirm.
   ///
   /// In en, this message translates to:
@@ -507,6 +519,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Double hex'**
   String get inputBonusDoubleHexagon;
+
+  /// No description provided for @bonusInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do the bonuses mean?'**
+  String get bonusInfoTitle;
+
+  /// No description provided for @bonusTripletDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A tile with three identical digits (e.g. 4-4-4). +10, or +30 for 0-0-0.'**
+  String get bonusTripletDesc;
+
+  /// No description provided for @bonusBridgeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connects two previously separate regions at a single corner. +40.'**
+  String get bonusBridgeDesc;
+
+  /// No description provided for @bonusHexagonDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Completes a hexagon made of 6 triangles. +50.'**
+  String get bonusHexagonDesc;
+
+  /// No description provided for @bonusDoubleHexagonDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'One tile completes two hexagons at once. +110 in total.'**
+  String get bonusDoubleHexagonDesc;
 
   /// No description provided for @inputTripletDetected.
   ///
