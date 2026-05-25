@@ -73,6 +73,69 @@ class GamePage extends ConsumerWidget {
             leader != null &&
             leader.totalScore >= game.scoreLimit!;
 
+        final wide = MediaQuery.sizeOf(context).width >= 720;
+
+        final playerCards = <Widget>[
+          for (var i = 0; i < seats.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+              child: PlayerScoreCard(
+                seat: seats[i],
+                active: i == activeIndex,
+                colorHex: colors[seats[i].playerId] ??
+                    avatarColorFor(seats[i].displayNameSnapshot),
+                image: images[seats[i].playerId],
+              ),
+            ),
+        ];
+
+        final historyWidgets = <Widget>[
+          Text(l10n.gameRoundHistory, style: context.text.titleLarge),
+          const SizedBox(height: AppSpacing.x12),
+          if (round != null)
+            RoundHistoryList(
+              moves: moves,
+              seats: seats,
+              onUndoLast: () =>
+                  ref.read(gameControllerProvider).undo(game: game, round: round),
+              onEdit: (move) => _editMove(
+                context,
+                ref,
+                game: game,
+                round: round,
+                seats: seats,
+                premium: premium,
+                move: move,
+              ),
+            ),
+        ];
+
+        final Widget? banner = thresholdReached
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.x16),
+                child: GlassContainer(
+                  glow: true,
+                  child: Row(
+                    children: [
+                      const Text('🏆', style: TextStyle(fontSize: 28)),
+                      const SizedBox(width: AppSpacing.x12),
+                      Expanded(
+                        child: Text(
+                          l10n.gameThresholdReached(leader.displayNameSnapshot),
+                          style: context.text.titleLarge,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.x8),
+                      FilledButton(
+                        onPressed: () => _finishNow(context, ref, game),
+                        child: Text(l10n.gameFinish),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : null;
+
         return AppScaffold(
           title: l10n.gameRound(game.currentRound),
           actions: [
@@ -114,66 +177,32 @@ class GamePage extends ConsumerWidget {
               ],
             ),
           ),
-          body: ListView(
-            children: [
-              if (thresholdReached)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x16),
-                  child: GlassContainer(
-                    glow: true,
-                    child: Row(
-                      children: [
-                        const Text('🏆', style: TextStyle(fontSize: 28)),
-                        const SizedBox(width: AppSpacing.x12),
-                        Expanded(
-                          child: Text(
-                            l10n.gameThresholdReached(leader.displayNameSnapshot),
-                            style: context.text.titleLarge,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.x8),
-                        FilledButton(
-                          onPressed: () => _finishNow(context, ref, game),
-                          child: Text(l10n.gameFinish),
-                        ),
-                      ],
+          body: wide
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ?banner,
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: ListView(children: playerCards)),
+                          const SizedBox(width: AppSpacing.x16),
+                          Expanded(child: ListView(children: historyWidgets)),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
+                )
+              : ListView(
+                  children: [
+                    ?banner,
+                    ...playerCards,
+                    const SizedBox(height: AppSpacing.x16),
+                    ...historyWidgets,
+                    const SizedBox(height: AppSpacing.x48),
+                  ],
                 ),
-              for (var i = 0; i < seats.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x12),
-                  child: PlayerScoreCard(
-                    seat: seats[i],
-                    active: i == activeIndex,
-                    colorHex: colors[seats[i].playerId] ??
-                        avatarColorFor(seats[i].displayNameSnapshot),
-                    image: images[seats[i].playerId],
-                  ),
-                ),
-              const SizedBox(height: AppSpacing.x16),
-              Text(l10n.gameRoundHistory, style: context.text.titleLarge),
-              const SizedBox(height: AppSpacing.x12),
-              if (round != null)
-                RoundHistoryList(
-                  moves: moves,
-                  seats: seats,
-                  onUndoLast: () => ref
-                      .read(gameControllerProvider)
-                      .undo(game: game, round: round),
-                  onEdit: (move) => _editMove(
-                    context,
-                    ref,
-                    game: game,
-                    round: round,
-                    seats: seats,
-                    premium: premium,
-                    move: move,
-                  ),
-                ),
-              const SizedBox(height: AppSpacing.x48),
-            ],
-          ),
         );
       },
     );
