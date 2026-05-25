@@ -446,6 +446,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsDefaultScoreLimit => 'Domyślny próg punktowy';
 
   @override
+  String get settingsHouseRules => 'Zasady domowe';
+
+  @override
+  String get rulesStarterBonus => 'Bonus startowy';
+
+  @override
+  String get rulesEndOfHand => 'Bonus za wyjście';
+
+  @override
+  String get rulesReset => 'Przywróć domyślne';
+
+  @override
   String get settingsAbout => 'O aplikacji';
 
   @override

@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/audio/audio_service.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/game/move.dart';
+import '../../../../core/game/score_calculator.dart';
 import '../../../../core/game/scoring_rules.dart';
 import '../../../../core/haptics/haptics_service.dart';
+import '../../../../core/settings/settings_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/extensions/build_context.dart';
 import '../../../../shared/widgets/glass_container.dart';
@@ -208,9 +210,11 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildSummary(BuildContext context, Move? move) {
     final l10n = context.l10n;
-    final base = move?.baseScore ?? 0;
-    final bonus = move?.bonusScore ?? 0;
-    final total = move?.totalScore ?? 0;
+    final score =
+        move == null ? null : scoreMove(move, ref.read(scoringConfigProvider));
+    final base = score?.base ?? 0;
+    final bonus = score?.bonus ?? 0;
+    final total = score?.total ?? 0;
     return Column(
       children: [
         _summaryRow(context, l10n.inputBase, '$base'),
@@ -242,6 +246,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildOtherActions(BuildContext context) {
     final l10n = context.l10n;
+    final config = ref.read(scoringConfigProvider);
     return Wrap(
       spacing: AppSpacing.x8,
       runSpacing: AppSpacing.x8,
@@ -249,12 +254,12 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
       children: [
         OutlinedButton.icon(
           icon: const Icon(Icons.download_outlined, size: 18),
-          label: Text(l10n.inputDrawPile(ScoringRules.drawPenalty)),
+          label: Text(l10n.inputDrawPile(config.drawPenalty)),
           onPressed: () => _confirmPenalty(MoveType.drawPenalty),
         ),
         OutlinedButton.icon(
           icon: const Icon(Icons.skip_next_outlined, size: 18),
-          label: Text(l10n.inputPassPenalty(ScoringRules.passPenalty)),
+          label: Text(l10n.inputPassPenalty(config.passPenalty)),
           onPressed: () => _confirmPenalty(MoveType.passPenalty),
         ),
         OutlinedButton.icon(

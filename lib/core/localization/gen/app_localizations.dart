@@ -910,6 +910,30 @@ abstract class AppLocalizations {
   /// **'Default score threshold'**
   String get settingsDefaultScoreLimit;
 
+  /// No description provided for @settingsHouseRules.
+  ///
+  /// In en, this message translates to:
+  /// **'House rules'**
+  String get settingsHouseRules;
+
+  /// No description provided for @rulesStarterBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Starter bonus'**
+  String get rulesStarterBonus;
+
+  /// No description provided for @rulesEndOfHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand-out bonus'**
+  String get rulesEndOfHand;
+
+  /// No description provided for @rulesReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to defaults'**
+  String get rulesReset;
+
   /// No description provided for @settingsAbout.
   ///
   /// In en, this message translates to:

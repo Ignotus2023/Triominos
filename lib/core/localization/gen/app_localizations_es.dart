@@ -449,6 +449,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsDefaultScoreLimit => 'Umbral de puntos predeterminado';
 
   @override
+  String get settingsHouseRules => 'Reglas de la casa';
+
+  @override
+  String get rulesStarterBonus => 'Bono inicial';
+
+  @override
+  String get rulesEndOfHand => 'Bono por quedarse sin fichas';
+
+  @override
+  String get rulesReset => 'Restaurar valores';
+
+  @override
   String get settingsAbout => 'Acerca de';
 
   @override

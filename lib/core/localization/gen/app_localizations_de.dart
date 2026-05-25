@@ -447,6 +447,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsDefaultScoreLimit => 'Standard-Punktegrenze';
 
   @override
+  String get settingsHouseRules => 'Hausregeln';
+
+  @override
+  String get rulesStarterBonus => 'Startbonus';
+
+  @override
+  String get rulesEndOfHand => 'Bonus fürs Ausspielen';
+
+  @override
+  String get rulesReset => 'Auf Standard zurücksetzen';
+
+  @override
   String get settingsAbout => 'Über';
 
   @override

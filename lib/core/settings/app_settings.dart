@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../game/scoring_config.dart';
 import '../game/scoring_rules.dart';
 
 /// Niemutowalny stan preferencji użytkownika (trzymany w shared_preferences).
@@ -12,6 +13,7 @@ class AppSettings {
     this.hapticsEnabled = true,
     this.defaultScoreLimit = ScoringRules.defaultScoreLimit,
     this.isPremium = false,
+    this.scoringConfig = ScoringConfig.standard,
   });
 
   final ThemeMode themeMode;
@@ -26,6 +28,9 @@ class AppSettings {
   /// Docelowo ustawiana przez zakup w aplikacji.
   final bool isPremium;
 
+  /// Konfigurowalne zasady punktacji (Premium „zasady domowe").
+  final ScoringConfig scoringConfig;
+
   AppSettings copyWith({
     ThemeMode? themeMode,
     Locale? locale,
@@ -34,6 +39,7 @@ class AppSettings {
     bool? hapticsEnabled,
     int? defaultScoreLimit,
     bool? isPremium,
+    ScoringConfig? scoringConfig,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -42,6 +48,7 @@ class AppSettings {
       hapticsEnabled: hapticsEnabled ?? this.hapticsEnabled,
       defaultScoreLimit: defaultScoreLimit ?? this.defaultScoreLimit,
       isPremium: isPremium ?? this.isPremium,
+      scoringConfig: scoringConfig ?? this.scoringConfig,
     );
   }
 }

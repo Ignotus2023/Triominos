@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../game/scoring_config.dart';
 import 'app_settings.dart';
 import 'settings_repository.dart';
 
@@ -51,7 +52,17 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _repo.savePremium(value);
     state = state.copyWith(isPremium: value);
   }
+
+  Future<void> setScoringConfig(ScoringConfig config) async {
+    await _repo.saveScoringConfig(config);
+    state = state.copyWith(scoringConfig: config);
+  }
 }
 
 final settingsProvider =
     NotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
+
+/// Aktualna konfiguracja punktacji (do liczenia ruchów).
+final scoringConfigProvider = Provider<ScoringConfig>(
+  (ref) => ref.watch(settingsProvider.select((s) => s.scoringConfig)),
+);

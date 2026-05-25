@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:triomino_score/core/database/app_database.dart';
 import 'package:triomino_score/core/game/game_enums.dart';
+import 'package:triomino_score/core/game/scoring_config.dart';
 import 'package:triomino_score/core/haptics/haptics_service.dart';
 import 'package:triomino_score/core/localization/gen/app_localizations.dart';
+import 'package:triomino_score/core/settings/settings_provider.dart';
 import 'package:triomino_score/core/theme/app_colors.dart';
 import 'package:triomino_score/features/game/presentation/widgets/smart_input_sheet.dart';
 
@@ -39,6 +41,7 @@ void main() {
       ProviderScope(
         overrides: [
           hapticsProvider.overrideWithValue(const HapticsService(false)),
+          scoringConfigProvider.overrideWithValue(ScoringConfig.standard),
         ],
         child: MaterialApp(
           locale: const Locale('pl'),

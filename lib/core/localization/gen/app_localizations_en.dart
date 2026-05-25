@@ -445,6 +445,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDefaultScoreLimit => 'Default score threshold';
 
   @override
+  String get settingsHouseRules => 'House rules';
+
+  @override
+  String get rulesStarterBonus => 'Starter bonus';
+
+  @override
+  String get rulesEndOfHand => 'Hand-out bonus';
+
+  @override
+  String get rulesReset => 'Reset to defaults';
+
+  @override
   String get settingsAbout => 'About';
 
   @override

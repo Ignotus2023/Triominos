@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:triomino_score/core/database/app_database.dart';
 import 'package:triomino_score/core/game/game_enums.dart';
 import 'package:triomino_score/core/game/move.dart';
+import 'package:triomino_score/core/game/scoring_config.dart';
 import 'package:triomino_score/features/game/game_controller.dart';
 
 void main() {
@@ -12,7 +13,7 @@ void main() {
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    controller = GameController(db.gamesDao);
+    controller = GameController(db.gamesDao, ScoringConfig.standard);
   });
   tearDown(() => db.close());
 

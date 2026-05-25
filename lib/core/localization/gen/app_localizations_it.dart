@@ -448,6 +448,18 @@ class AppLocalizationsIt extends AppLocalizations {
   String get settingsDefaultScoreLimit => 'Soglia di punti predefinita';
 
   @override
+  String get settingsHouseRules => 'Regole della casa';
+
+  @override
+  String get rulesStarterBonus => 'Bonus iniziale';
+
+  @override
+  String get rulesEndOfHand => 'Bonus di fine mano';
+
+  @override
+  String get rulesReset => 'Ripristina predefiniti';
+
+  @override
   String get settingsAbout => 'Informazioni';
 
   @override

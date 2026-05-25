@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
@@ -122,6 +124,32 @@ class SettingsPage extends ConsumerWidget {
               subtitle: Text(l10n.settingsPremiumDesc),
               value: settings.isPremium,
               onChanged: notifier.setPremium,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x12),
+          GlassContainer(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              leading: Icon(Icons.tune, color: context.colors.primary),
+              title: Text(l10n.settingsHouseRules),
+              trailing: Icon(
+                settings.isPremium ? Icons.chevron_right : Icons.lock_outline,
+              ),
+              onTap: () {
+                if (settings.isPremium) {
+                  context.pushNamed(AppRoutes.houseRules);
+                } else {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${l10n.settingsHouseRules} — ${l10n.settingsPremium}',
+                        ),
+                      ),
+                    );
+                }
+              },
             ),
           ),
           const SizedBox(height: AppSpacing.x12),
