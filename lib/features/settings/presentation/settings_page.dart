@@ -223,7 +223,7 @@ class SettingsPage extends ConsumerWidget {
               children: [
                 Text(l10n.settingsAbout, style: context.text.titleLarge),
                 const SizedBox(height: AppSpacing.x8),
-                Text(l10n.settingsVersion('1.0.0'), style: context.text.bodyMedium),
+                Text(l10n.settingsVersion('2.0.0'), style: context.text.bodyMedium),
                 const SizedBox(height: AppSpacing.x16),
                 TextButton.icon(
                   style: TextButton.styleFrom(foregroundColor: context.colors.error),
