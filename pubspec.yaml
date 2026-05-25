@@ -31,6 +31,7 @@ dependencies:
   animated_flip_counter: ^0.3.4
   audioplayers: ^6.6.0
   image_picker: ^1.2.2
+  share_plus: ^13.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/audio/audio_service.dart';
 import '../../../core/database/app_database.dart';
@@ -16,6 +17,7 @@ import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../game/game_providers.dart';
+import '../../game_setup/game_setup_controller.dart';
 import '../../players/players_providers.dart';
 
 class GameSummaryPage extends ConsumerStatefulWidget {
@@ -75,8 +77,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
               Expanded(
                 child: PrimaryButton(
                   label: l10n.summaryRematch,
-                  onPressed: () =>
-                      context.pushReplacementNamed(AppRoutes.gameSetup),
+                  onPressed: () => _rematch(context),
                 ),
               ),
             ],
@@ -138,6 +139,14 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
                   ],
                 ),
               ),
+              const SizedBox(height: AppSpacing.x16),
+              Center(
+                child: OutlinedButton.icon(
+                  onPressed: () => _share(context, seats),
+                  icon: const Icon(Icons.share_outlined),
+                  label: Text(l10n.summaryShare),
+                ),
+              ),
             ],
           ),
           Align(
@@ -163,6 +172,36 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _share(BuildContext context, List<GamePlayer> seats) async {
+    final l10n = context.l10n;
+    const medals = ['🥇', '🥈', '🥉'];
+    final b = StringBuffer()..writeln('🏆 ${l10n.appTitle}');
+    for (var i = 0; i < seats.length; i++) {
+      final medal = i < medals.length ? medals[i] : '${i + 1}.';
+      b.writeln(
+        '$medal ${seats[i].displayNameSnapshot} — '
+        '${l10n.scoreUnit(seats[i].totalScore)}',
+      );
+    }
+    b.write('\nhttps://ignotus2023.github.io/Triominos/');
+    await SharePlus.instance.share(
+      ShareParams(text: b.toString(), subject: l10n.appTitle),
+    );
+  }
+
+  Future<void> _rematch(BuildContext context) async {
+    final players = ref.read(playersStreamProvider).value ?? [];
+    final id = await ref
+        .read(gameSetupControllerProvider)
+        .rematchFrom(widget.gameId, players);
+    if (!context.mounted) return;
+    if (id != null) {
+      context.pushReplacementNamed(AppRoutes.game, pathParameters: {'id': id});
+    } else {
+      context.pushReplacementNamed(AppRoutes.gameSetup);
+    }
   }
 }
 

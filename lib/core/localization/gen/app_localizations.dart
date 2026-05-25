@@ -670,6 +670,60 @@ abstract class AppLocalizations {
   /// **'Duration'**
   String get summaryDuration;
 
+  /// No description provided for @summaryShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get summaryShare;
+
+  /// No description provided for @homeQuickRematch.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick rematch'**
+  String get homeQuickRematch;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// No description provided for @achFirstGame.
+  ///
+  /// In en, this message translates to:
+  /// **'First game'**
+  String get achFirstGame;
+
+  /// No description provided for @achFirstHexagon.
+  ///
+  /// In en, this message translates to:
+  /// **'First hexagon'**
+  String get achFirstHexagon;
+
+  /// No description provided for @achFirstBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'First bridge'**
+  String get achFirstBridge;
+
+  /// No description provided for @achBigMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Big move (40+)'**
+  String get achBigMove;
+
+  /// No description provided for @achGames10.
+  ///
+  /// In en, this message translates to:
+  /// **'10 games played'**
+  String get achGames10;
+
+  /// No description provided for @achHatTrick.
+  ///
+  /// In en, this message translates to:
+  /// **'3 wins in a row'**
+  String get achHatTrick;
+
   /// No description provided for @historyTitle.
   ///
   /// In en, this message translates to:

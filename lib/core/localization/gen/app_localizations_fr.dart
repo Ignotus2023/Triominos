@@ -323,6 +323,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get summaryDuration => 'Durée';
 
   @override
+  String get summaryShare => 'Partager';
+
+  @override
+  String get homeQuickRematch => 'Revanche rapide';
+
+  @override
+  String get achievementsTitle => 'Succès';
+
+  @override
+  String get achFirstGame => 'Première partie';
+
+  @override
+  String get achFirstHexagon => 'Premier hexagone';
+
+  @override
+  String get achFirstBridge => 'Premier pont';
+
+  @override
+  String get achBigMove => 'Gros coup (40+)';
+
+  @override
+  String get achGames10 => '10 parties jouées';
+
+  @override
+  String get achHatTrick => '3 victoires d\'affilée';
+
+  @override
   String get historyTitle => 'Historique';
 
   @override

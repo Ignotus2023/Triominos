@@ -20,6 +20,14 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
   Future<Game?> getGame(String id) =>
       (select(games)..where((g) => g.id.equals(id))).getSingleOrNull();
 
+  /// Ostatnia (najnowsza) gra — do szybkiego rewanżu z tym samym składem.
+  Stream<Game?> watchLastGame() => (select(games)
+        ..orderBy(
+          [(g) => OrderingTerm(expression: g.startedAt, mode: OrderingMode.desc)],
+        )
+        ..limit(1))
+      .watchSingleOrNull();
+
   Stream<Game?> watchActiveGame() => (select(games)
         ..where((g) => g.status.equalsValue(GameStatus.inProgress))
         ..orderBy(

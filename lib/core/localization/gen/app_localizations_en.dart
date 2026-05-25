@@ -320,6 +320,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get summaryDuration => 'Duration';
 
   @override
+  String get summaryShare => 'Share';
+
+  @override
+  String get homeQuickRematch => 'Quick rematch';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achFirstGame => 'First game';
+
+  @override
+  String get achFirstHexagon => 'First hexagon';
+
+  @override
+  String get achFirstBridge => 'First bridge';
+
+  @override
+  String get achBigMove => 'Big move (40+)';
+
+  @override
+  String get achGames10 => '10 games played';
+
+  @override
+  String get achHatTrick => '3 wins in a row';
+
+  @override
   String get historyTitle => 'History';
 
   @override
