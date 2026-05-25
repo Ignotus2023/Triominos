@@ -22,7 +22,10 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(
           driftDatabase(
-            name: 'triomino_score',
+            name: const String.fromEnvironment(
+              'DB_NAME',
+              defaultValue: 'triomino_score',
+            ),
             web: DriftWebOptions(
               sqlite3Wasm: Uri.parse('sqlite3.wasm'),
               driftWorker: Uri.parse('drift_worker.js'),
@@ -34,11 +37,16 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.addColumn(players, players.avatarImage);
+          }
+        },
         beforeOpen: (details) async {
           await customStatement('PRAGMA foreign_keys = ON');
         },

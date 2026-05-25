@@ -54,6 +54,7 @@ abstract class AppTheme {
       brightness: brightness,
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
+      fontFamily: AppTypography.fontFamily,
       textTheme: textTheme,
       extensions: [glass],
       appBarTheme: AppBarTheme(

@@ -112,6 +112,18 @@ abstract class AppLocalizations {
   /// **'TriominoScore'**
   String get appTitle;
 
+  /// No description provided for @scoreSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get scoreSuffix;
+
+  /// No description provided for @adPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Advertisement'**
+  String get adPlaceholder;
+
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:
@@ -267,6 +279,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Color'**
   String get playerColor;
+
+  /// No description provided for @playerPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get playerPhoto;
+
+  /// No description provided for @premiumPhotoHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile photos are a Premium feature'**
+  String get premiumPhotoHint;
 
   /// No description provided for @playerDeleteConfirm.
   ///
@@ -496,6 +520,36 @@ abstract class AppLocalizations {
   /// **'Double hex'**
   String get inputBonusDoubleHexagon;
 
+  /// No description provided for @bonusInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do the bonuses mean?'**
+  String get bonusInfoTitle;
+
+  /// No description provided for @bonusTripletDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'A tile with three identical digits (e.g. 4-4-4). +10, or +30 for 0-0-0.'**
+  String get bonusTripletDesc;
+
+  /// No description provided for @bonusBridgeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Connects two previously separate regions at a single corner. +40.'**
+  String get bonusBridgeDesc;
+
+  /// No description provided for @bonusHexagonDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Completes a hexagon made of 6 triangles. +50.'**
+  String get bonusHexagonDesc;
+
+  /// No description provided for @bonusDoubleHexagonDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'One tile completes two hexagons at once. +110 in total.'**
+  String get bonusDoubleHexagonDesc;
+
   /// No description provided for @inputTripletDetected.
   ///
   /// In en, this message translates to:
@@ -615,6 +669,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duration'**
   String get summaryDuration;
+
+  /// No description provided for @summaryShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get summaryShare;
+
+  /// No description provided for @homeQuickRematch.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick rematch'**
+  String get homeQuickRematch;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get achievementsTitle;
+
+  /// No description provided for @achFirstGame.
+  ///
+  /// In en, this message translates to:
+  /// **'First game'**
+  String get achFirstGame;
+
+  /// No description provided for @achFirstHexagon.
+  ///
+  /// In en, this message translates to:
+  /// **'First hexagon'**
+  String get achFirstHexagon;
+
+  /// No description provided for @achFirstBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'First bridge'**
+  String get achFirstBridge;
+
+  /// No description provided for @achBigMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Big move (40+)'**
+  String get achBigMove;
+
+  /// No description provided for @achGames10.
+  ///
+  /// In en, this message translates to:
+  /// **'10 games played'**
+  String get achGames10;
+
+  /// No description provided for @achHatTrick.
+  ///
+  /// In en, this message translates to:
+  /// **'3 wins in a row'**
+  String get achHatTrick;
 
   /// No description provided for @historyTitle.
   ///
@@ -778,11 +886,65 @@ abstract class AppLocalizations {
   /// **'Haptics'**
   String get settingsHaptics;
 
+  /// No description provided for @settingsPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get settingsPremium;
+
+  /// No description provided for @settingsPremiumDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock editing any move and remove ads'**
+  String get settingsPremiumDesc;
+
+  /// No description provided for @premiumEditHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing any move is a Premium feature'**
+  String get premiumEditHint;
+
+  /// No description provided for @premiumBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Premium'**
+  String get premiumBuy;
+
+  /// No description provided for @premiumRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get premiumRestore;
+
   /// No description provided for @settingsDefaultScoreLimit.
   ///
   /// In en, this message translates to:
   /// **'Default score threshold'**
   String get settingsDefaultScoreLimit;
+
+  /// No description provided for @settingsHouseRules.
+  ///
+  /// In en, this message translates to:
+  /// **'House rules'**
+  String get settingsHouseRules;
+
+  /// No description provided for @rulesStarterBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Starter bonus'**
+  String get rulesStarterBonus;
+
+  /// No description provided for @rulesEndOfHand.
+  ///
+  /// In en, this message translates to:
+  /// **'Hand-out bonus'**
+  String get rulesEndOfHand;
+
+  /// No description provided for @rulesReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to defaults'**
+  String get rulesReset;
 
   /// No description provided for @settingsAbout.
   ///

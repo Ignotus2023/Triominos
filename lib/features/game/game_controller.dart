@@ -6,12 +6,16 @@ import '../../core/database/daos/games_dao.dart';
 import '../../core/database/database_provider.dart';
 import '../../core/game/game_enums.dart';
 import '../../core/game/move.dart';
+import '../../core/game/score_calculator.dart';
+import '../../core/game/scoring_config.dart';
+import '../../core/settings/settings_provider.dart';
 import '../../core/utils/id.dart';
 
 class GameController {
-  GameController(this._dao);
+  GameController(this._dao, this._config);
 
   final GamesDao _dao;
+  final ScoringConfig _config;
 
   Future<void> addPlay({
     required Game game,
@@ -19,11 +23,12 @@ class GameController {
     required String playerId,
     required Move move,
   }) async {
+    final score = scoreMove(move, _config);
     final index = (await _dao.getMoves(round.id)).length;
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
-      delta: move.totalScore,
+      delta: score.total,
       move: MovesCompanion.insert(
         id: newId(),
         roundId: round.id,
@@ -33,14 +38,41 @@ class GameController {
         corner1: Value(move.corner1),
         corner2: Value(move.corner2),
         corner3: Value(move.corner3),
-        baseScore: move.baseScore,
-        bonusScore: Value(move.bonusScore),
+        baseScore: score.base,
+        bonusScore: Value(score.bonus),
         isTriplet: Value(move.isTriplet),
         isBridge: Value(move.isBridge),
         isHexagon: Value(move.isHexagon),
         isDoubleHexagon: Value(move.isDoubleHexagon),
         isStarter: Value(move.isStarter),
         createdAt: DateTime.now(),
+      ),
+    );
+  }
+
+  /// Edycja zagranego ruchu (funkcja Premium). Przelicza różnicę punktów.
+  Future<void> editMove({
+    required Game game,
+    required MoveRow original,
+    required Move updated,
+  }) {
+    final score = scoreMove(updated, _config);
+    final delta = score.total - (original.baseScore + original.bonusScore);
+    return _dao.editMove(
+      moveId: original.id,
+      gameId: game.id,
+      playerId: original.playerId,
+      scoreDelta: delta,
+      changes: MovesCompanion(
+        corner1: Value(updated.corner1),
+        corner2: Value(updated.corner2),
+        corner3: Value(updated.corner3),
+        baseScore: Value(score.base),
+        bonusScore: Value(score.bonus),
+        isTriplet: Value(updated.isTriplet),
+        isBridge: Value(updated.isBridge),
+        isHexagon: Value(updated.isHexagon),
+        isDoubleHexagon: Value(updated.isDoubleHexagon),
       ),
     );
   }
@@ -54,18 +86,19 @@ class GameController {
     assert(type == MoveType.drawPenalty || type == MoveType.passPenalty);
     final move =
         type == MoveType.drawPenalty ? Move.drawPenalty() : Move.passPenalty();
+    final score = scoreMove(move, _config);
     final index = (await _dao.getMoves(round.id)).length;
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
-      delta: move.totalScore,
+      delta: score.total,
       move: MovesCompanion.insert(
         id: newId(),
         roundId: round.id,
         playerId: playerId,
         moveIndex: index,
         moveType: type,
-        baseScore: move.baseScore,
+        baseScore: score.base,
         createdAt: DateTime.now(),
       ),
     );
@@ -79,19 +112,20 @@ class GameController {
     required int opponentsHandSum,
   }) async {
     final move = Move.endOfHand(opponentsHandSum: opponentsHandSum);
+    final score = scoreMove(move, _config);
     final index = (await _dao.getMoves(round.id)).length;
     await _dao.addMove(
       gameId: game.id,
       playerId: finisherId,
-      delta: move.totalScore,
+      delta: score.total,
       move: MovesCompanion.insert(
         id: newId(),
         roundId: round.id,
         playerId: finisherId,
         moveIndex: index,
         moveType: MoveType.endOfHandBonus,
-        baseScore: move.baseScore,
-        bonusScore: Value(move.bonusScore),
+        baseScore: score.base,
+        bonusScore: Value(score.bonus),
         createdAt: DateTime.now(),
       ),
     );
@@ -139,5 +173,9 @@ class GameController {
       seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
 }
 
-final gameControllerProvider =
-    Provider<GameController>((ref) => GameController(ref.watch(gamesDaoProvider)));
+final gameControllerProvider = Provider<GameController>(
+  (ref) => GameController(
+    ref.watch(gamesDaoProvider),
+    ref.watch(scoringConfigProvider),
+  ),
+);

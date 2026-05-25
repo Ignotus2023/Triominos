@@ -22,12 +22,17 @@ dependencies:
   path: ^1.9.1
   shared_preferences: ^2.5.5
   uuid: ^4.5.3
-  google_fonts: ^8.1.0
   flutter_animate: ^4.5.2
   collection: ^1.19.1
   intl: any
   drift_flutter: ^0.3.0
-
+  confetti: ^0.8.0
+  animated_flip_counter: ^0.3.4
+  audioplayers: ^6.6.0
+  image_picker: ^1.2.2
+  share_plus: ^13.1.0
+  google_mobile_ads: ^8.0.0
+  in_app_purchase: ^3.2.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -41,3 +46,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/sounds/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700

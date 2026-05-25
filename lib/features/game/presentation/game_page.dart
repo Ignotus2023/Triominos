@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/move.dart';
+import '../../../core/monetization/ads.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -58,6 +61,8 @@ class GamePage extends ConsumerWidget {
             : ref.watch(roundMovesProvider(round.id)).value ?? [];
 
         final colors = ref.watch(playerColorsProvider);
+        final images = ref.watch(playerImagesProvider);
+        final premium = ref.watch(settingsProvider.select((s) => s.isPremium));
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
         final leader = seats.isEmpty
@@ -67,6 +72,69 @@ class GamePage extends ConsumerWidget {
             game.scoreLimit != null &&
             leader != null &&
             leader.totalScore >= game.scoreLimit!;
+
+        final wide = MediaQuery.sizeOf(context).width >= 720;
+
+        final playerCards = <Widget>[
+          for (var i = 0; i < seats.length; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+              child: PlayerScoreCard(
+                seat: seats[i],
+                active: i == activeIndex,
+                colorHex: colors[seats[i].playerId] ??
+                    avatarColorFor(seats[i].displayNameSnapshot),
+                image: images[seats[i].playerId],
+              ),
+            ),
+        ];
+
+        final historyWidgets = <Widget>[
+          Text(l10n.gameRoundHistory, style: context.text.titleLarge),
+          const SizedBox(height: AppSpacing.x12),
+          if (round != null)
+            RoundHistoryList(
+              moves: moves,
+              seats: seats,
+              onUndoLast: () =>
+                  ref.read(gameControllerProvider).undo(game: game, round: round),
+              onEdit: (move) => _editMove(
+                context,
+                ref,
+                game: game,
+                round: round,
+                seats: seats,
+                premium: premium,
+                move: move,
+              ),
+            ),
+        ];
+
+        final Widget? banner = thresholdReached
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.x16),
+                child: GlassContainer(
+                  glow: true,
+                  child: Row(
+                    children: [
+                      const Text('🏆', style: TextStyle(fontSize: 28)),
+                      const SizedBox(width: AppSpacing.x12),
+                      Expanded(
+                        child: Text(
+                          l10n.gameThresholdReached(leader.displayNameSnapshot),
+                          style: context.text.titleLarge,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.x8),
+                      FilledButton(
+                        onPressed: () => _finishNow(context, ref, game),
+                        child: Text(l10n.gameFinish),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : null;
 
         return AppScaffold(
           title: l10n.gameRound(game.currentRound),
@@ -78,76 +146,63 @@ class GamePage extends ConsumerWidget {
               ),
           ],
           bottomBar: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.x16),
-              child: PrimaryButton(
-                label: l10n.gameAddMove,
-                icon: Icons.add,
-                onPressed: (activeSeat == null || round == null)
-                    ? null
-                    : () => _openSmartInput(
-                          context,
-                          ref,
-                          game: game,
-                          round: round,
-                          seat: activeSeat,
-                          moveNumber: moves.length + 1,
-                          isStarterMove: game.currentRound == 1 && moves.isEmpty,
-                          opponentsCount: seats.length - 1,
-                        ),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (AppConstants.isFreeVersion && !premium)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x16),
+                    child: adBannerWidget(height: 48),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.x16),
+                  child: PrimaryButton(
+                    label: l10n.gameAddMove,
+                    icon: Icons.add,
+                    onPressed: (activeSeat == null || round == null)
+                        ? null
+                        : () => _openSmartInput(
+                              context,
+                              ref,
+                              game: game,
+                              round: round,
+                              seat: activeSeat,
+                              moveNumber: moves.length + 1,
+                              isStarterMove:
+                                  game.currentRound == 1 && moves.isEmpty,
+                              opponentsCount: seats.length - 1,
+                            ),
+                  ),
+                ),
+              ],
             ),
           ),
-          body: ListView(
-            children: [
-              if (thresholdReached)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x16),
-                  child: GlassContainer(
-                    glow: true,
-                    child: Row(
-                      children: [
-                        const Text('🏆', style: TextStyle(fontSize: 28)),
-                        const SizedBox(width: AppSpacing.x12),
-                        Expanded(
-                          child: Text(
-                            l10n.gameThresholdReached(leader.displayNameSnapshot),
-                            style: context.text.titleLarge,
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.x8),
-                        FilledButton(
-                          onPressed: () => _finishNow(context, ref, game),
-                          child: Text(l10n.gameFinish),
-                        ),
-                      ],
+          body: wide
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ?banner,
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(child: ListView(children: playerCards)),
+                          const SizedBox(width: AppSpacing.x16),
+                          Expanded(child: ListView(children: historyWidgets)),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
+                )
+              : ListView(
+                  children: [
+                    ?banner,
+                    ...playerCards,
+                    const SizedBox(height: AppSpacing.x16),
+                    ...historyWidgets,
+                    const SizedBox(height: AppSpacing.x48),
+                  ],
                 ),
-              for (var i = 0; i < seats.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x12),
-                  child: PlayerScoreCard(
-                    seat: seats[i],
-                    active: i == activeIndex,
-                    colorHex: colors[seats[i].playerId] ??
-                        avatarColorFor(seats[i].displayNameSnapshot),
-                  ),
-                ),
-              const SizedBox(height: AppSpacing.x16),
-              Text(l10n.gameRoundHistory, style: context.text.titleLarge),
-              const SizedBox(height: AppSpacing.x12),
-              if (round != null)
-                RoundHistoryList(
-                  moves: moves,
-                  seats: seats,
-                  onUndoLast: () => ref
-                      .read(gameControllerProvider)
-                      .undo(game: game, round: round),
-                ),
-              const SizedBox(height: AppSpacing.x48),
-            ],
-          ),
         );
       },
     );
@@ -192,5 +247,41 @@ class GamePage extends ConsumerWidget {
 
   Future<void> _finishNow(BuildContext context, WidgetRef ref, Game game) async {
     await ref.read(gameControllerProvider).finishNow(game);
+  }
+
+  void _editMove(
+    BuildContext context,
+    WidgetRef ref, {
+    required Game game,
+    required Round round,
+    required List<GamePlayer> seats,
+    required bool premium,
+    required MoveRow move,
+  }) {
+    if (!premium) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(context.l10n.premiumEditHint)));
+      return;
+    }
+    final seat = seats.firstWhere(
+      (s) => s.playerId == move.playerId,
+      orElse: () => seats.first,
+    );
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => SmartInputSheet(
+        game: game,
+        round: round,
+        playerId: move.playerId,
+        playerName: seat.displayNameSnapshot,
+        moveNumber: move.moveIndex + 1,
+        isStarterMove: move.isStarter,
+        opponentsCount: seats.length - 1,
+        editing: move,
+      ),
+    );
   }
 }

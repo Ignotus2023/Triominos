@@ -11,12 +11,16 @@ class RoundHistoryList extends StatelessWidget {
     required this.moves,
     required this.seats,
     required this.onUndoLast,
+    this.onEdit,
     super.key,
   });
 
   final List<MoveRow> moves;
   final List<GamePlayer> seats;
   final VoidCallback onUndoLast;
+
+  /// Long-press na zagraniu (edycja Premium). Tylko dla ruchów typu `play`.
+  final void Function(MoveRow move)? onEdit;
 
   String _nameOf(String playerId) => seats
       .firstWhere(
@@ -44,6 +48,10 @@ class RoundHistoryList extends StatelessWidget {
             name: _nameOf(reversed[i].playerId),
             canUndo: i == 0,
             onUndo: onUndoLast,
+            onLongPress:
+                (onEdit != null && reversed[i].moveType == MoveType.play)
+                    ? () => onEdit!(reversed[i])
+                    : null,
           ),
       ],
     );
@@ -56,12 +64,14 @@ class _MoveTile extends StatelessWidget {
     required this.name,
     required this.canUndo,
     required this.onUndo,
+    this.onLongPress,
   });
 
   final MoveRow move;
   final String name;
   final bool canUndo;
   final VoidCallback onUndo;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +80,7 @@ class _MoveTile extends StatelessWidget {
         (move.isTriplet || move.isBridge || move.isHexagon || move.isDoubleHexagon);
     final positive = total >= 0;
 
-    return GlassContainer(
+    final tile = GlassContainer(
       margin: const EdgeInsets.only(bottom: AppSpacing.x8),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.x16,
@@ -113,6 +123,13 @@ class _MoveTile extends StatelessWidget {
             ),
         ],
       ),
+    );
+
+    if (onLongPress == null) return tile;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: onLongPress,
+      child: tile,
     );
   }
 

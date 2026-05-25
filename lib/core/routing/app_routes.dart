@@ -30,6 +30,9 @@ abstract class AppRoutes {
   static const settings = 'settings';
   static const settingsPath = '/settings';
 
+  static const houseRules = 'houseRules';
+  static const houseRulesPath = '/settings/house-rules';
+
   static String gameLocation(String id) => '/game/$id';
   static String gameSummaryLocation(String id) => '/game/$id/summary';
 }

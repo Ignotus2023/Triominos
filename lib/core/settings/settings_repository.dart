@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../game/scoring_config.dart';
 import 'app_settings.dart';
 
 /// Cienka warstwa nad [SharedPreferences] do trwałego zapisu preferencji UI.
@@ -14,6 +15,8 @@ class SettingsRepository {
   static const _kSounds = 'soundsEnabled';
   static const _kHaptics = 'hapticsEnabled';
   static const _kScoreLimit = 'defaultScoreLimit';
+  static const _kPremium = 'isPremium';
+  static const _kScoringConfig = 'scoringConfig';
   static const _kOnboarding = 'onboardingCompleted';
 
   AppSettings load() {
@@ -25,8 +28,25 @@ class SettingsRepository {
       hapticsEnabled: _prefs.getBool(_kHaptics) ?? true,
       defaultScoreLimit:
           _prefs.getInt(_kScoreLimit) ?? const AppSettings().defaultScoreLimit,
+      isPremium: _prefs.getBool(_kPremium) ?? false,
+      scoringConfig: _loadScoringConfig(),
     );
   }
+
+  ScoringConfig _loadScoringConfig() {
+    final json = _prefs.getString(_kScoringConfig);
+    if (json == null) return ScoringConfig.standard;
+    try {
+      return ScoringConfig.fromJson(json);
+    } catch (_) {
+      return ScoringConfig.standard;
+    }
+  }
+
+  Future<void> saveScoringConfig(ScoringConfig config) =>
+      _prefs.setString(_kScoringConfig, config.toJson());
+
+  Future<void> savePremium(bool value) => _prefs.setBool(_kPremium, value);
 
   Future<void> saveThemeMode(ThemeMode mode) =>
       _prefs.setString(_kThemeMode, mode.name);

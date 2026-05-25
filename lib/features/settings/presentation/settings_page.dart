@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/monetization/purchase_provider.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
@@ -107,6 +111,75 @@ class SettingsPage extends ConsumerWidget {
                   onChanged: notifier.setHaptics,
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x12),
+          GlassContainer(
+            padding: EdgeInsets.zero,
+            glow: settings.isPremium,
+            child: Column(
+              children: [
+                SwitchListTile(
+                  secondary: Icon(
+                    Icons.workspace_premium_outlined,
+                    color: context.colors.primary,
+                  ),
+                  title: Text(l10n.settingsPremium),
+                  subtitle: Text(l10n.settingsPremiumDesc),
+                  value: settings.isPremium,
+                  onChanged: notifier.setPremium,
+                ),
+                if (!kIsWeb && !settings.isPremium)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.x16,
+                      0,
+                      AppSpacing.x8,
+                      AppSpacing.x8,
+                    ),
+                    child: Row(
+                      children: [
+                        FilledButton(
+                          onPressed: () =>
+                              ref.read(purchaseServiceProvider).buy(),
+                          child: Text(l10n.premiumBuy),
+                        ),
+                        const Spacer(),
+                        TextButton(
+                          onPressed: () =>
+                              ref.read(purchaseServiceProvider).restore(),
+                          child: Text(l10n.premiumRestore),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x12),
+          GlassContainer(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              leading: Icon(Icons.tune, color: context.colors.primary),
+              title: Text(l10n.settingsHouseRules),
+              trailing: Icon(
+                settings.isPremium ? Icons.chevron_right : Icons.lock_outline,
+              ),
+              onTap: () {
+                if (settings.isPremium) {
+                  context.pushNamed(AppRoutes.houseRules);
+                } else {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${l10n.settingsHouseRules} — ${l10n.settingsPremium}',
+                        ),
+                      ),
+                    );
+                }
+              },
             ),
           ),
           const SizedBox(height: AppSpacing.x12),

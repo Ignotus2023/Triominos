@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/audio/audio_service.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/game/move.dart';
+import '../../../../core/game/score_calculator.dart';
 import '../../../../core/game/scoring_rules.dart';
 import '../../../../core/haptics/haptics_service.dart';
+import '../../../../core/settings/settings_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/extensions/build_context.dart';
 import '../../../../shared/widgets/glass_container.dart';
@@ -21,6 +24,7 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.moveNumber,
     required this.isStarterMove,
     required this.opponentsCount,
+    this.editing,
     super.key,
   });
 
@@ -31,6 +35,9 @@ class SmartInputSheet extends ConsumerStatefulWidget {
   final int moveNumber;
   final bool isStarterMove;
   final int opponentsCount;
+
+  /// Gdy ustawione — tryb edycji istniejącego ruchu (Premium).
+  final MoveRow? editing;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -56,9 +63,23 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
           isBridge: _bridge,
           isHexagon: _hexagon,
           isDoubleHexagon: _doubleHex,
-          isStarter: widget.isStarterMove,
+          isStarter: widget.editing?.isStarter ?? widget.isStarterMove,
         )
       : null;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.editing;
+    if (e != null) {
+      _c1 = e.corner1;
+      _c2 = e.corner2;
+      _c3 = e.corner3;
+      _bridge = e.isBridge;
+      _hexagon = e.isHexagon;
+      _doubleHex = e.isDoubleHexagon;
+    }
+  }
 
   @override
   void dispose() {
@@ -96,7 +117,24 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                 _CornerRow(value: _c2, onSelected: (v) => _setCorner(1, v)),
                 _CornerRow(value: _c3, onSelected: (v) => _setCorner(2, v)),
                 const SizedBox(height: AppSpacing.x16),
-                Text(l10n.inputBonuses, style: context.text.labelLarge),
+                Row(
+                  children: [
+                    Text(l10n.inputBonuses, style: context.text.labelLarge),
+                    const SizedBox(width: AppSpacing.x4),
+                    InkWell(
+                      onTap: () => _showBonusInfo(context),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 18,
+                          color: context.colors.primary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.x8),
                 _buildBonuses(context, move),
                 const SizedBox(height: AppSpacing.x16),
@@ -107,8 +145,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                   icon: Icons.check,
                   onPressed: _complete ? _confirmPlay : null,
                 ),
-                const SizedBox(height: AppSpacing.x12),
-                _buildOtherActions(context),
+                if (widget.editing == null) ...[
+                  const SizedBox(height: AppSpacing.x12),
+                  _buildOtherActions(context),
+                ],
               ] else
                 _buildEndHand(context),
             ],
@@ -170,9 +210,11 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildSummary(BuildContext context, Move? move) {
     final l10n = context.l10n;
-    final base = move?.baseScore ?? 0;
-    final bonus = move?.bonusScore ?? 0;
-    final total = move?.totalScore ?? 0;
+    final score =
+        move == null ? null : scoreMove(move, ref.read(scoringConfigProvider));
+    final base = score?.base ?? 0;
+    final bonus = score?.bonus ?? 0;
+    final total = score?.total ?? 0;
     return Column(
       children: [
         _summaryRow(context, l10n.inputBase, '$base'),
@@ -204,6 +246,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildOtherActions(BuildContext context) {
     final l10n = context.l10n;
+    final config = ref.read(scoringConfigProvider);
     return Wrap(
       spacing: AppSpacing.x8,
       runSpacing: AppSpacing.x8,
@@ -211,12 +254,12 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
       children: [
         OutlinedButton.icon(
           icon: const Icon(Icons.download_outlined, size: 18),
-          label: Text(l10n.inputDrawPile(ScoringRules.drawPenalty)),
+          label: Text(l10n.inputDrawPile(config.drawPenalty)),
           onPressed: () => _confirmPenalty(MoveType.drawPenalty),
         ),
         OutlinedButton.icon(
           icon: const Icon(Icons.skip_next_outlined, size: 18),
-          label: Text(l10n.inputPassPenalty(ScoringRules.passPenalty)),
+          label: Text(l10n.inputPassPenalty(config.passPenalty)),
           onPressed: () => _confirmPenalty(MoveType.passPenalty),
         ),
         OutlinedButton.icon(
@@ -278,21 +321,83 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     }
   }
 
+  AppSound _soundFor(Move m) {
+    if (m.isHexagon || m.isDoubleHexagon) return AppSound.hexagon;
+    if (m.isBridge) return AppSound.bridge;
+    if (m.isTriplet) return AppSound.triplet;
+    return AppSound.tap;
+  }
+
+  void _showBonusInfo(BuildContext context) {
+    final l10n = context.l10n;
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.bonusInfoTitle),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _bonusInfoRow(context, l10n.inputBonusTriplet, l10n.bonusTripletDesc),
+              _bonusInfoRow(context, l10n.inputBonusBridge, l10n.bonusBridgeDesc),
+              _bonusInfoRow(
+                  context, l10n.inputBonusHexagon, l10n.bonusHexagonDesc),
+              _bonusInfoRow(context, l10n.inputBonusDoubleHexagon,
+                  l10n.bonusDoubleHexagonDesc),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.commonClose),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bonusInfoRow(BuildContext context, String name, String desc) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(name, style: context.text.titleLarge),
+          Text(desc, style: context.text.bodyMedium),
+        ],
+      ),
+    );
+  }
+
   Future<void> _confirmPlay() async {
     final move = _previewMove;
     if (move == null) return;
     ref.read(hapticsProvider).medium();
-    await ref.read(gameControllerProvider).addPlay(
-          game: widget.game,
-          round: widget.round,
-          playerId: widget.playerId,
-          move: move,
-        );
+    ref.read(audioServiceProvider).play(_soundFor(move));
+    final editing = widget.editing;
+    final controller = ref.read(gameControllerProvider);
+    if (editing != null) {
+      await controller.editMove(
+        game: widget.game,
+        original: editing,
+        updated: move,
+      );
+    } else {
+      await controller.addPlay(
+        game: widget.game,
+        round: widget.round,
+        playerId: widget.playerId,
+        move: move,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 
   Future<void> _confirmPenalty(MoveType type) async {
     ref.read(hapticsProvider).light();
+    ref.read(audioServiceProvider).play(AppSound.tap);
     await ref.read(gameControllerProvider).addPenalty(
           game: widget.game,
           round: widget.round,
@@ -305,6 +410,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   Future<void> _confirmEndHand() async {
     final sum = int.tryParse(_handSumController.text.trim()) ?? 0;
     ref.read(hapticsProvider).medium();
+    ref.read(audioServiceProvider).play(AppSound.roundEnd);
     await ref.read(gameControllerProvider).endHand(
           game: widget.game,
           round: widget.round,

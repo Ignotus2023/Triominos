@@ -56,6 +56,18 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _avatarImageMeta = const VerificationMeta(
+    'avatarImage',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> avatarImage =
+      GeneratedColumn<Uint8List>(
+        'avatar_image',
+        aliasedName,
+        true,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -84,6 +96,7 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     name,
     avatarColor,
     initials,
+    avatarImage,
     createdAt,
     updatedAt,
   ];
@@ -131,6 +144,15 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     } else if (isInserting) {
       context.missing(_initialsMeta);
     }
+    if (data.containsKey('avatar_image')) {
+      context.handle(
+        _avatarImageMeta,
+        avatarImage.isAcceptableOrUnknown(
+          data['avatar_image']!,
+          _avatarImageMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -172,6 +194,10 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
         DriftSqlType.string,
         data['${effectivePrefix}initials'],
       )!,
+      avatarImage: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}avatar_image'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -194,6 +220,9 @@ class Player extends DataClass implements Insertable<Player> {
   final String name;
   final String avatarColor;
   final String initials;
+
+  /// Opcjonalne zdjęcie profilowe (Premium) — miniatura zapisana w bazie.
+  final Uint8List? avatarImage;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Player({
@@ -201,6 +230,7 @@ class Player extends DataClass implements Insertable<Player> {
     required this.name,
     required this.avatarColor,
     required this.initials,
+    this.avatarImage,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -211,6 +241,9 @@ class Player extends DataClass implements Insertable<Player> {
     map['name'] = Variable<String>(name);
     map['avatar_color'] = Variable<String>(avatarColor);
     map['initials'] = Variable<String>(initials);
+    if (!nullToAbsent || avatarImage != null) {
+      map['avatar_image'] = Variable<Uint8List>(avatarImage);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
@@ -222,6 +255,9 @@ class Player extends DataClass implements Insertable<Player> {
       name: Value(name),
       avatarColor: Value(avatarColor),
       initials: Value(initials),
+      avatarImage: avatarImage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(avatarImage),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -237,6 +273,7 @@ class Player extends DataClass implements Insertable<Player> {
       name: serializer.fromJson<String>(json['name']),
       avatarColor: serializer.fromJson<String>(json['avatarColor']),
       initials: serializer.fromJson<String>(json['initials']),
+      avatarImage: serializer.fromJson<Uint8List?>(json['avatarImage']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -249,6 +286,7 @@ class Player extends DataClass implements Insertable<Player> {
       'name': serializer.toJson<String>(name),
       'avatarColor': serializer.toJson<String>(avatarColor),
       'initials': serializer.toJson<String>(initials),
+      'avatarImage': serializer.toJson<Uint8List?>(avatarImage),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -259,6 +297,7 @@ class Player extends DataClass implements Insertable<Player> {
     String? name,
     String? avatarColor,
     String? initials,
+    Value<Uint8List?> avatarImage = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Player(
@@ -266,6 +305,7 @@ class Player extends DataClass implements Insertable<Player> {
     name: name ?? this.name,
     avatarColor: avatarColor ?? this.avatarColor,
     initials: initials ?? this.initials,
+    avatarImage: avatarImage.present ? avatarImage.value : this.avatarImage,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -277,6 +317,9 @@ class Player extends DataClass implements Insertable<Player> {
           ? data.avatarColor.value
           : this.avatarColor,
       initials: data.initials.present ? data.initials.value : this.initials,
+      avatarImage: data.avatarImage.present
+          ? data.avatarImage.value
+          : this.avatarImage,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -289,6 +332,7 @@ class Player extends DataClass implements Insertable<Player> {
           ..write('name: $name, ')
           ..write('avatarColor: $avatarColor, ')
           ..write('initials: $initials, ')
+          ..write('avatarImage: $avatarImage, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -296,8 +340,15 @@ class Player extends DataClass implements Insertable<Player> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, avatarColor, initials, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    avatarColor,
+    initials,
+    $driftBlobEquality.hash(avatarImage),
+    createdAt,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -306,6 +357,7 @@ class Player extends DataClass implements Insertable<Player> {
           other.name == this.name &&
           other.avatarColor == this.avatarColor &&
           other.initials == this.initials &&
+          $driftBlobEquality.equals(other.avatarImage, this.avatarImage) &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -315,6 +367,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
   final Value<String> name;
   final Value<String> avatarColor;
   final Value<String> initials;
+  final Value<Uint8List?> avatarImage;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -323,6 +376,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     this.name = const Value.absent(),
     this.avatarColor = const Value.absent(),
     this.initials = const Value.absent(),
+    this.avatarImage = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -332,6 +386,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     required String name,
     required String avatarColor,
     required String initials,
+    this.avatarImage = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -346,6 +401,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     Expression<String>? name,
     Expression<String>? avatarColor,
     Expression<String>? initials,
+    Expression<Uint8List>? avatarImage,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -355,6 +411,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
       if (name != null) 'name': name,
       if (avatarColor != null) 'avatar_color': avatarColor,
       if (initials != null) 'initials': initials,
+      if (avatarImage != null) 'avatar_image': avatarImage,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -366,6 +423,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     Value<String>? name,
     Value<String>? avatarColor,
     Value<String>? initials,
+    Value<Uint8List?>? avatarImage,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -375,6 +433,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
       name: name ?? this.name,
       avatarColor: avatarColor ?? this.avatarColor,
       initials: initials ?? this.initials,
+      avatarImage: avatarImage ?? this.avatarImage,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -396,6 +455,9 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     if (initials.present) {
       map['initials'] = Variable<String>(initials.value);
     }
+    if (avatarImage.present) {
+      map['avatar_image'] = Variable<Uint8List>(avatarImage.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -415,6 +477,7 @@ class PlayersCompanion extends UpdateCompanion<Player> {
           ..write('name: $name, ')
           ..write('avatarColor: $avatarColor, ')
           ..write('initials: $initials, ')
+          ..write('avatarImage: $avatarImage, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -2844,6 +2907,7 @@ typedef $$PlayersTableCreateCompanionBuilder =
       required String name,
       required String avatarColor,
       required String initials,
+      Value<Uint8List?> avatarImage,
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -2854,6 +2918,7 @@ typedef $$PlayersTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> avatarColor,
       Value<String> initials,
+      Value<Uint8List?> avatarImage,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -2908,6 +2973,11 @@ class $$PlayersTableFilterComposer
 
   ColumnFilters<String> get initials => $composableBuilder(
     column: $table.initials,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get avatarImage => $composableBuilder(
+    column: $table.avatarImage,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2976,6 +3046,11 @@ class $$PlayersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<Uint8List> get avatarImage => $composableBuilder(
+    column: $table.avatarImage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -3009,6 +3084,11 @@ class $$PlayersTableAnnotationComposer
 
   GeneratedColumn<String> get initials =>
       $composableBuilder(column: $table.initials, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get avatarImage => $composableBuilder(
+    column: $table.avatarImage,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -3074,6 +3154,7 @@ class $$PlayersTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> avatarColor = const Value.absent(),
                 Value<String> initials = const Value.absent(),
+                Value<Uint8List?> avatarImage = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -3082,6 +3163,7 @@ class $$PlayersTableTableManager
                 name: name,
                 avatarColor: avatarColor,
                 initials: initials,
+                avatarImage: avatarImage,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -3092,6 +3174,7 @@ class $$PlayersTableTableManager
                 required String name,
                 required String avatarColor,
                 required String initials,
+                Value<Uint8List?> avatarImage = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -3100,6 +3183,7 @@ class $$PlayersTableTableManager
                 name: name,
                 avatarColor: avatarColor,
                 initials: initials,
+                avatarImage: avatarImage,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 rowid: rowid,

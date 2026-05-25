@@ -52,6 +52,27 @@ class GameSetupController {
     );
     return gameId;
   }
+
+  /// Tworzy nową grę z tym samym składem i trybem co podana gra.
+  /// Zwraca id nowej gry, albo null gdy zostało mniej niż 2 graczy
+  /// (np. profile usunięto).
+  Future<String?> rematchFrom(String gameId, List<Player> allPlayers) async {
+    final game = await _dao.getGame(gameId);
+    if (game == null) return null;
+    final seats = await _dao.getGamePlayers(gameId);
+    final players = <Player>[];
+    for (final seat in seats) {
+      final match = allPlayers.where((p) => p.id == seat.playerId);
+      if (match.isNotEmpty) players.add(match.first);
+    }
+    if (players.length < 2) return null;
+    return createGame(
+      players: players,
+      endMode: game.endMode,
+      scoreLimit: game.scoreLimit,
+      totalRounds: game.totalRounds,
+    );
+  }
 }
 
 final gameSetupControllerProvider = Provider<GameSetupController>(

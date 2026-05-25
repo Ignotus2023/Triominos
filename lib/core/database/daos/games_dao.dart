@@ -20,6 +20,14 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
   Future<Game?> getGame(String id) =>
       (select(games)..where((g) => g.id.equals(id))).getSingleOrNull();
 
+  /// Ostatnia (najnowsza) gra — do szybkiego rewanżu z tym samym składem.
+  Stream<Game?> watchLastGame() => (select(games)
+        ..orderBy(
+          [(g) => OrderingTerm(expression: g.startedAt, mode: OrderingMode.desc)],
+        )
+        ..limit(1))
+      .watchSingleOrNull();
+
   Stream<Game?> watchActiveGame() => (select(games)
         ..where((g) => g.status.equalsValue(GameStatus.inProgress))
         ..orderBy(
@@ -101,6 +109,20 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
     return transaction(() async {
       await into(moves).insert(move);
       await _adjustScore(gameId, playerId, delta);
+    });
+  }
+
+  /// Edycja istniejącego ruchu z korektą sumy punktów gracza (delta).
+  Future<void> editMove({
+    required String moveId,
+    required String gameId,
+    required String playerId,
+    required MovesCompanion changes,
+    required int scoreDelta,
+  }) {
+    return transaction(() async {
+      await (update(moves)..where((m) => m.id.equals(moveId))).write(changes);
+      await _adjustScore(gameId, playerId, scoreDelta);
     });
   }
 

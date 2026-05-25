@@ -14,4 +14,7 @@ abstract class AppConstants {
 
   /// Maksymalna liczba ruchów wstecz dla szybkiego undo (§8.6).
   static const int maxUndoDepth = 3;
+
+  /// Wersja darmowa — rezerwuje miejsce na banery reklamowe (v2+).
+  static const bool isFreeVersion = true;
 }

@@ -12,6 +12,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get scoreSuffix => 'pts';
+
+  @override
+  String get adPlaceholder => 'Advertisement';
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override
@@ -90,6 +96,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerColor => 'Color';
+
+  @override
+  String get playerPhoto => 'Photo';
+
+  @override
+  String get premiumPhotoHint => 'Profile photos are a Premium feature';
 
   @override
   String get playerDeleteConfirm =>
@@ -222,6 +234,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inputBonusDoubleHexagon => 'Double hex';
 
   @override
+  String get bonusInfoTitle => 'What do the bonuses mean?';
+
+  @override
+  String get bonusTripletDesc =>
+      'A tile with three identical digits (e.g. 4-4-4). +10, or +30 for 0-0-0.';
+
+  @override
+  String get bonusBridgeDesc =>
+      'Connects two previously separate regions at a single corner. +40.';
+
+  @override
+  String get bonusHexagonDesc =>
+      'Completes a hexagon made of 6 triangles. +50.';
+
+  @override
+  String get bonusDoubleHexagonDesc =>
+      'One tile completes two hexagons at once. +110 in total.';
+
+  @override
   String get inputTripletDetected => 'Triplet detected';
 
   @override
@@ -287,6 +318,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get summaryDuration => 'Duration';
+
+  @override
+  String get summaryShare => 'Share';
+
+  @override
+  String get homeQuickRematch => 'Quick rematch';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achFirstGame => 'First game';
+
+  @override
+  String get achFirstHexagon => 'First hexagon';
+
+  @override
+  String get achFirstBridge => 'First bridge';
+
+  @override
+  String get achBigMove => 'Big move (40+)';
+
+  @override
+  String get achGames10 => '10 games played';
+
+  @override
+  String get achHatTrick => '3 wins in a row';
 
   @override
   String get historyTitle => 'History';
@@ -375,7 +433,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHaptics => 'Haptics';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc => 'Unlock editing any move and remove ads';
+
+  @override
+  String get premiumEditHint => 'Editing any move is a Premium feature';
+
+  @override
+  String get premiumBuy => 'Buy Premium';
+
+  @override
+  String get premiumRestore => 'Restore purchases';
+
+  @override
   String get settingsDefaultScoreLimit => 'Default score threshold';
+
+  @override
+  String get settingsHouseRules => 'House rules';
+
+  @override
+  String get rulesStarterBonus => 'Starter bonus';
+
+  @override
+  String get rulesEndOfHand => 'Hand-out bonus';
+
+  @override
+  String get rulesReset => 'Reset to defaults';
 
   @override
   String get settingsAbout => 'About';

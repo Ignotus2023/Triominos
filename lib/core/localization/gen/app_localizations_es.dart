@@ -12,6 +12,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get scoreSuffix => 'pts';
+
+  @override
+  String get adPlaceholder => 'Publicidad';
+
+  @override
   String get commonCancel => 'Cancelar';
 
   @override
@@ -91,6 +97,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get playerColor => 'Color';
+
+  @override
+  String get playerPhoto => 'Foto';
+
+  @override
+  String get premiumPhotoHint => 'Las fotos de perfil son una función Premium';
 
   @override
   String get playerDeleteConfirm =>
@@ -225,6 +237,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get inputBonusDoubleHexagon => 'Hex doble';
 
   @override
+  String get bonusInfoTitle => '¿Qué significan los bonos?';
+
+  @override
+  String get bonusTripletDesc =>
+      'Una ficha con tres dígitos iguales (p. ej. 4-4-4). +10, o +30 para 0-0-0.';
+
+  @override
+  String get bonusBridgeDesc =>
+      'Conecta dos regiones separadas por una esquina. +40.';
+
+  @override
+  String get bonusHexagonDesc => 'Completa un hexágono de 6 triángulos. +50.';
+
+  @override
+  String get bonusDoubleHexagonDesc =>
+      'Una ficha completa dos hexágonos a la vez. +110 en total.';
+
+  @override
   String get inputTripletDetected => 'Triplete detectado';
 
   @override
@@ -290,6 +320,33 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get summaryDuration => 'Duración';
+
+  @override
+  String get summaryShare => 'Compartir';
+
+  @override
+  String get homeQuickRematch => 'Revancha rápida';
+
+  @override
+  String get achievementsTitle => 'Logros';
+
+  @override
+  String get achFirstGame => 'Primera partida';
+
+  @override
+  String get achFirstHexagon => 'Primer hexágono';
+
+  @override
+  String get achFirstBridge => 'Primer puente';
+
+  @override
+  String get achBigMove => 'Gran jugada (40+)';
+
+  @override
+  String get achGames10 => '10 partidas jugadas';
+
+  @override
+  String get achHatTrick => '3 victorias seguidas';
 
   @override
   String get historyTitle => 'Historial';
@@ -378,7 +435,36 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsHaptics => 'Vibración';
 
   @override
+  String get settingsPremium => 'Premium';
+
+  @override
+  String get settingsPremiumDesc =>
+      'Desbloquea editar cualquier jugada y quita los anuncios';
+
+  @override
+  String get premiumEditHint =>
+      'Editar cualquier jugada es una función Premium';
+
+  @override
+  String get premiumBuy => 'Comprar Premium';
+
+  @override
+  String get premiumRestore => 'Restaurar compras';
+
+  @override
   String get settingsDefaultScoreLimit => 'Umbral de puntos predeterminado';
+
+  @override
+  String get settingsHouseRules => 'Reglas de la casa';
+
+  @override
+  String get rulesStarterBonus => 'Bono inicial';
+
+  @override
+  String get rulesEndOfHand => 'Bono por quedarse sin fichas';
+
+  @override
+  String get rulesReset => 'Restaurar valores';
 
   @override
   String get settingsAbout => 'Acerca de';

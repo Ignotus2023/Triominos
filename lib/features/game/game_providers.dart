@@ -8,6 +8,11 @@ final activeGameProvider = StreamProvider<Game?>(
   (ref) => ref.watch(gamesDaoProvider).watchActiveGame(),
 );
 
+/// Ostatnia gra (dowolny status) — do szybkiego rewanżu.
+final lastGameProvider = StreamProvider<Game?>(
+  (ref) => ref.watch(gamesDaoProvider).watchLastGame(),
+);
+
 final gameProvider = StreamProvider.family<Game?, String>(
   (ref, id) => ref.watch(gamesDaoProvider).watchGame(id),
 );
