@@ -119,15 +119,17 @@ class SettingsPage extends ConsumerWidget {
             glow: settings.isPremium,
             child: Column(
               children: [
-                SwitchListTile(
-                  secondary: Icon(
+                ListTile(
+                  leading: Icon(
                     Icons.workspace_premium_outlined,
                     color: context.colors.primary,
                   ),
                   title: Text(l10n.settingsPremium),
                   subtitle: Text(l10n.settingsPremiumDesc),
-                  value: settings.isPremium,
-                  onChanged: notifier.setPremium,
+                  trailing: Icon(
+                    settings.isPremium ? Icons.check_circle : Icons.lock_outline,
+                    color: settings.isPremium ? context.colors.primary : null,
+                  ),
                 ),
                 if (!kIsWeb && !settings.isPremium)
                   Padding(

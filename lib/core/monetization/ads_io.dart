@@ -4,6 +4,7 @@
 // na własne ID z AdMob i ustaw APPLICATION_ID w AndroidManifest / Info.plist.
 import 'dart:io';
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -14,6 +15,12 @@ String _testBannerUnitId() => Platform.isAndroid
     : 'ca-app-pub-3940256099942544/2934735716';
 
 Future<void> initMobileAds() async {
+  if (Platform.isIOS) {
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+    if (status == TrackingStatus.notDetermined) {
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
   await MobileAds.instance.initialize();
 }
 
