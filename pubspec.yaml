@@ -2,7 +2,7 @@ name: triomino_score
 description: "TriominoScore – mobilny pomocnik do liczenia punktów w grze Triominos."
 publish_to: 'none'
 
-version: 2.0.0+2
+version: 2.0.0+3
 
 environment:
   sdk: ^3.12.0
@@ -33,6 +33,7 @@ dependencies:
   share_plus: ^13.1.0
   google_mobile_ads: ^8.0.0
   in_app_purchase: ^3.2.3
+  app_tracking_transparency: ^2.0.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
