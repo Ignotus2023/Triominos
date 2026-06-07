@@ -96,6 +96,17 @@ class AppLocalizationsIt extends AppLocalizations {
       'Eliminare questo giocatore? La cronologia delle partite resta intatta.';
 
   @override
+  String get playerDeleteBlocked =>
+      'Impossibile eliminare un giocatore che ha partecipato a partite.';
+
+  @override
+  String get gameAbandon => 'Abbandona partita';
+
+  @override
+  String get gameAbandonConfirm =>
+      'Abbandonare questa partita senza salvare il risultato?';
+
+  @override
   String get playerErrorNameEmpty => 'Inserisci un nome';
 
   @override

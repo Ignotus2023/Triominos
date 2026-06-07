@@ -96,6 +96,16 @@ class AppLocalizationsDe extends AppLocalizations {
       'Diesen Spieler löschen? Die Spielhistorie bleibt erhalten.';
 
   @override
+  String get playerDeleteBlocked =>
+      'Ein Spieler, der an Spielen teilgenommen hat, kann nicht gelöscht werden.';
+
+  @override
+  String get gameAbandon => 'Spiel abbrechen';
+
+  @override
+  String get gameAbandonConfirm => 'Dieses Spiel ohne Ergebnis abbrechen?';
+
+  @override
   String get playerErrorNameEmpty => 'Namen eingeben';
 
   @override

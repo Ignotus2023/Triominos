@@ -43,7 +43,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.gameSetupPath,
         name: AppRoutes.gameSetup,
-        builder: (context, state) => const GameSetupPage(),
+        builder: (context, state) => GameSetupPage(
+          initialPlayerIds:
+              state.extra is List<String> ? state.extra! as List<String> : null,
+        ),
       ),
       GoRoute(
         path: AppRoutes.gamePath,

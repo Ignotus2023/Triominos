@@ -50,8 +50,10 @@ class GameSummaryPage extends ConsumerWidget {
               Expanded(
                 child: PrimaryButton(
                   label: l10n.summaryRematch,
-                  onPressed: () =>
-                      context.pushReplacementNamed(AppRoutes.gameSetup),
+                  onPressed: () => context.pushReplacementNamed(
+                    AppRoutes.gameSetup,
+                    extra: [for (final s in seats) s.playerId],
+                  ),
                 ),
               ),
             ],
@@ -133,7 +135,11 @@ class _ScoreboardRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 32,
-            child: Text(badge, style: context.text.titleLarge),
+            child: Text(
+              badge,
+              style: context.text.titleLarge,
+              semanticsLabel: '${position + 1}',
+            ),
           ),
           const SizedBox(width: AppSpacing.x8),
           PlayerAvatar(

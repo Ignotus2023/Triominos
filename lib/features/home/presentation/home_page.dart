@@ -29,6 +29,7 @@ class HomePage extends ConsumerWidget {
                 child: Text(l10n.appTitle, style: context.text.headlineLarge),
               ),
               IconButton(
+                tooltip: l10n.settingsTitle,
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () => context.pushNamed(AppRoutes.settings),
               ),

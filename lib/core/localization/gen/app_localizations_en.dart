@@ -96,6 +96,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Delete this player? Their game history stays intact.';
 
   @override
+  String get playerDeleteBlocked =>
+      'Can\'t delete a player who has taken part in games.';
+
+  @override
+  String get gameAbandon => 'Abandon game';
+
+  @override
+  String get gameAbandonConfirm => 'Abandon this game without saving a result?';
+
+  @override
   String get playerErrorNameEmpty => 'Enter a name';
 
   @override

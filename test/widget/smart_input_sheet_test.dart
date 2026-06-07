@@ -56,7 +56,6 @@ void main() {
               playerName: 'Anna',
               moveNumber: 1,
               isStarterMove: false,
-              opponentsCount: 1,
             ),
           ),
         ),

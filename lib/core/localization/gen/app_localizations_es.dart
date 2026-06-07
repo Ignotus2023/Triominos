@@ -97,6 +97,17 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Eliminar este jugador? Su historial de partidas se conserva.';
 
   @override
+  String get playerDeleteBlocked =>
+      'No se puede eliminar un jugador que ha participado en partidas.';
+
+  @override
+  String get gameAbandon => 'Abandonar partida';
+
+  @override
+  String get gameAbandonConfirm =>
+      '¿Abandonar esta partida sin guardar el resultado?';
+
+  @override
   String get playerErrorNameEmpty => 'Introduce un nombre';
 
   @override

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
+import '../../../core/database/database_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -51,6 +52,7 @@ class PlayersListPage extends ConsumerWidget {
                       child: Text(p.name, style: context.text.titleLarge),
                     ),
                     IconButton(
+                      tooltip: l10n.commonDelete,
                       icon: Icon(Icons.delete_outline, color: context.colors.error),
                       onPressed: () => _confirmDelete(context, ref, p),
                     ),
@@ -70,6 +72,17 @@ class PlayersListPage extends ConsumerWidget {
     Player player,
   ) async {
     final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+
+    // Profil z historią gier jest chroniony kluczem obcym; twarde usunięcie
+    // zniszczyłoby zapisane partie, więc takiego gracza nie kasujemy.
+    final played = await ref.read(gamesDaoProvider).countGamesForPlayer(player.id);
+    if (played > 0) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.playerDeleteBlocked)));
+      return;
+    }
+    if (!context.mounted) return;
+
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -279,6 +292,6 @@ class _ColorSwatch extends StatelessWidget {
 
   static Color _parseHex(String hex) {
     final value = hex.replaceFirst('#', '');
-    return Color(int.parse('FF$value', radix: 16));
+    return Color(int.tryParse('FF$value', radix: 16) ?? 0xFF6366F1);
   }
 }

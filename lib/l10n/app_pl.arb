@@ -32,6 +32,9 @@
   "playerEdit": "Edytuj gracza",
   "playerColor": "Kolor",
   "playerDeleteConfirm": "Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.",
+  "playerDeleteBlocked": "Nie można usunąć gracza, który brał udział w grach.",
+  "gameAbandon": "Porzuć grę",
+  "gameAbandonConfirm": "Przerwać tę grę bez zapisywania wyniku?",
   "playerErrorNameEmpty": "Podaj imię",
   "playerErrorNameTooLong": "Imię jest za długie (maks. 32 znaki)",
 

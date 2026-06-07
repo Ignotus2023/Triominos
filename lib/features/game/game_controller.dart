@@ -109,6 +109,9 @@ class GameController {
     await _dao.finishGame(gameId: game.id, winnerId: _highest(seats).playerId);
   }
 
+  /// Porzucenie gry bez wyłaniania zwycięzcy (znika z bannera „Wznów grę").
+  Future<void> abandon(Game game) => _dao.abandonGame(game.id);
+
   Future<void> _evaluateEnd(Game game, Round round) async {
     final seats = await _dao.getGamePlayers(game.id);
     // Tylko tryb "liczba rund" kończy grę automatycznie. W trybie "limit
@@ -128,11 +131,20 @@ class GameController {
           id: newId(),
           gameId: game.id,
           roundNumber: next,
-          starterPlayerId: seats.first.playerId,
+          starterPlayerId: _nextStarterId(seats, round.starterPlayerId),
           startedAt: DateTime.now(),
         ),
       );
     }
+  }
+
+  /// Kolejna runda startuje od następnego gracza w kolejności miejsc, dzięki
+  /// czemu prawo pierwszego ruchu rotuje między rundami.
+  String _nextStarterId(List<GamePlayer> seats, String currentStarterId) {
+    if (seats.isEmpty) return currentStarterId;
+    final current = seats.indexWhere((s) => s.playerId == currentStarterId);
+    final base = current < 0 ? -1 : current;
+    return seats[(base + 1) % seats.length].playerId;
   }
 
   GamePlayer _highest(List<GamePlayer> seats) =>

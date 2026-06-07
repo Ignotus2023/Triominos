@@ -32,6 +32,9 @@
   "playerEdit": "Editar jugador",
   "playerColor": "Color",
   "playerDeleteConfirm": "¿Eliminar este jugador? Su historial de partidas se conserva.",
+  "playerDeleteBlocked": "No se puede eliminar un jugador que ha participado en partidas.",
+  "gameAbandon": "Abandonar partida",
+  "gameAbandonConfirm": "¿Abandonar esta partida sin guardar el resultado?",
   "playerErrorNameEmpty": "Introduce un nombre",
   "playerErrorNameTooLong": "El nombre es demasiado largo (máx. 32 caracteres)",
 

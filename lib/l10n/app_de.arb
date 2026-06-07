@@ -32,6 +32,9 @@
   "playerEdit": "Spieler bearbeiten",
   "playerColor": "Farbe",
   "playerDeleteConfirm": "Diesen Spieler löschen? Die Spielhistorie bleibt erhalten.",
+  "playerDeleteBlocked": "Ein Spieler, der an Spielen teilgenommen hat, kann nicht gelöscht werden.",
+  "gameAbandon": "Spiel abbrechen",
+  "gameAbandonConfirm": "Dieses Spiel ohne Ergebnis abbrechen?",
   "playerErrorNameEmpty": "Namen eingeben",
   "playerErrorNameTooLong": "Name ist zu lang (max. 32 Zeichen)",
 
