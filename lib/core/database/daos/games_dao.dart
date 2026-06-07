@@ -46,6 +46,16 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
         ..orderBy([(gp) => OrderingTerm(expression: gp.seatIndex)]))
       .get();
 
+  /// Liczba gier, w których wziął udział dany gracz (po polu klucza obcego).
+  Future<int> countGamesForPlayer(String playerId) async {
+    final cnt = countAll();
+    final query = selectOnly(gamePlayers)
+      ..addColumns([cnt])
+      ..where(gamePlayers.playerId.equals(playerId));
+    final row = await query.getSingle();
+    return row.read(cnt) ?? 0;
+  }
+
   // ---- Rounds ----
   Stream<Round?> watchCurrentRound(String gameId) => (select(rounds)
         ..where((r) => r.gameId.equals(gameId))

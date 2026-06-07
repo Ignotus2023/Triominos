@@ -10,7 +10,7 @@ import '../../core/theme/app_spacing.dart';
 class GlassContainer extends StatelessWidget {
   const GlassContainer({
     required this.child,
-    this.blur = 24,
+    this.blur = 18,
     this.radius,
     this.padding = const EdgeInsets.all(AppSpacing.x16),
     this.margin,

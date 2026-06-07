@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/game/game_enums.dart';
 import '../../../core/game/move.dart';
+import '../../../core/haptics/haptics_service.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
@@ -30,6 +33,7 @@ class GamePage extends ConsumerWidget {
     ref.listen(gameProvider(gameId), (prev, next) {
       final game = next.value;
       if (game != null && game.status == GameStatus.finished) {
+        unawaited(ref.read(hapticsProvider).success());
         context.pushReplacementNamed(
           AppRoutes.gameSummary,
           pathParameters: {'id': gameId},
@@ -76,6 +80,21 @@ class GamePage extends ConsumerWidget {
                 onPressed: () => _finishNow(context, ref, game),
                 child: Text(l10n.gameFinish),
               ),
+            PopupMenuButton<void>(
+              tooltip: l10n.commonClose,
+              onSelected: (_) => _confirmAbandon(context, ref, game),
+              itemBuilder: (context) => [
+                PopupMenuItem<void>(
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: context.colors.error),
+                      const SizedBox(width: AppSpacing.x12),
+                      Text(l10n.gameAbandon),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ],
           bottomBar: SafeArea(
             child: Padding(
@@ -93,7 +112,6 @@ class GamePage extends ConsumerWidget {
                           seat: activeSeat,
                           moveNumber: moves.length + 1,
                           isStarterMove: game.currentRound == 1 && moves.isEmpty,
-                          opponentsCount: seats.length - 1,
                         ),
               ),
             ),
@@ -172,7 +190,6 @@ class GamePage extends ConsumerWidget {
     required GamePlayer seat,
     required int moveNumber,
     required bool isStarterMove,
-    required int opponentsCount,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -185,12 +202,38 @@ class GamePage extends ConsumerWidget {
         playerName: seat.displayNameSnapshot,
         moveNumber: moveNumber,
         isStarterMove: isStarterMove,
-        opponentsCount: opponentsCount,
       ),
     );
   }
 
   Future<void> _finishNow(BuildContext context, WidgetRef ref, Game game) async {
     await ref.read(gameControllerProvider).finishNow(game);
+  }
+
+  Future<void> _confirmAbandon(
+    BuildContext context,
+    WidgetRef ref,
+    Game game,
+  ) async {
+    final l10n = context.l10n;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text(l10n.gameAbandonConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l10n.gameAbandon),
+          ),
+        ],
+      ),
+    );
+    if (!(ok ?? false)) return;
+    await ref.read(gameControllerProvider).abandon(game);
+    if (context.mounted) context.goNamed(AppRoutes.home);
   }
 }

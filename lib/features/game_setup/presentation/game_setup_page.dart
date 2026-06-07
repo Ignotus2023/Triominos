@@ -19,7 +19,10 @@ import '../../players/players_providers.dart';
 import '../game_setup_controller.dart';
 
 class GameSetupPage extends ConsumerStatefulWidget {
-  const GameSetupPage({super.key});
+  const GameSetupPage({this.initialPlayerIds, super.key});
+
+  /// Wstępnie zaznaczeni gracze (np. przy „Rewanżu" z tym samym składem).
+  final List<String>? initialPlayerIds;
 
   @override
   ConsumerState<GameSetupPage> createState() => _GameSetupPageState();
@@ -36,6 +39,10 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
   void initState() {
     super.initState();
     _scoreLimit = ref.read(settingsProvider).defaultScoreLimit;
+    final preset = widget.initialPlayerIds;
+    if (preset != null) {
+      _selected.addAll(preset.take(AppConstants.maxPlayers));
+    }
   }
 
   bool get _canStart =>
@@ -235,9 +242,15 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
   Future<void> _start() async {
     setState(() => _creating = true);
     final all = ref.read(playersStreamProvider).value ?? [];
-    final selectedPlayers = _selected
-        .map((id) => all.firstWhere((p) => p.id == id))
-        .toList();
+    final byId = {for (final p in all) p.id: p};
+    final selectedPlayers = [
+      for (final id in _selected)
+        if (byId[id] != null) byId[id]!,
+    ];
+    if (selectedPlayers.length < AppConstants.minPlayers) {
+      setState(() => _creating = false);
+      return;
+    }
 
     final gameId = await ref.read(gameSetupControllerProvider).createGame(
           players: selectedPlayers,

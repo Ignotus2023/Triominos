@@ -94,19 +94,10 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: AppSpacing.x12),
           GlassContainer(
             padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                SwitchListTile(
-                  title: Text(l10n.settingsSounds),
-                  value: settings.soundsEnabled,
-                  onChanged: notifier.setSounds,
-                ),
-                SwitchListTile(
-                  title: Text(l10n.settingsHaptics),
-                  value: settings.hapticsEnabled,
-                  onChanged: notifier.setHaptics,
-                ),
-              ],
+            child: SwitchListTile(
+              title: Text(l10n.settingsHaptics),
+              value: settings.hapticsEnabled,
+              onChanged: notifier.setHaptics,
             ),
           ),
           const SizedBox(height: AppSpacing.x12),

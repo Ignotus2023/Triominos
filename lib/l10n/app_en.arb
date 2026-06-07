@@ -33,6 +33,9 @@
   "playerEdit": "Edit player",
   "playerColor": "Color",
   "playerDeleteConfirm": "Delete this player? Their game history stays intact.",
+  "playerDeleteBlocked": "Can't delete a player who has taken part in games.",
+  "gameAbandon": "Abandon game",
+  "gameAbandonConfirm": "Abandon this game without saving a result?",
   "playerErrorNameEmpty": "Enter a name",
   "playerErrorNameTooLong": "Name is too long (max 32 characters)",
 

@@ -18,12 +18,12 @@ class RoundHistoryList extends StatelessWidget {
   final List<GamePlayer> seats;
   final VoidCallback onUndoLast;
 
-  String _nameOf(String playerId) => seats
-      .firstWhere(
-        (s) => s.playerId == playerId,
-        orElse: () => seats.first,
-      )
-      .displayNameSnapshot;
+  String _nameOf(String playerId) {
+    for (final s in seats) {
+      if (s.playerId == playerId) return s.displayNameSnapshot;
+    }
+    return seats.isEmpty ? '?' : seats.first.displayNameSnapshot;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,13 @@ class RoundHistoryList extends StatelessWidget {
     return Column(
       children: [
         for (var i = 0; i < reversed.length; i++)
-          _MoveTile(
-            move: reversed[i],
-            name: _nameOf(reversed[i].playerId),
-            canUndo: i == 0,
-            onUndo: onUndoLast,
+          RepaintBoundary(
+            child: _MoveTile(
+              move: reversed[i],
+              name: _nameOf(reversed[i].playerId),
+              canUndo: i == 0,
+              onUndo: onUndoLast,
+            ),
           ),
       ],
     );
@@ -107,6 +109,7 @@ class _MoveTile extends StatelessWidget {
           ),
           if (canUndo)
             IconButton(
+              tooltip: context.l10n.gameUndoLast,
               visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.undo, size: 18),
               onPressed: onUndo,

@@ -20,7 +20,6 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.playerName,
     required this.moveNumber,
     required this.isStarterMove,
-    required this.opponentsCount,
     super.key,
   });
 
@@ -30,7 +29,6 @@ class SmartInputSheet extends ConsumerStatefulWidget {
   final String playerName;
   final int moveNumber;
   final bool isStarterMove;
-  final int opponentsCount;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -303,7 +301,8 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   }
 
   Future<void> _confirmEndHand() async {
-    final sum = int.tryParse(_handSumController.text.trim()) ?? 0;
+    final parsed = int.tryParse(_handSumController.text.trim()) ?? 0;
+    final sum = parsed < 0 ? 0 : parsed;
     ref.read(hapticsProvider).medium();
     await ref.read(gameControllerProvider).endHand(
           game: widget.game,
@@ -325,8 +324,9 @@ class _CornerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Wrap(
+        spacing: AppSpacing.x8,
+        runSpacing: AppSpacing.x8,
         children: [
           for (var i = ScoringRules.minCorner; i <= ScoringRules.maxCorner; i++)
             ChoiceChip(

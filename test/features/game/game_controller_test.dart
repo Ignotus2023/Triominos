@@ -155,4 +155,45 @@ void main() {
     updated = (await db.gamesDao.getGame('g1'))!;
     expect(updated.status, GameStatus.finished);
   });
+
+  test('prawo pierwszego ruchu rotuje między rundami', () async {
+    await seed(endMode: EndMode.rounds, totalRounds: 3);
+    var (game, round) = await current();
+    expect(round.starterPlayerId, 'p1');
+
+    await controller.endHand(
+      game: game,
+      round: round,
+      finisherId: 'p1',
+      opponentsHandSum: 0,
+    );
+    (game, round) = await current();
+    expect(round.roundNumber, 2);
+    expect(round.starterPlayerId, 'p2');
+
+    await controller.endHand(
+      game: game,
+      round: round,
+      finisherId: 'p2',
+      opponentsHandSum: 0,
+    );
+    (game, round) = await current();
+    expect(round.roundNumber, 3);
+    expect(round.starterPlayerId, 'p1');
+  });
+
+  test('countGamesForPlayer zlicza udział gracza', () async {
+    await seed(endMode: EndMode.freeform);
+    expect(await db.gamesDao.countGamesForPlayer('p1'), 1);
+    expect(await db.gamesDao.countGamesForPlayer('p2'), 1);
+    expect(await db.gamesDao.countGamesForPlayer('nieznany'), 0);
+  });
+
+  test('abandon ustawia status gry na abandoned', () async {
+    await seed(endMode: EndMode.freeform);
+    final (game, _) = await current();
+    await controller.abandon(game);
+    final updated = (await db.gamesDao.getGame('g1'))!;
+    expect(updated.status, GameStatus.abandoned);
+  });
 }

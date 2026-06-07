@@ -274,6 +274,24 @@ abstract class AppLocalizations {
   /// **'Delete this player? Their game history stays intact.'**
   String get playerDeleteConfirm;
 
+  /// No description provided for @playerDeleteBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t delete a player who has taken part in games.'**
+  String get playerDeleteBlocked;
+
+  /// No description provided for @gameAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon game'**
+  String get gameAbandon;
+
+  /// No description provided for @gameAbandonConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon this game without saving a result?'**
+  String get gameAbandonConfirm;
+
   /// No description provided for @playerErrorNameEmpty.
   ///
   /// In en, this message translates to:

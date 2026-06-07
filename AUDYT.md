@@ -246,3 +246,43 @@ Konsekwentne `AsyncValue.when` na ekranach (gra, gracze, historia, setup). Błą
 ---
 
 *Audyt statyczny — bez uruchamiania narzędzi Flutter. Zalecane domknięcie weryfikacją dynamiczną: `flutter analyze`, `flutter test --coverage`, testy na realnych urządzeniach (iPhone/iPad/Android phone+tablet) oraz przy 200% skali czcionki.*
+
+---
+
+# Status realizacji poprawek (2026-06-07)
+
+> **Ograniczenie środowiska:** w kontenerze nie ma Fluttera/Darta, więc **nie uruchomiono** `build_runner`, `gen-l10n`, `flutter analyze` ani testów. Poprawki wymagające codegenu/migracji/assetów odłożono świadomie (oznaczone ODŁOŻONE) — pozostałe wprowadzono jako zmiany niskiego ryzyka, zweryfikowane przeglądem. Nowe stringi i18n dopisano ręcznie do plików ARB **oraz** do wygenerowanych klas lokalizacji (6 języków + klasa abstrakcyjna).
+
+### Zrobione ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| 6.1/4.1 | Crash przy usuwaniu gracza | Dodano `GamesDao.countGamesForPlayer`; UI blokuje usunięcie gracza z historią i pokazuje komunikat zamiast rzucać wyjątkiem (`players_list_page.dart`). Pełny soft-delete = ODŁOŻONE (migracja). |
+| 1.1/6.3 | Ujemna suma rąk | Clamp `>= 0` w `_confirmEndHand` (`smart_input_sheet.dart`). |
+| 1.5 | Parsowanie hex | `int.tryParse` z fallbackiem w `_ColorSwatch._parseHex`. |
+| 3.1 | a11y — tooltipy | `tooltip:` na ikonach: ustawienia (`home_page`), usuń gracza (`players_list_page`), cofnij ruch (`round_history_list`). |
+| 3.2 | Overflow `_CornerRow` | `Row` → `Wrap` (chipy 0–5 zawijają się). |
+| 3.4 | a11y — medale | `semanticsLabel` na odznace miejsca (`game_summary_page`). |
+| 2.1 | Wydajność szkła | Domyślny blur 24 → 18; `RepaintBoundary` wokół kafli historii rundy. |
+| 4.3 | Rotacja startera | `_nextStarterId` — prawo pierwszego ruchu rotuje między rundami (+ test). |
+| 4.7 | Martwy kod | Usunięto nieużywany `opponentsCount`; podłączono `HapticsService.success()` (haptyka wygranej w `game_page`); podłączono `abandonGame` przez `GameController.abandon`. |
+| 5.1 | Mylący przełącznik dźwięku | Ukryto przełącznik „Dźwięki" (audio niezaimplementowane); preferencja pozostaje w modelu na przyszłość. |
+| 5.4 | Rewanż ze składem | „Rewanż" przekazuje graczy przez `extra`; setup wstępnie zaznacza skład (`game_setup_page`, `app_router`). |
+| 5.5 | Porzucenie gry | Menu „Porzuć grę" na ekranie rozgrywki + potwierdzenie (+ test). |
+| 4.8 | Bezpieczny `orElse` | `_nameOf` nie zakłada niepustej listy miejsc. |
+| 6.7 | Parzystość ARB | Zweryfikowano: klucze user-facing identyczne w 6 językach (różnica to wyłącznie metadane `@` w szablonie EN). |
+| 6.8 | Testy regresyjne | Dodano testy: rotacja startera, `countGamesForPlayer`, `abandon`. |
+
+### Odłożone (wymagają narzędzi/assetów/większych zmian) ⏳
+
+| # | Pozycja | Powód |
+| - | ------- | ----- |
+| 4.1 | Pełny **soft-delete** gracza | Nowa kolumna → migracja schematu + `build_runner` (niedostępny). Interim: blokada usuwania z komunikatem (bez crasha). |
+| 5.1/5.2 | Realne **audio** + **konfetti** | Wymaga `just_audio`/`confetti` w `pubspec` i plików `.mp3`/assetów; brak narzędzi do pobrania i weryfikacji. |
+| 5.3 | **Szczegóły gry w historii** (replay) | Nowy ekran + routing + zapytania — osobny feature, nie poprawka. |
+| 4.4/6.6 | Przepisanie zapytań statystyk | Zmiana złożonych zapytań drift bez możliwości kompilacji/testu = zbyt duże ryzyko regresji; opis pozostaje w sekcji 4/6. |
+| 4.5 | Zamiana lintera na `very_good_analysis` | Ujawniłaby wiele lintów do ręcznego naprawienia bez `flutter analyze`; do zrobienia z działającym toolchainem. |
+| 2.2 | `nextMoveIndex` przez SQL | Mikro-optymalizacja; pominięta, by nie ryzykować błędnym zapytaniem bez kompilatora. |
+| 1.3/4.6 | Wyjęcie `docs/` z repo | `docs/` to **wdrożony** GitHub Pages; usunięcie zepsułoby stronę — wymaga decyzji właściciela + pipeline CI. |
+
+> Po przywróceniu toolchainu należy uruchomić: `flutter gen-l10n`, `dart run build_runner build --delete-conflicting-outputs`, `flutter analyze`, `flutter test`.

@@ -96,6 +96,16 @@ class AppLocalizationsPl extends AppLocalizations {
       'Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.';
 
   @override
+  String get playerDeleteBlocked =>
+      'Nie można usunąć gracza, który brał udział w grach.';
+
+  @override
+  String get gameAbandon => 'Porzuć grę';
+
+  @override
+  String get gameAbandonConfirm => 'Przerwać tę grę bez zapisywania wyniku?';
+
+  @override
   String get playerErrorNameEmpty => 'Podaj imię';
 
   @override
