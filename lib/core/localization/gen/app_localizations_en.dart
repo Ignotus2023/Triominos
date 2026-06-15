@@ -12,6 +12,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get settingsPrivacy => 'Privacy policy';
+
+  @override
+  String get privacyTitle => 'Privacy policy';
+
+  @override
+  String get privacyBody =>
+      'TriominoScore works 100% offline. The app does not collect, send, or share any data — everything (players, games, statistics) stays only on your device. We use no accounts, ads, or analytics. You can permanently erase all data at any time in Settings → Reset data.';
+
+  @override
   String get commonCancel => 'Cancel';
 
   @override
@@ -25,6 +35,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonClose => 'Close';
+
+  @override
+  String get commonError => 'Something went wrong';
 
   @override
   String get commonStart => 'Start';
@@ -92,12 +105,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerColor => 'Color';
 
   @override
-  String get playerDeleteConfirm =>
-      'Delete this player? Their game history stays intact.';
+  String get playerIcon => 'Icon';
 
   @override
-  String get playerDeleteBlocked =>
-      'Can\'t delete a player who has taken part in games.';
+  String get playerDeleteConfirm =>
+      'Delete this player? Their game history stays intact.';
 
   @override
   String get gameAbandon => 'Abandon game';
@@ -322,7 +334,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsBestScore => 'Best score';
 
   @override
-  String get statsMostHexagons => 'Most hexagons in a game';
+  String get statsTotalHexagons => 'Hexagons total';
 
   @override
   String get rulesTitle => 'Rules';

@@ -7,7 +7,8 @@ import 'settings_repository.dart';
 
 /// Nadpisywane w `main()` po inicjalizacji [SharedPreferences].
 final sharedPreferencesProvider = Provider<SharedPreferences>(
-  (ref) => throw UnimplementedError('sharedPreferencesProvider must be overridden'),
+  (ref) =>
+      throw UnimplementedError('sharedPreferencesProvider must be overridden'),
 );
 
 final settingsRepositoryProvider = Provider<SettingsRepository>(
@@ -48,5 +49,6 @@ class SettingsNotifier extends Notifier<AppSettings> {
   }
 }
 
-final settingsProvider =
-    NotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
+final settingsProvider = NotifierProvider<SettingsNotifier, AppSettings>(
+  SettingsNotifier.new,
+);

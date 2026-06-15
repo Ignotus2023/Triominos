@@ -12,20 +12,41 @@ void main() {
   // Ikona z tłem (legacy + iOS).
   final icon = img.Image(width: 1024, height: 1024, numChannels: 4);
   img.fill(icon, color: indigo);
-  _drawTriomino(icon, cx: 512, cy: 548, radius: 320, color: white,
-      thickness: 52, pipRadius: 38);
+  _drawTriomino(
+    icon,
+    cx: 512,
+    cy: 548,
+    radius: 320,
+    color: white,
+    thickness: 52,
+    pipRadius: 38,
+  );
   _write('assets/icon/icon.png', icon);
 
   // Foreground dla adaptacyjnej ikony Androida (transparentne tło, bezpieczna strefa).
   final fg = img.Image(width: 1024, height: 1024, numChannels: 4);
-  _drawTriomino(fg, cx: 512, cy: 548, radius: 250, color: white,
-      thickness: 46, pipRadius: 32);
+  _drawTriomino(
+    fg,
+    cx: 512,
+    cy: 548,
+    radius: 250,
+    color: white,
+    thickness: 46,
+    pipRadius: 32,
+  );
   _write('assets/icon/icon_foreground.png', fg);
 
   // Logo splash (transparentne tło).
   final splash = img.Image(width: 768, height: 768, numChannels: 4);
-  _drawTriomino(splash, cx: 384, cy: 410, radius: 250, color: white,
-      thickness: 44, pipRadius: 32);
+  _drawTriomino(
+    splash,
+    cx: 384,
+    cy: 410,
+    radius: 250,
+    color: white,
+    thickness: 44,
+    pipRadius: 32,
+  );
   _write('assets/splash/splash_logo.png', splash);
 }
 
@@ -50,17 +71,29 @@ void _drawTriomino(
   );
 
   for (final (a, b) in [(top, left), (left, right), (right, top)]) {
-    img.drawLine(image,
-        x1: a.x, y1: a.y, x2: b.x, y2: b.y,
-        color: color, thickness: thickness);
+    img.drawLine(
+      image,
+      x1: a.x,
+      y1: a.y,
+      x2: b.x,
+      y2: b.y,
+      color: color,
+      thickness: thickness,
+    );
   }
 
   // Pipsy w narożnikach, lekko przesunięte do środka.
   for (final v in [top, left, right]) {
     final px = v.x + ((cx - v.x) * 0.16).round();
     final py = v.y + ((cy - v.y) * 0.16).round();
-    img.fillCircle(image, x: px, y: py, radius: pipRadius, color: color,
-        antialias: true);
+    img.fillCircle(
+      image,
+      x: px,
+      y: py,
+      radius: pipRadius,
+      color: color,
+      antialias: true,
+    );
   }
 }
 

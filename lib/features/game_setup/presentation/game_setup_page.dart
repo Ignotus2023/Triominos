@@ -12,6 +12,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -68,7 +69,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
       ),
       body: players.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => ErrorView(error: e),
         data: (list) {
           if (list.isEmpty) {
             return Column(
@@ -89,10 +90,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
           final byId = {for (final p in list) p.id: p};
           return ListView(
             children: [
-              Text(
-                l10n.setupSelectPlayers,
-                style: context.text.titleLarge,
-              ),
+              Text(l10n.setupSelectPlayers, style: context.text.titleLarge),
               Text(
                 l10n.setupPlayersRange(
                   AppConstants.minPlayers,
@@ -113,6 +111,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
                         PlayerAvatar(
                           initials: p.initials,
                           colorHex: p.avatarColor,
+                          iconKey: p.avatarIcon,
                           active: selected,
                         ),
                         const SizedBox(width: AppSpacing.x16),
@@ -220,6 +219,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
             PlayerAvatar(
               initials: initials,
               colorHex: player?.avatarColor ?? '#6366F1',
+              iconKey: player?.avatarIcon,
               size: 36,
             ),
             const SizedBox(width: AppSpacing.x12),
@@ -252,14 +252,19 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
       return;
     }
 
-    final gameId = await ref.read(gameSetupControllerProvider).createGame(
+    final gameId = await ref
+        .read(gameSetupControllerProvider)
+        .createGame(
           players: selectedPlayers,
           endMode: _endMode,
           scoreLimit: _scoreLimit,
           totalRounds: _rounds,
         );
     if (mounted) {
-      context.pushReplacementNamed(AppRoutes.game, pathParameters: {'id': gameId});
+      context.pushReplacementNamed(
+        AppRoutes.game,
+        pathParameters: {'id': gameId},
+      );
     }
   }
 }
@@ -274,9 +279,17 @@ class _EndModeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final entries = <(EndMode, String, String)>[
-      (EndMode.scoreLimit, l10n.setupEndModeScoreLimit, l10n.setupEndModeScoreLimitDesc),
+      (
+        EndMode.scoreLimit,
+        l10n.setupEndModeScoreLimit,
+        l10n.setupEndModeScoreLimitDesc,
+      ),
       (EndMode.rounds, l10n.setupEndModeRounds, l10n.setupEndModeRoundsDesc),
-      (EndMode.freeform, l10n.setupEndModeFreeform, l10n.setupEndModeFreeformDesc),
+      (
+        EndMode.freeform,
+        l10n.setupEndModeFreeform,
+        l10n.setupEndModeFreeformDesc,
+      ),
     ];
     return Column(
       children: [
@@ -339,7 +352,9 @@ class _ThresholdSlider extends StatelessWidget {
               Expanded(child: Text(label, style: context.text.titleLarge)),
               Text(
                 '$value',
-                style: context.text.titleLarge?.copyWith(color: context.colors.primary),
+                style: context.text.titleLarge?.copyWith(
+                  color: context.colors.primary,
+                ),
               ),
             ],
           ),

@@ -12,6 +12,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../players/players_providers.dart';
@@ -46,7 +47,7 @@ class GamePage extends ConsumerWidget {
     return gameAsync.when(
       loading: () =>
           const AppScaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => AppScaffold(body: Center(child: Text('$e'))),
+      error: (e, _) => AppScaffold(body: ErrorView(error: e)),
       data: (game) {
         if (game == null) {
           return AppScaffold(
@@ -62,12 +63,14 @@ class GamePage extends ConsumerWidget {
             : ref.watch(roundMovesProvider(round.id)).value ?? [];
 
         final colors = ref.watch(playerColorsProvider);
+        final icons = ref.watch(playerIconsProvider);
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
         final leader = seats.isEmpty
             ? null
             : seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
-        final thresholdReached = game.endMode == EndMode.scoreLimit &&
+        final thresholdReached =
+            game.endMode == EndMode.scoreLimit &&
             game.scoreLimit != null &&
             leader != null &&
             leader.totalScore >= game.scoreLimit!;
@@ -105,14 +108,14 @@ class GamePage extends ConsumerWidget {
                 onPressed: (activeSeat == null || round == null)
                     ? null
                     : () => _openSmartInput(
-                          context,
-                          ref,
-                          game: game,
-                          round: round,
-                          seat: activeSeat,
-                          moveNumber: moves.length + 1,
-                          isStarterMove: game.currentRound == 1 && moves.isEmpty,
-                        ),
+                        context,
+                        ref,
+                        game: game,
+                        round: round,
+                        seat: activeSeat,
+                        moveNumber: moves.length + 1,
+                        isStarterMove: game.currentRound == 1 && moves.isEmpty,
+                      ),
               ),
             ),
           ),
@@ -129,7 +132,9 @@ class GamePage extends ConsumerWidget {
                         const SizedBox(width: AppSpacing.x12),
                         Expanded(
                           child: Text(
-                            l10n.gameThresholdReached(leader.displayNameSnapshot),
+                            l10n.gameThresholdReached(
+                              leader.displayNameSnapshot,
+                            ),
                             style: context.text.titleLarge,
                           ),
                         ),
@@ -143,13 +148,17 @@ class GamePage extends ConsumerWidget {
                   ),
                 ),
               for (var i = 0; i < seats.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x12),
-                  child: PlayerScoreCard(
-                    seat: seats[i],
-                    active: i == activeIndex,
-                    colorHex: colors[seats[i].playerId] ??
-                        avatarColorFor(seats[i].displayNameSnapshot),
+                RepaintBoundary(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+                    child: PlayerScoreCard(
+                      seat: seats[i],
+                      active: i == activeIndex,
+                      colorHex:
+                          colors[seats[i].playerId] ??
+                          avatarColorFor(seats[i].displayNameSnapshot),
+                      iconKey: icons[seats[i].playerId],
+                    ),
                   ),
                 ),
               const SizedBox(height: AppSpacing.x16),
@@ -162,6 +171,22 @@ class GamePage extends ConsumerWidget {
                   onUndoLast: () => ref
                       .read(gameControllerProvider)
                       .undo(game: game, round: round),
+                  onEditMove: (move) {
+                    final seat = seats.firstWhere(
+                      (s) => s.playerId == move.playerId,
+                      orElse: () => seats.first,
+                    );
+                    _openSmartInput(
+                      context,
+                      ref,
+                      game: game,
+                      round: round,
+                      seat: seat,
+                      moveNumber: move.moveIndex + 1,
+                      isStarterMove: move.isStarter,
+                      editMove: move,
+                    );
+                  },
                 ),
               const SizedBox(height: AppSpacing.x48),
             ],
@@ -173,11 +198,15 @@ class GamePage extends ConsumerWidget {
 
   int _activeIndex(List<GamePlayer> seats, Round? round, List<MoveRow> moves) {
     if (seats.isEmpty || round == null) return 0;
-    final starter = seats.indexWhere((s) => s.playerId == round.starterPlayerId);
+    final starter = seats.indexWhere(
+      (s) => s.playerId == round.starterPlayerId,
+    );
     final base = starter < 0 ? 0 : starter;
     final turns = moves
-        .where((m) =>
-            m.moveType == MoveType.play || m.moveType == MoveType.passPenalty)
+        .where(
+          (m) =>
+              m.moveType == MoveType.play || m.moveType == MoveType.passPenalty,
+        )
         .length;
     return (base + turns) % seats.length;
   }
@@ -190,6 +219,7 @@ class GamePage extends ConsumerWidget {
     required GamePlayer seat,
     required int moveNumber,
     required bool isStarterMove,
+    MoveRow? editMove,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -202,11 +232,16 @@ class GamePage extends ConsumerWidget {
         playerName: seat.displayNameSnapshot,
         moveNumber: moveNumber,
         isStarterMove: isStarterMove,
+        editMove: editMove,
       ),
     );
   }
 
-  Future<void> _finishNow(BuildContext context, WidgetRef ref, Game game) async {
+  Future<void> _finishNow(
+    BuildContext context,
+    WidgetRef ref,
+    Game game,
+  ) async {
     await ref.read(gameControllerProvider).finishNow(game);
   }
 

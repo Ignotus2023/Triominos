@@ -56,6 +56,17 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _avatarIconMeta = const VerificationMeta(
+    'avatarIcon',
+  );
+  @override
+  late final GeneratedColumn<String> avatarIcon = GeneratedColumn<String>(
+    'avatar_icon',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -78,14 +89,27 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
     name,
     avatarColor,
     initials,
+    avatarIcon,
     createdAt,
     updatedAt,
+    deletedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -131,6 +155,12 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
     } else if (isInserting) {
       context.missing(_initialsMeta);
     }
+    if (data.containsKey('avatar_icon')) {
+      context.handle(
+        _avatarIconMeta,
+        avatarIcon.isAcceptableOrUnknown(data['avatar_icon']!, _avatarIconMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -146,6 +176,12 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
       );
     } else if (isInserting) {
       context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
     }
     return context;
   }
@@ -172,6 +208,10 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
         DriftSqlType.string,
         data['${effectivePrefix}initials'],
       )!,
+      avatarIcon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}avatar_icon'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -180,6 +220,10 @@ class $PlayersTable extends Players with TableInfo<$PlayersTable, Player> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated_at'],
       )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}deleted_at'],
+      ),
     );
   }
 
@@ -194,15 +238,26 @@ class Player extends DataClass implements Insertable<Player> {
   final String name;
   final String avatarColor;
   final String initials;
+
+  /// Opcjonalny klucz ikony awatara (patrz `player_icons.dart`). Gdy null,
+  /// awatar pokazuje inicjały.
+  final String? avatarIcon;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  /// Soft-delete: ustawiane przy usunięciu gracza, który ma historię gier.
+  /// Wiersz pozostaje (klucz obcy `game_players` nienaruszony), ale jest
+  /// odfiltrowany z list. Gracze bez historii są usuwani twardo.
+  final DateTime? deletedAt;
   const Player({
     required this.id,
     required this.name,
     required this.avatarColor,
     required this.initials,
+    this.avatarIcon,
     required this.createdAt,
     required this.updatedAt,
+    this.deletedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -211,8 +266,14 @@ class Player extends DataClass implements Insertable<Player> {
     map['name'] = Variable<String>(name);
     map['avatar_color'] = Variable<String>(avatarColor);
     map['initials'] = Variable<String>(initials);
+    if (!nullToAbsent || avatarIcon != null) {
+      map['avatar_icon'] = Variable<String>(avatarIcon);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -222,8 +283,14 @@ class Player extends DataClass implements Insertable<Player> {
       name: Value(name),
       avatarColor: Value(avatarColor),
       initials: Value(initials),
+      avatarIcon: avatarIcon == null && nullToAbsent
+          ? const Value.absent()
+          : Value(avatarIcon),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -237,8 +304,10 @@ class Player extends DataClass implements Insertable<Player> {
       name: serializer.fromJson<String>(json['name']),
       avatarColor: serializer.fromJson<String>(json['avatarColor']),
       initials: serializer.fromJson<String>(json['initials']),
+      avatarIcon: serializer.fromJson<String?>(json['avatarIcon']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -249,8 +318,10 @@ class Player extends DataClass implements Insertable<Player> {
       'name': serializer.toJson<String>(name),
       'avatarColor': serializer.toJson<String>(avatarColor),
       'initials': serializer.toJson<String>(initials),
+      'avatarIcon': serializer.toJson<String?>(avatarIcon),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -259,15 +330,19 @@ class Player extends DataClass implements Insertable<Player> {
     String? name,
     String? avatarColor,
     String? initials,
+    Value<String?> avatarIcon = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
+    Value<DateTime?> deletedAt = const Value.absent(),
   }) => Player(
     id: id ?? this.id,
     name: name ?? this.name,
     avatarColor: avatarColor ?? this.avatarColor,
     initials: initials ?? this.initials,
+    avatarIcon: avatarIcon.present ? avatarIcon.value : this.avatarIcon,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
   );
   Player copyWithCompanion(PlayersCompanion data) {
     return Player(
@@ -277,8 +352,12 @@ class Player extends DataClass implements Insertable<Player> {
           ? data.avatarColor.value
           : this.avatarColor,
       initials: data.initials.present ? data.initials.value : this.initials,
+      avatarIcon: data.avatarIcon.present
+          ? data.avatarIcon.value
+          : this.avatarIcon,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -289,15 +368,25 @@ class Player extends DataClass implements Insertable<Player> {
           ..write('name: $name, ')
           ..write('avatarColor: $avatarColor, ')
           ..write('initials: $initials, ')
+          ..write('avatarIcon: $avatarIcon, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedAt: $updatedAt')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, avatarColor, initials, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    avatarColor,
+    initials,
+    avatarIcon,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -306,8 +395,10 @@ class Player extends DataClass implements Insertable<Player> {
           other.name == this.name &&
           other.avatarColor == this.avatarColor &&
           other.initials == this.initials &&
+          other.avatarIcon == this.avatarIcon &&
           other.createdAt == this.createdAt &&
-          other.updatedAt == this.updatedAt);
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
 }
 
 class PlayersCompanion extends UpdateCompanion<Player> {
@@ -315,16 +406,20 @@ class PlayersCompanion extends UpdateCompanion<Player> {
   final Value<String> name;
   final Value<String> avatarColor;
   final Value<String> initials;
+  final Value<String?> avatarIcon;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
+  final Value<DateTime?> deletedAt;
   final Value<int> rowid;
   const PlayersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.avatarColor = const Value.absent(),
     this.initials = const Value.absent(),
+    this.avatarIcon = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PlayersCompanion.insert({
@@ -332,8 +427,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     required String name,
     required String avatarColor,
     required String initials,
+    this.avatarIcon = const Value.absent(),
     required DateTime createdAt,
     required DateTime updatedAt,
+    this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -346,8 +443,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     Expression<String>? name,
     Expression<String>? avatarColor,
     Expression<String>? initials,
+    Expression<String>? avatarIcon,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
+    Expression<DateTime>? deletedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -355,8 +454,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
       if (name != null) 'name': name,
       if (avatarColor != null) 'avatar_color': avatarColor,
       if (initials != null) 'initials': initials,
+      if (avatarIcon != null) 'avatar_icon': avatarIcon,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -366,8 +467,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     Value<String>? name,
     Value<String>? avatarColor,
     Value<String>? initials,
+    Value<String?>? avatarIcon,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
+    Value<DateTime?>? deletedAt,
     Value<int>? rowid,
   }) {
     return PlayersCompanion(
@@ -375,8 +478,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
       name: name ?? this.name,
       avatarColor: avatarColor ?? this.avatarColor,
       initials: initials ?? this.initials,
+      avatarIcon: avatarIcon ?? this.avatarIcon,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -396,11 +501,17 @@ class PlayersCompanion extends UpdateCompanion<Player> {
     if (initials.present) {
       map['initials'] = Variable<String>(initials.value);
     }
+    if (avatarIcon.present) {
+      map['avatar_icon'] = Variable<String>(avatarIcon.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
       map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -415,8 +526,10 @@ class PlayersCompanion extends UpdateCompanion<Player> {
           ..write('name: $name, ')
           ..write('avatarColor: $avatarColor, ')
           ..write('initials: $initials, ')
+          ..write('avatarIcon: $avatarIcon, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2844,8 +2957,10 @@ typedef $$PlayersTableCreateCompanionBuilder =
       required String name,
       required String avatarColor,
       required String initials,
+      Value<String?> avatarIcon,
       required DateTime createdAt,
       required DateTime updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 typedef $$PlayersTableUpdateCompanionBuilder =
@@ -2854,8 +2969,10 @@ typedef $$PlayersTableUpdateCompanionBuilder =
       Value<String> name,
       Value<String> avatarColor,
       Value<String> initials,
+      Value<String?> avatarIcon,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
+      Value<DateTime?> deletedAt,
       Value<int> rowid,
     });
 
@@ -2911,6 +3028,11 @@ class $$PlayersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get avatarIcon => $composableBuilder(
+    column: $table.avatarIcon,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -2918,6 +3040,11 @@ class $$PlayersTableFilterComposer
 
   ColumnFilters<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2976,6 +3103,11 @@ class $$PlayersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get avatarIcon => $composableBuilder(
+    column: $table.avatarIcon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -2983,6 +3115,11 @@ class $$PlayersTableOrderingComposer
 
   ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -3010,11 +3147,19 @@ class $$PlayersTableAnnotationComposer
   GeneratedColumn<String> get initials =>
       $composableBuilder(column: $table.initials, builder: (column) => column);
 
+  GeneratedColumn<String> get avatarIcon => $composableBuilder(
+    column: $table.avatarIcon,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 
   Expression<T> gamePlayersRefs<T extends Object>(
     Expression<T> Function($$GamePlayersTableAnnotationComposer a) f,
@@ -3074,16 +3219,20 @@ class $$PlayersTableTableManager
                 Value<String> name = const Value.absent(),
                 Value<String> avatarColor = const Value.absent(),
                 Value<String> initials = const Value.absent(),
+                Value<String?> avatarIcon = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PlayersCompanion(
                 id: id,
                 name: name,
                 avatarColor: avatarColor,
                 initials: initials,
+                avatarIcon: avatarIcon,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3092,16 +3241,20 @@ class $$PlayersTableTableManager
                 required String name,
                 required String avatarColor,
                 required String initials,
+                Value<String?> avatarIcon = const Value.absent(),
                 required DateTime createdAt,
                 required DateTime updatedAt,
+                Value<DateTime?> deletedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PlayersCompanion.insert(
                 id: id,
                 name: name,
                 avatarColor: avatarColor,
                 initials: initials,
+                avatarIcon: avatarIcon,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
+                deletedAt: deletedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

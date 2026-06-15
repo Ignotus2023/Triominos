@@ -16,6 +16,7 @@ class GlassContainer extends StatelessWidget {
     this.margin,
     this.onTap,
     this.glow = false,
+    this.enableBlur = true,
     this.width,
     this.height,
     super.key,
@@ -30,6 +31,11 @@ class GlassContainer extends StatelessWidget {
 
   /// Świecąca obwódka (np. dla aktywnego gracza).
   final bool glow;
+
+  /// Gdy `false`, powierzchnia renderuje się jako półprzezroczyste tło bez
+  /// [BackdropFilter]. Używaj dla gęstych list (np. historia rundy), gdzie
+  /// wiele jednoczesnych rozmyć kosztuje najwięcej (§audyt M-5).
+  final bool enableBlur;
   final double? width;
   final double? height;
 
@@ -39,34 +45,38 @@ class GlassContainer extends StatelessWidget {
     final borderRadius = radius ?? BorderRadius.circular(AppRadii.lg);
     final scheme = Theme.of(context).colorScheme;
 
+    final surface = Container(
+      width: width,
+      height: height,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: glass.glass,
+        borderRadius: borderRadius,
+        border: Border.all(
+          color: glow ? scheme.primary : glass.glassBorder,
+          width: glow ? 1.5 : 1,
+        ),
+        boxShadow: glow
+            ? [
+                BoxShadow(
+                  color: scheme.primary.withValues(alpha: 0.35),
+                  blurRadius: 24,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: child,
+    );
+
     Widget content = ClipRRect(
       borderRadius: borderRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          width: width,
-          height: height,
-          padding: padding,
-          decoration: BoxDecoration(
-            color: glass.glass,
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: glow ? scheme.primary : glass.glassBorder,
-              width: glow ? 1.5 : 1,
-            ),
-            boxShadow: glow
-                ? [
-                    BoxShadow(
-                      color: scheme.primary.withValues(alpha: 0.35),
-                      blurRadius: 24,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
-          ),
-          child: child,
-        ),
-      ),
+      child: enableBlur
+          ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: surface,
+            )
+          : surface,
     );
 
     if (onTap != null) {
@@ -78,9 +88,6 @@ class GlassContainer extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: margin ?? EdgeInsets.zero,
-      child: content,
-    );
+    return Padding(padding: margin ?? EdgeInsets.zero, child: content);
   }
 }

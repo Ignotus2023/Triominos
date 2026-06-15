@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/database/database_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
+import '../player_icons.dart';
 import '../players_providers.dart';
 
 class PlayersListPage extends ConsumerWidget {
@@ -29,7 +30,7 @@ class PlayersListPage extends ConsumerWidget {
       ),
       body: players.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => ErrorView(error: e),
         data: (list) {
           if (list.isEmpty) {
             return EmptyState(
@@ -46,14 +47,21 @@ class PlayersListPage extends ConsumerWidget {
                 onTap: () => _showPlayerDialog(context, ref, player: p),
                 child: Row(
                   children: [
-                    PlayerAvatar(initials: p.initials, colorHex: p.avatarColor),
+                    PlayerAvatar(
+                      initials: p.initials,
+                      colorHex: p.avatarColor,
+                      iconKey: p.avatarIcon,
+                    ),
                     const SizedBox(width: AppSpacing.x16),
                     Expanded(
                       child: Text(p.name, style: context.text.titleLarge),
                     ),
                     IconButton(
                       tooltip: l10n.commonDelete,
-                      icon: Icon(Icons.delete_outline, color: context.colors.error),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: context.colors.error,
+                      ),
                       onPressed: () => _confirmDelete(context, ref, p),
                     ),
                   ],
@@ -74,15 +82,6 @@ class PlayersListPage extends ConsumerWidget {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
 
-    // Profil z historią gier jest chroniony kluczem obcym; twarde usunięcie
-    // zniszczyłoby zapisane partie, więc takiego gracza nie kasujemy.
-    final played = await ref.read(gamesDaoProvider).countGamesForPlayer(player.id);
-    if (played > 0) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.playerDeleteBlocked)));
-      return;
-    }
-    if (!context.mounted) return;
-
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -99,8 +98,14 @@ class PlayersListPage extends ConsumerWidget {
         ],
       ),
     );
-    if (ok ?? false) {
+    if (!(ok ?? false)) return;
+
+    // Gracz z historią jest archiwizowany (soft-delete) w warstwie serwisu —
+    // historia gier pozostaje nienaruszona; gracz bez historii usuwany twardo.
+    try {
       await ref.read(playersServiceProvider).delete(player.id);
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError)));
     }
   }
 
@@ -114,11 +119,11 @@ class PlayersListPage extends ConsumerWidget {
       context: context,
       builder: (context) => _PlayerFormDialog(
         player: player,
-        onSubmit: (name, color) async {
+        onSubmit: (name, color, icon) async {
           if (player == null) {
-            await service.create(name, color);
+            await service.create(name, color, icon: icon);
           } else {
-            await service.update(player, name, color);
+            await service.update(player, name, color, icon: icon);
           }
         },
       ),
@@ -130,7 +135,7 @@ class _PlayerFormDialog extends StatefulWidget {
   const _PlayerFormDialog({required this.onSubmit, this.player});
 
   final Player? player;
-  final Future<void> Function(String name, String color) onSubmit;
+  final Future<void> Function(String name, String color, String? icon) onSubmit;
 
   @override
   State<_PlayerFormDialog> createState() => _PlayerFormDialogState();
@@ -140,12 +145,14 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
   late final TextEditingController _controller;
   final _formKey = GlobalKey<FormState>();
   late String _color;
+  late String? _icon;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.player?.name ?? '');
     _color = widget.player?.avatarColor ?? avatarPalette.first;
+    _icon = widget.player?.avatarIcon;
   }
 
   @override
@@ -156,7 +163,14 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await widget.onSubmit(_controller.text.trim(), _color);
+    final messenger = ScaffoldMessenger.of(context);
+    final errorText = context.l10n.commonError;
+    try {
+      await widget.onSubmit(_controller.text.trim(), _color, _icon);
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(errorText)));
+      return;
+    }
     if (mounted) Navigator.pop(context);
   }
 
@@ -184,6 +198,7 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
                   PlayerAvatar(
                     initials: initialsFor(_controller.text),
                     colorHex: _color,
+                    iconKey: _icon,
                     size: 48,
                   ),
                   const SizedBox(width: AppSpacing.x16),
@@ -232,6 +247,26 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
                     ),
                 ],
               ),
+              const SizedBox(height: AppSpacing.x16),
+              Text(l10n.playerIcon, style: context.text.labelLarge),
+              const SizedBox(height: AppSpacing.x12),
+              Wrap(
+                spacing: AppSpacing.x12,
+                runSpacing: AppSpacing.x12,
+                children: [
+                  _IconChoice(
+                    icon: Icons.text_fields,
+                    selected: _icon == null,
+                    onTap: () => setState(() => _icon = null),
+                  ),
+                  for (final entry in playerIconCatalog.entries)
+                    _IconChoice(
+                      icon: entry.value,
+                      selected: _icon == entry.key,
+                      onTap: () => setState(() => _icon = entry.key),
+                    ),
+                ],
+              ),
               const SizedBox(height: AppSpacing.x24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -241,7 +276,10 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
                     child: Text(l10n.commonCancel),
                   ),
                   const SizedBox(width: AppSpacing.x8),
-                  FilledButton(onPressed: _submit, child: Text(l10n.commonSave)),
+                  FilledButton(
+                    onPressed: _submit,
+                    child: Text(l10n.commonSave),
+                  ),
                 ],
               ),
             ],
@@ -293,5 +331,46 @@ class _ColorSwatch extends StatelessWidget {
   static Color _parseHex(String hex) {
     final value = hex.replaceFirst('#', '');
     return Color(int.tryParse('FF$value', radix: 16) ?? 0xFF6366F1);
+  }
+}
+
+class _IconChoice extends StatelessWidget {
+  const _IconChoice({
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: selected
+              ? context.colors.primary.withValues(alpha: 0.15)
+              : context.colors.onSurface.withValues(alpha: 0.05),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: selected ? context.colors.primary : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Icon(
+          icon,
+          size: 22,
+          color: selected
+              ? context.colors.primary
+              : context.colors.onSurfaceVariant,
+        ),
+      ),
+    );
   }
 }

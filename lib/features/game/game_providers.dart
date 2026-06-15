@@ -27,3 +27,20 @@ final roundMovesProvider = StreamProvider.family<List<MoveRow>, String>(
 final finishedGamesProvider = StreamProvider<List<Game>>(
   (ref) => ref.watch(gamesDaoProvider).watchFinishedGames(),
 );
+
+typedef RoundWithMoves = ({Round round, List<MoveRow> moves});
+typedef GameReplay = ({List<GamePlayer> seats, List<RoundWithMoves> rounds});
+
+/// Pełne dane zakończonej gry do odtworzenia w historii (read-only).
+final gameReplayProvider = FutureProvider.family<GameReplay, String>((
+  ref,
+  gameId,
+) async {
+  final dao = ref.watch(gamesDaoProvider);
+  final seats = await dao.getGamePlayers(gameId);
+  final rounds = await dao.getRounds(gameId);
+  final withMoves = <RoundWithMoves>[
+    for (final r in rounds) (round: r, moves: await dao.getMoves(r.id)),
+  ];
+  return (seats: seats, rounds: withMoves);
+});

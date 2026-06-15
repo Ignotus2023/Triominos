@@ -1,12 +1,16 @@
 {
   "@@locale": "es",
   "appTitle": "TriominoScore",
+  "settingsPrivacy": "Política de privacidad",
+  "privacyTitle": "Política de privacidad",
+  "privacyBody": "TriominoScore funciona 100 % sin conexión. La aplicación no recopila, envía ni comparte ningún dato: todo (jugadores, partidas, estadísticas) permanece solo en tu dispositivo. No usamos cuentas, anuncios ni analíticas. Puedes borrar todos los datos de forma permanente en cualquier momento en Ajustes → Restablecer datos.",
 
   "commonCancel": "Cancelar",
   "commonSave": "Guardar",
   "commonDelete": "Eliminar",
   "commonConfirm": "Confirmar",
   "commonClose": "Cerrar",
+  "commonError": "Algo salió mal",
   "commonStart": "Empezar",
   "commonAdd": "Añadir",
   "commonBack": "Atrás",
@@ -31,8 +35,8 @@
   "playerNew": "Nuevo jugador",
   "playerEdit": "Editar jugador",
   "playerColor": "Color",
+  "playerIcon": "Icono",
   "playerDeleteConfirm": "¿Eliminar este jugador? Su historial de partidas se conserva.",
-  "playerDeleteBlocked": "No se puede eliminar un jugador que ha participado en partidas.",
   "gameAbandon": "Abandonar partida",
   "gameAbandonConfirm": "¿Abandonar esta partida sin guardar el resultado?",
   "playerErrorNameEmpty": "Introduce un nombre",
@@ -105,7 +109,7 @@
   "statsEmpty": "Juega algunas partidas para ver estadísticas",
   "statsTotalGames": "Partidas jugadas",
   "statsBestScore": "Mejor puntuación",
-  "statsMostHexagons": "Más hexágonos en una partida",
+  "statsTotalHexagons": "Hexágonos en total",
 
   "rulesTitle": "Reglas",
 

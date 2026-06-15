@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../game/game_providers.dart';
 
@@ -22,7 +25,7 @@ class HistoryPage extends ConsumerWidget {
       title: l10n.historyTitle,
       body: games.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => ErrorView(error: e),
         data: (list) {
           if (list.isEmpty) {
             return EmptyState(icon: Icons.history, message: l10n.historyEmpty);
@@ -52,6 +55,10 @@ class _GameHistoryTile extends ConsumerWidget {
     final winner = seats.where((s) => s.playerId == game.winnerId).firstOrNull;
 
     return GlassContainer(
+      onTap: () => context.pushNamed(
+        AppRoutes.historyDetail,
+        pathParameters: {'id': game.id},
+      ),
       child: Row(
         children: [
           Icon(Icons.emoji_events, color: context.colors.primary),
@@ -72,11 +79,12 @@ class _GameHistoryTile extends ConsumerWidget {
               ],
             ),
           ),
-          Text(
-            '${seats.length}',
-            style: context.text.bodyMedium,
+          Text('${seats.length}', style: context.text.bodyMedium),
+          Icon(
+            Icons.group_outlined,
+            size: 16,
+            color: context.text.bodyMedium?.color,
           ),
-          Icon(Icons.group_outlined, size: 16, color: context.text.bodyMedium?.color),
         ],
       ),
     );

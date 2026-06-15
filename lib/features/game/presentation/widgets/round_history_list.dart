@@ -11,12 +11,16 @@ class RoundHistoryList extends StatelessWidget {
     required this.moves,
     required this.seats,
     required this.onUndoLast,
+    this.onEditMove,
     super.key,
   });
 
   final List<MoveRow> moves;
   final List<GamePlayer> seats;
   final VoidCallback onUndoLast;
+
+  /// Wywoływane przy long-press na zagraniu (edycja narożników/bonusów).
+  final void Function(MoveRow move)? onEditMove;
 
   String _nameOf(String playerId) {
     for (final s in seats) {
@@ -45,6 +49,10 @@ class RoundHistoryList extends StatelessWidget {
               name: _nameOf(reversed[i].playerId),
               canUndo: i == 0,
               onUndo: onUndoLast,
+              onEdit:
+                  onEditMove != null && reversed[i].moveType == MoveType.play
+                  ? () => onEditMove!(reversed[i])
+                  : null,
             ),
           ),
       ],
@@ -58,63 +66,70 @@ class _MoveTile extends StatelessWidget {
     required this.name,
     required this.canUndo,
     required this.onUndo,
+    this.onEdit,
   });
 
   final MoveRow move;
   final String name;
   final bool canUndo;
   final VoidCallback onUndo;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
     final total = move.baseScore + move.bonusScore;
-    final hasBonus = move.bonusScore != 0 &&
-        (move.isTriplet || move.isBridge || move.isHexagon || move.isDoubleHexagon);
+    final hasBonus =
+        move.bonusScore != 0 &&
+        (move.isTriplet ||
+            move.isBridge ||
+            move.isHexagon ||
+            move.isDoubleHexagon);
     final positive = total >= 0;
 
-    return GlassContainer(
-      margin: const EdgeInsets.only(bottom: AppSpacing.x8),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.x16,
-        vertical: AppSpacing.x12,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: '$name  ',
-                    style: context.text.bodyLarge,
-                  ),
-                  TextSpan(
-                    text: _describe(context),
-                    style: context.text.bodyMedium,
-                  ),
-                ],
+    return GestureDetector(
+      onLongPress: onEdit,
+      child: GlassContainer(
+        enableBlur: false,
+        margin: const EdgeInsets.only(bottom: AppSpacing.x8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x16,
+          vertical: AppSpacing.x12,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: '$name  ', style: context.text.bodyLarge),
+                    TextSpan(
+                      text: _describe(context),
+                      style: context.text.bodyMedium,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (hasBonus)
-            const Padding(
-              padding: EdgeInsets.only(right: AppSpacing.x8),
-              child: Icon(Icons.auto_awesome, size: 16, color: Colors.amber),
+            if (hasBonus)
+              const Padding(
+                padding: EdgeInsets.only(right: AppSpacing.x8),
+                child: Icon(Icons.auto_awesome, size: 16, color: Colors.amber),
+              ),
+            Text(
+              '${positive ? '+' : ''}$total',
+              style: context.text.titleLarge?.copyWith(
+                color: positive ? context.colors.primary : context.colors.error,
+              ),
             ),
-          Text(
-            '${positive ? '+' : ''}$total',
-            style: context.text.titleLarge?.copyWith(
-              color: positive ? context.colors.primary : context.colors.error,
-            ),
-          ),
-          if (canUndo)
-            IconButton(
-              tooltip: context.l10n.gameUndoLast,
-              visualDensity: VisualDensity.compact,
-              icon: const Icon(Icons.undo, size: 18),
-              onPressed: onUndo,
-            ),
-        ],
+            if (canUndo)
+              IconButton(
+                tooltip: context.l10n.gameUndoLast,
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.undo, size: 18),
+                onPressed: onUndo,
+              ),
+          ],
+        ),
       ),
     );
   }

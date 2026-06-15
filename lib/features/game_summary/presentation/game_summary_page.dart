@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,21 +15,44 @@ import '../../../shared/widgets/primary_button.dart';
 import '../../game/game_providers.dart';
 import '../../players/players_providers.dart';
 
-class GameSummaryPage extends ConsumerWidget {
+class GameSummaryPage extends ConsumerStatefulWidget {
   const GameSummaryPage({required this.gameId, super.key});
 
   final String gameId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GameSummaryPage> createState() => _GameSummaryPageState();
+}
+
+class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
+  late final ConfettiController _confetti;
+
+  @override
+  void initState() {
+    super.initState();
+    _confetti = ConfettiController(duration: const Duration(seconds: 2));
+    _confetti.play();
+  }
+
+  @override
+  void dispose() {
+    _confetti.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final game = ref.watch(gameProvider(gameId)).value;
+    final game = ref.watch(gameProvider(widget.gameId)).value;
     final colors = ref.watch(playerColorsProvider);
-    final seats = [...?ref.watch(gamePlayersProvider(gameId)).value]
+    final icons = ref.watch(playerIconsProvider);
+    final seats = [...?ref.watch(gamePlayersProvider(widget.gameId)).value]
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
     if (game == null || seats.isEmpty) {
-      return const AppScaffold(body: Center(child: CircularProgressIndicator()));
+      return const AppScaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     final winner = seats.first;
@@ -60,50 +84,80 @@ class GameSummaryPage extends ConsumerWidget {
           ),
         ),
       ),
-      body: ListView(
+      body: Stack(
         children: [
-          const SizedBox(height: AppSpacing.x32),
-          Center(
-            child: Column(
-              children: [
-                const Text('🏆', style: TextStyle(fontSize: 64))
-                    .animate()
-                    .scale(duration: 400.ms, curve: Curves.elasticOut),
-                const SizedBox(height: AppSpacing.x16),
-                Text(
-                  l10n.summaryWinner(winner.displayNameSnapshot),
-                  style: context.text.headlineLarge,
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(delay: 200.ms),
-                const SizedBox(height: AppSpacing.x4),
-                Text(
-                  l10n.scoreUnit(winner.totalScore),
-                  style: context.text.displayMedium
-                      ?.copyWith(color: context.colors.primary),
-                ).animate().fadeIn(delay: 300.ms),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.x32),
-          Text(l10n.summaryScoreboard, style: context.text.titleLarge),
-          const SizedBox(height: AppSpacing.x12),
-          for (var i = 0; i < seats.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.x8),
-              child: _ScoreboardRow(
-                seat: seats[i],
-                position: i,
-                colorHex: colors[seats[i].playerId] ??
-                    avatarColorFor(seats[i].displayNameSnapshot),
+          ListView(
+            children: [
+              const SizedBox(height: AppSpacing.x32),
+              Center(
+                child: Column(
+                  children: [
+                    const Text('🏆', style: TextStyle(fontSize: 64))
+                        .animate()
+                        .scale(duration: 400.ms, curve: Curves.elasticOut),
+                    const SizedBox(height: AppSpacing.x16),
+                    Text(
+                      l10n.summaryWinner(winner.displayNameSnapshot),
+                      style: context.text.headlineLarge,
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 200.ms),
+                    const SizedBox(height: AppSpacing.x4),
+                    Text(
+                      l10n.scoreUnit(winner.totalScore),
+                      style: context.text.displayMedium?.copyWith(
+                        color: context.colors.primary,
+                      ),
+                    ).animate().fadeIn(delay: 300.ms),
+                  ],
+                ),
               ),
-            ),
-          const SizedBox(height: AppSpacing.x16),
-          GlassContainer(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(l10n.summaryRoundsPlayed, style: context.text.bodyLarge),
-                Text('${game.currentRound}', style: context.text.titleLarge),
+              const SizedBox(height: AppSpacing.x32),
+              Text(l10n.summaryScoreboard, style: context.text.titleLarge),
+              const SizedBox(height: AppSpacing.x12),
+              for (var i = 0; i < seats.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.x8),
+                  child: _ScoreboardRow(
+                    seat: seats[i],
+                    position: i,
+                    colorHex:
+                        colors[seats[i].playerId] ??
+                        avatarColorFor(seats[i].displayNameSnapshot),
+                    iconKey: icons[seats[i].playerId],
+                  ),
+                ),
+              const SizedBox(height: AppSpacing.x16),
+              GlassContainer(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      l10n.summaryRoundsPlayed,
+                      style: context.text.bodyLarge,
+                    ),
+                    Text(
+                      '${game.currentRound}',
+                      style: context.text.titleLarge,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confetti,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              emissionFrequency: 0.05,
+              numberOfParticles: 18,
+              gravity: 0.25,
+              colors: [
+                context.colors.primary,
+                context.colors.secondary,
+                context.colors.tertiary,
+                Colors.amber,
               ],
             ),
           ),
@@ -118,16 +172,20 @@ class _ScoreboardRow extends StatelessWidget {
     required this.seat,
     required this.position,
     required this.colorHex,
+    this.iconKey,
   });
 
   final GamePlayer seat;
   final int position;
   final String colorHex;
+  final String? iconKey;
 
   @override
   Widget build(BuildContext context) {
     const medals = ['🥇', '🥈', '🥉'];
-    final badge = position < medals.length ? medals[position] : '${position + 1}';
+    final badge = position < medals.length
+        ? medals[position]
+        : '${position + 1}';
 
     return GlassContainer(
       glow: position == 0,
@@ -145,10 +203,14 @@ class _ScoreboardRow extends StatelessWidget {
           PlayerAvatar(
             initials: initialsFor(seat.displayNameSnapshot),
             colorHex: colorHex,
+            iconKey: iconKey,
           ),
           const SizedBox(width: AppSpacing.x16),
           Expanded(
-            child: Text(seat.displayNameSnapshot, style: context.text.titleLarge),
+            child: Text(
+              seat.displayNameSnapshot,
+              style: context.text.titleLarge,
+            ),
           ),
           Text(
             context.l10n.scoreUnit(seat.totalScore),

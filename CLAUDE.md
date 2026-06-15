@@ -88,7 +88,7 @@ Pozostałe płytki tworzą **pulę dobierania (boneyard)**.
 
 ### 2.3 Pierwszy ruch
 
-Pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejność preferencji:
+Przy stole pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejność preferencji (zasada gry):
 
 1. (5,5,5) → start + **+10 premii za triplet** + **+10 bonusu startowego** = **+25 pkt** (15 + 10)
 2. (4,4,4) → +12 + 10 + 10 = **+32 pkt**
@@ -96,6 +96,8 @@ Pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejno�
 4. Jeśli nikt nie ma tripleta → startuje gracz z **najwyższą sumą narożników** dowolnej płytki, dostaje **+10 bonusu startowego**.
 
 > **Uwaga:** w literaturze istnieją drobne warianty (np. Goliath: 10 pkt bonusu, Pressman: brak osobnego bonusu, tylko premia za triplet). MVP implementuje wariant Goliath — wartości bonusów są **konfigurowalne** w `lib/core/game/scoring_rules.dart` aby łatwo dostosować do warianów lokalnych.
+
+> **Implementacja (decyzja produktowa).** TriominoScore jest pomocnikiem do liczenia punktów i **nie zna płytek w rękach graczy**, więc nie wyłania startera automatycznie wg najwyższego tripletu — wymagałoby to wpisywania wszystkich płytek startowych (sprzeczne z filozofią Smart Input). Zamiast tego **starterem pierwszej rundy jest gracz na 1. miejscu** ustawionej w ekranie setupu kolejności tury (sekcja „Kolejność", drag-to-reorder — `game_setup_page.dart`). Gracze fizycznie ustalają, kto ma najwyższy triplet, i przeciągają go na górę listy. Prawo pierwszego ruchu **rotuje** między rundami (`GameController._nextStarterId`). Bonus startowy (`+10`) naliczany jest pierwszemu ruchowi gry. *Poprzednia, nieużywana klasa `StarterResolver` (auto-detekcja po płytkach) została usunięta jako martwy kod — patrz audyt 2026-06-15, H-3.*
 
 ### 2.4 Przebieg tury
 
@@ -179,14 +181,15 @@ Ustalenia z fazy odkrywania:
 
 | Kategoria             | Pakiet                              | Uzasadnienie                                           |
 | --------------------- | ----------------------------------- | ------------------------------------------------------ |
-| State management      | `flutter_riverpod` + `riverpod_generator` | Typowane, async-first, code-gen, branżowy standard |
+| State management      | `flutter_riverpod` (providery ręczne, bez code-genu) | Typowane, async-first; patrz §5.2 (decyzja M-7) |
 | Routing               | `go_router`                         | Oficjalny pakiet Flutter team, deep-link friendly      |
 | Baza danych           | `drift` (+ `drift_dev`)             | SQLite ORM, type-safe queries, code-gen                |
 | Settings              | `shared_preferences`                | Standard dla key-value preferences                     |
 | i18n                  | `flutter_localizations` + `intl`    | Oficjalne narzędzia ARB                                |
-| Dane / modele         | `freezed` + `json_serializable`     | Immutable models, copyWith, equals, JSON               |
+| Dane / modele         | Ręczne, niemutowalne klasy (`copyWith`) | Bez `freezed` przy obecnej skali (decyzja M-7)     |
 | ID generation         | `uuid`                              | UUID v4 dla encji                                      |
-| Audio                 | `just_audio`                        | Niezawodne odtwarzanie krótkich sampli                 |
+| Audio                 | `just_audio` (planowane)            | Niezaimplementowane w MVP — wymaga sampli `.mp3` (M-8) |
+| Konfetti              | `confetti`                          | Efekt przy wygranej (ekran podsumowania)               |
 | Haptics               | `vibration` lub `flutter/services`  | HapticFeedback z `flutter/services` jest wbudowane     |
 | Animacje              | `flutter_animate`                   | Deklaratywne, eleganckie API                           |
 | Glassmorphism         | `BackdropFilter` (wbudowane)        | Natywne, performance OK                                |
@@ -224,12 +227,13 @@ features/<feature>/
 
 ### 5.2 Zarządzanie stanem
 
-**Riverpod 2.x** z code-gen (`@riverpod`):
+**Riverpod 3.x** — providery pisane **ręcznie** (bez `riverpod_generator`/`@riverpod`):
 
-- **AsyncNotifierProvider** dla danych z bazy (gracze, gry, statystyki)
-- **NotifierProvider** dla stanu UI (current game, current round)
-- **Provider** dla services (DB, audio, haptics, settings)
-- **FutureProvider** / **StreamProvider** dla async lookupów
+- **StreamProvider / FutureProvider (+ `.family`)** dla danych z bazy (gracze, gry, rundy, ruchy, statystyki) — w połączeniu ze strumieniami drift
+- **Provider** dla serwisów i kontrolerów (DB, haptics, settings, `GameController`, `PlayersService`)
+- **NotifierProvider** dla stanu UI tam, gdzie potrzebny
+
+> **Decyzja (audyt 2026-06-15, M-7).** Świadomie **nie używamy** code-genu Riverpod (`@riverpod`) ani `freezed`. Przy obecnej skali ręczne providery i ręczne `copyWith` (np. `Move`, `AppSettings`) są w pełni czytelne, redukują liczbę kroków code-genu (mamy już `drift_dev` + `gen-l10n`) i nie wprowadzają realnego ryzyka. Drift pozostaje jedynym generatorem kodu domenowego.
 
 ### 5.3 Dependency Injection
 
@@ -674,6 +678,8 @@ W bottom sheet, w dolnej części, **collapsible section "Inne akcje"**:
 - **Edycja dowolnego ruchu** — long-press na ruch w historii → otwiera Smart Input z istniejącymi danymi
 - Edycja **przelicza totalScore** wszystkich graczy automatycznie (transakcja DB)
 
+> **Stan implementacji (decyzja produktowa).** Jako pomocnik do liczenia (a nie cyfrowa gra), aplikacja **nie wymusza twardych limitów** dobierania (`ScoringRules.maxDraws` jest wartością konfiguracyjną/referencyjną, nie egzekwowaną) — gracz przy stole stosuje zasady, a aplikacja rejestruje wynik. Undo działa jako **wielokrotne cofanie ostatniego ruchu** (poprawianie pomyłek), bez sztywnego limitu „3 wstecz"; nieużywana stała `AppConstants.maxUndoDepth` została usunięta (audyt 2026-06-15, A6). **Edycja zagrania long-pressem jest zaimplementowana** (audyt 2026-06-15, Sprint 4): przytrzymanie ruchu typu „play" w historii rundy otwiera Smart Input z istniejącymi danymi; zatwierdzenie wywołuje `GameController.editPlay` → `GamesDao.updateMove`, który koryguje `totalScore` gracza o różnicę w transakcji. Sztywny limit „3 wstecz" pozostaje świadomie pominięty.
+
 ---
 
 ## 9. System bonusów i kar
@@ -1048,9 +1054,9 @@ Wyciszane przez `prefs.hapticsEnabled`.
 
 ### 14.1 Style guide
 
-- **Lints:** `very_good_analysis` (rygorystyczne, Apache-style)
-- **Formatter:** `dart format` (line length 100)
-- **Pre-commit hook:** `dart format --set-exit-if-changed .` + `flutter analyze`
+- **Lints:** `flutter_lints` (pakiet `flutter_lints`, plik `analysis_options.yaml`). *Decyzja (audyt 2026-06-15, M-7): pozostajemy przy `flutter_lints` zamiast `very_good_analysis` — analiza jest czysta (`flutter analyze` bez uwag), a `very_good_analysis` wymusiłby m.in. dokumentację publicznego API, co przy aplikacji (nie bibliotece) daje głównie szum. Do rozważenia ponownie, jeśli projekt urośnie.*
+- **Formatter:** `dart format` (line length 80, domyślny dla Dart 3) — egzekwowany w CI (`dart format --set-exit-if-changed .`)
+- **CI:** `.github/workflows/ci.yml` — `gen-l10n` + `build_runner` (z bramką aktualności) → `dart format` → `flutter analyze` → `flutter test`
 
 ### 14.2 Nazewnictwo
 

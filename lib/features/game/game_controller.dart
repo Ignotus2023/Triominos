@@ -19,7 +19,7 @@ class GameController {
     required String playerId,
     required Move move,
   }) async {
-    final index = (await _dao.getMoves(round.id)).length;
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
@@ -52,9 +52,10 @@ class GameController {
     required MoveType type,
   }) async {
     assert(type == MoveType.drawPenalty || type == MoveType.passPenalty);
-    final move =
-        type == MoveType.drawPenalty ? Move.drawPenalty() : Move.passPenalty();
-    final index = (await _dao.getMoves(round.id)).length;
+    final move = type == MoveType.drawPenalty
+        ? Move.drawPenalty()
+        : Move.passPenalty();
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
@@ -79,7 +80,7 @@ class GameController {
     required int opponentsHandSum,
   }) async {
     final move = Move.endOfHand(opponentsHandSum: opponentsHandSum);
-    final index = (await _dao.getMoves(round.id)).length;
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: finisherId,
@@ -102,6 +103,33 @@ class GameController {
   Future<void> undo({required Game game, required Round round}) =>
       _dao.undoLastMove(roundId: round.id, gameId: game.id);
 
+  /// Edytuje istniejące zagranie (poprawa narożników/bonusów) i przelicza
+  /// punkty gracza o różnicę między nową a starą wartością ruchu.
+  Future<void> editPlay({
+    required Game game,
+    required MoveRow original,
+    required Move move,
+  }) async {
+    final oldTotal = original.baseScore + original.bonusScore;
+    await _dao.updateMove(
+      moveId: original.id,
+      gameId: game.id,
+      playerId: original.playerId,
+      delta: move.totalScore - oldTotal,
+      updated: MovesCompanion(
+        corner1: Value(move.corner1),
+        corner2: Value(move.corner2),
+        corner3: Value(move.corner3),
+        baseScore: Value(move.baseScore),
+        bonusScore: Value(move.bonusScore),
+        isTriplet: Value(move.isTriplet),
+        isBridge: Value(move.isBridge),
+        isHexagon: Value(move.isHexagon),
+        isDoubleHexagon: Value(move.isDoubleHexagon),
+      ),
+    );
+  }
+
   /// Ręczne zakończenie gry (tryb dowolny lub przerwanie przez użytkownika).
   Future<void> finishNow(Game game) async {
     final seats = await _dao.getGamePlayers(game.id);
@@ -117,11 +145,15 @@ class GameController {
     // Tylko tryb "liczba rund" kończy grę automatycznie. W trybie "limit
     // punktów" gracz kończy grę ręcznie (po osiągnięciu progu pojawia się
     // opcja zakończenia), dzięki czemu można dograć rundę do końca.
-    final shouldFinish = game.endMode == EndMode.rounds &&
+    final shouldFinish =
+        game.endMode == EndMode.rounds &&
         round.roundNumber >= (game.totalRounds ?? 1);
 
     if (shouldFinish) {
-      await _dao.finishGame(gameId: game.id, winnerId: _highest(seats).playerId);
+      await _dao.finishGame(
+        gameId: game.id,
+        winnerId: _highest(seats).playerId,
+      );
     } else {
       final next = round.roundNumber + 1;
       await _dao.startNextRound(
@@ -151,5 +183,6 @@ class GameController {
       seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
 }
 
-final gameControllerProvider =
-    Provider<GameController>((ref) => GameController(ref.watch(gamesDaoProvider)));
+final gameControllerProvider = Provider<GameController>(
+  (ref) => GameController(ref.watch(gamesDaoProvider)),
+);

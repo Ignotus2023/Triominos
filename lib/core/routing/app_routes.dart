@@ -21,6 +21,9 @@ abstract class AppRoutes {
   static const history = 'history';
   static const historyPath = '/history';
 
+  static const historyDetail = 'historyDetail';
+  static const historyDetailPath = '/history/:id';
+
   static const statistics = 'statistics';
   static const statisticsPath = '/statistics';
 
@@ -29,6 +32,9 @@ abstract class AppRoutes {
 
   static const settings = 'settings';
   static const settingsPath = '/settings';
+
+  static const privacy = 'privacy';
+  static const privacyPath = '/privacy';
 
   static String gameLocation(String id) => '/game/$id';
   static String gameSummaryLocation(String id) => '/game/$id/summary';

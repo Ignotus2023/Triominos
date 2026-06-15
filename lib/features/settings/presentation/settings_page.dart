@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
@@ -67,7 +69,10 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(l10n.settingsLanguage, style: context.text.titleLarge),
+                  child: Text(
+                    l10n.settingsLanguage,
+                    style: context.text.titleLarge,
+                  ),
                 ),
                 DropdownButton<String>(
                   value: settings.locale?.languageCode ?? 'system',
@@ -77,12 +82,30 @@ class SettingsPage extends ConsumerWidget {
                       value: 'system',
                       child: Text(l10n.settingsThemeSystem),
                     ),
-                    DropdownMenuItem(value: 'pl', child: Text(l10n.languagePolish)),
-                    DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
-                    DropdownMenuItem(value: 'de', child: Text(l10n.languageGerman)),
-                    DropdownMenuItem(value: 'fr', child: Text(l10n.languageFrench)),
-                    DropdownMenuItem(value: 'es', child: Text(l10n.languageSpanish)),
-                    DropdownMenuItem(value: 'it', child: Text(l10n.languageItalian)),
+                    DropdownMenuItem(
+                      value: 'pl',
+                      child: Text(l10n.languagePolish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text(l10n.languageEnglish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'de',
+                      child: Text(l10n.languageGerman),
+                    ),
+                    DropdownMenuItem(
+                      value: 'fr',
+                      child: Text(l10n.languageFrench),
+                    ),
+                    DropdownMenuItem(
+                      value: 'es',
+                      child: Text(l10n.languageSpanish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'it',
+                      child: Text(l10n.languageItalian),
+                    ),
                   ],
                   onChanged: (code) => notifier.setLocale(
                     code == null || code == 'system' ? null : Locale(code),
@@ -125,7 +148,8 @@ class SettingsPage extends ConsumerWidget {
                   value: settings.defaultScoreLimit.toDouble(),
                   min: AppConstants.minScoreLimit.toDouble(),
                   max: AppConstants.maxScoreLimit.toDouble(),
-                  divisions: (AppConstants.maxScoreLimit -
+                  divisions:
+                      (AppConstants.maxScoreLimit -
                           AppConstants.minScoreLimit) ~/
                       AppConstants.scoreLimitStep,
                   label: '${settings.defaultScoreLimit}',
@@ -141,10 +165,21 @@ class SettingsPage extends ConsumerWidget {
               children: [
                 Text(l10n.settingsAbout, style: context.text.titleLarge),
                 const SizedBox(height: AppSpacing.x8),
-                Text(l10n.settingsVersion('1.0.0'), style: context.text.bodyMedium),
-                const SizedBox(height: AppSpacing.x16),
+                Text(
+                  l10n.settingsVersion('1.0.0'),
+                  style: context.text.bodyMedium,
+                ),
+                const SizedBox(height: AppSpacing.x8),
                 TextButton.icon(
-                  style: TextButton.styleFrom(foregroundColor: context.colors.error),
+                  icon: const Icon(Icons.lock_outline),
+                  label: Text(l10n.settingsPrivacy),
+                  onPressed: () => context.pushNamed(AppRoutes.privacy),
+                ),
+                const SizedBox(height: AppSpacing.x8),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.colors.error,
+                  ),
                   icon: const Icon(Icons.delete_forever_outlined),
                   label: Text(l10n.settingsResetData),
                   onPressed: () => _confirmReset(context, ref),
@@ -159,6 +194,7 @@ class SettingsPage extends ConsumerWidget {
 
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -175,8 +211,11 @@ class SettingsPage extends ConsumerWidget {
         ],
       ),
     );
-    if (ok ?? false) {
+    if (!(ok ?? false)) return;
+    try {
       await ref.read(databaseProvider).resetAllData();
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError)));
     }
   }
 }

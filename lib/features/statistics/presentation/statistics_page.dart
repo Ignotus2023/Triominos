@@ -35,7 +35,7 @@ class StatisticsPage extends ConsumerWidget {
           const SizedBox(height: AppSpacing.x12),
           _StatCard(
             icon: Icons.hexagon_outlined,
-            label: l10n.statsMostHexagons,
+            label: l10n.statsTotalHexagons,
             value: '$hexagons',
           ),
         ],

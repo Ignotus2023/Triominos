@@ -12,6 +12,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get settingsPrivacy => 'Informativa sulla privacy';
+
+  @override
+  String get privacyTitle => 'Informativa sulla privacy';
+
+  @override
+  String get privacyBody =>
+      'TriominoScore funziona al 100% offline. L\'app non raccoglie, invia né condivide alcun dato: tutto (giocatori, partite, statistiche) resta solo sul tuo dispositivo. Nessun account, nessuna pubblicità, nessuna analisi. Puoi cancellare definitivamente tutti i dati in qualsiasi momento in Impostazioni → Reimposta dati.';
+
+  @override
   String get commonCancel => 'Annulla';
 
   @override
@@ -25,6 +35,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get commonClose => 'Chiudi';
+
+  @override
+  String get commonError => 'Qualcosa è andato storto';
 
   @override
   String get commonStart => 'Inizia';
@@ -92,12 +105,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get playerColor => 'Colore';
 
   @override
-  String get playerDeleteConfirm =>
-      'Eliminare questo giocatore? La cronologia delle partite resta intatta.';
+  String get playerIcon => 'Icona';
 
   @override
-  String get playerDeleteBlocked =>
-      'Impossibile eliminare un giocatore che ha partecipato a partite.';
+  String get playerDeleteConfirm =>
+      'Eliminare questo giocatore? La cronologia delle partite resta intatta.';
 
   @override
   String get gameAbandon => 'Abbandona partita';
@@ -325,7 +337,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get statsBestScore => 'Miglior punteggio';
 
   @override
-  String get statsMostHexagons => 'Più esagoni in una partita';
+  String get statsTotalHexagons => 'Esagoni in totale';
 
   @override
   String get rulesTitle => 'Regole';

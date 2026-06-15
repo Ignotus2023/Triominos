@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Kółko z inicjałami gracza w jego kolorze (§ shared widgets).
+import '../../features/players/player_icons.dart';
+
+/// Kółko z ikoną lub inicjałami gracza w jego kolorze (§ shared widgets).
 class PlayerAvatar extends StatelessWidget {
   const PlayerAvatar({
     required this.initials,
     required this.colorHex,
+    this.iconKey,
     this.size = 40,
     this.active = false,
     super.key,
@@ -12,12 +15,16 @@ class PlayerAvatar extends StatelessWidget {
 
   final String initials;
   final String colorHex;
+
+  /// Klucz ikony z `playerIconCatalog`; gdy null, pokazywane są inicjały.
+  final String? iconKey;
   final double size;
   final bool active;
 
   @override
   Widget build(BuildContext context) {
     final color = _parseHex(colorHex);
+    final icon = playerIconFor(iconKey);
     return Container(
       width: size,
       height: size,
@@ -39,14 +46,16 @@ class PlayerAvatar extends StatelessWidget {
         ],
       ),
       alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: size * 0.38,
-        ),
-      ),
+      child: icon != null
+          ? Icon(icon, color: Colors.white, size: size * 0.55)
+          : Text(
+              initials,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: size * 0.38,
+              ),
+            ),
     );
   }
 

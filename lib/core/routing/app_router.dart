@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import '../../features/game/presentation/game_page.dart';
 import '../../features/game_setup/presentation/game_setup_page.dart';
 import '../../features/game_summary/presentation/game_summary_page.dart';
+import '../../features/history/presentation/history_detail_page.dart';
 import '../../features/history/presentation/history_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/players/presentation/players_list_page.dart';
 import '../../features/rules/presentation/rules_page.dart';
+import '../../features/settings/presentation/privacy_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/statistics/presentation/statistics_page.dart';
 import '../settings/settings_provider.dart';
@@ -44,8 +46,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.gameSetupPath,
         name: AppRoutes.gameSetup,
         builder: (context, state) => GameSetupPage(
-          initialPlayerIds:
-              state.extra is List<String> ? state.extra! as List<String> : null,
+          initialPlayerIds: state.extra is List<String>
+              ? state.extra! as List<String>
+              : null,
         ),
       ),
       GoRoute(
@@ -66,6 +69,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const HistoryPage(),
       ),
       GoRoute(
+        path: AppRoutes.historyDetailPath,
+        name: AppRoutes.historyDetail,
+        builder: (context, state) =>
+            HistoryDetailPage(gameId: state.pathParameters['id']!),
+      ),
+      GoRoute(
         path: AppRoutes.statisticsPath,
         name: AppRoutes.statistics,
         builder: (context, state) => const StatisticsPage(),
@@ -79,6 +88,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.settingsPath,
         name: AppRoutes.settings,
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.privacyPath,
+        name: AppRoutes.privacy,
+        builder: (context, state) => const PrivacyPage(),
       ),
     ],
   );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/game/move.dart';
 import '../../../../core/game/scoring_rules.dart';
@@ -20,6 +21,7 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.playerName,
     required this.moveNumber,
     required this.isStarterMove,
+    this.editMove,
     super.key,
   });
 
@@ -29,6 +31,9 @@ class SmartInputSheet extends ConsumerStatefulWidget {
   final String playerName;
   final int moveNumber;
   final bool isStarterMove;
+
+  /// Gdy ustawione, sheet edytuje istniejący ruch (a nie dodaje nowy).
+  final MoveRow? editMove;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -44,6 +49,22 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   bool _endHandMode = false;
   final _handSumController = TextEditingController();
 
+  bool get _isEditing => widget.editMove != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final edit = widget.editMove;
+    if (edit != null) {
+      _c1 = edit.corner1;
+      _c2 = edit.corner2;
+      _c3 = edit.corner3;
+      _bridge = edit.isBridge;
+      _hexagon = edit.isHexagon;
+      _doubleHex = edit.isDoubleHexagon;
+    }
+  }
+
   bool get _complete => _c1 != null && _c2 != null && _c3 != null;
 
   Move? get _previewMove => _complete
@@ -54,7 +75,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
           isBridge: _bridge,
           isHexagon: _hexagon,
           isDoubleHexagon: _doubleHex,
-          isStarter: widget.isStarterMove,
+          isStarter: widget.editMove?.isStarter ?? widget.isStarterMove,
         )
       : null;
 
@@ -81,7 +102,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.inputTitle(widget.playerName), style: context.text.titleLarge),
+              Text(
+                l10n.inputTitle(widget.playerName),
+                style: context.text.titleLarge,
+              ),
               Text(
                 l10n.inputContext(widget.round.roundNumber, widget.moveNumber),
                 style: context.text.bodyMedium,
@@ -105,8 +129,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                   icon: Icons.check,
                   onPressed: _complete ? _confirmPlay : null,
                 ),
-                const SizedBox(height: AppSpacing.x12),
-                _buildOtherActions(context),
+                if (!_isEditing) ...[
+                  const SizedBox(height: AppSpacing.x12),
+                  _buildOtherActions(context),
+                ],
               ] else
                 _buildEndHand(context),
             ],
@@ -176,18 +202,17 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
         _summaryRow(context, l10n.inputBase, '$base'),
         if (bonus != 0) _summaryRow(context, l10n.inputBonusLine, '+$bonus'),
         const Divider(),
-        _summaryRow(
-          context,
-          l10n.inputTotal,
-          '$total',
-          emphasize: true,
-        ),
+        _summaryRow(context, l10n.inputTotal, '$total', emphasize: true),
       ],
     );
   }
 
-  Widget _summaryRow(BuildContext context, String label, String value,
-      {bool emphasize = false}) {
+  Widget _summaryRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool emphasize = false,
+  }) {
     final style = emphasize
         ? context.text.headlineSmall?.copyWith(color: context.colors.primary)
         : context.text.bodyLarge;
@@ -195,7 +220,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label, style: style), Text(value, style: style)],
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
       ),
     );
   }
@@ -280,18 +308,26 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     final move = _previewMove;
     if (move == null) return;
     ref.read(hapticsProvider).medium();
-    await ref.read(gameControllerProvider).addPlay(
-          game: widget.game,
-          round: widget.round,
-          playerId: widget.playerId,
-          move: move,
-        );
+    final controller = ref.read(gameControllerProvider);
+    final edit = widget.editMove;
+    if (edit != null) {
+      await controller.editPlay(game: widget.game, original: edit, move: move);
+    } else {
+      await controller.addPlay(
+        game: widget.game,
+        round: widget.round,
+        playerId: widget.playerId,
+        move: move,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 
   Future<void> _confirmPenalty(MoveType type) async {
     ref.read(hapticsProvider).light();
-    await ref.read(gameControllerProvider).addPenalty(
+    await ref
+        .read(gameControllerProvider)
+        .addPenalty(
           game: widget.game,
           round: widget.round,
           playerId: widget.playerId,
@@ -302,9 +338,11 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Future<void> _confirmEndHand() async {
     final parsed = int.tryParse(_handSumController.text.trim()) ?? 0;
-    final sum = parsed < 0 ? 0 : parsed;
+    final sum = parsed.clamp(0, AppConstants.maxOpponentsHandSum);
     ref.read(hapticsProvider).medium();
-    await ref.read(gameControllerProvider).endHand(
+    await ref
+        .read(gameControllerProvider)
+        .endHand(
           game: widget.game,
           round: widget.round,
           finisherId: widget.playerId,

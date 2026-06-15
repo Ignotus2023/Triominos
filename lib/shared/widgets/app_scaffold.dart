@@ -46,10 +46,7 @@ class AppScaffold extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark
-                ? [
-                    scheme.surface,
-                    Theme.of(context).scaffoldBackgroundColor,
-                  ]
+                ? [scheme.surface, Theme.of(context).scaffoldBackgroundColor]
                 : [
                     scheme.primary.withValues(alpha: 0.18),
                     Theme.of(context).scaffoldBackgroundColor,
