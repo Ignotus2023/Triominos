@@ -81,7 +81,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.inputTitle(widget.playerName), style: context.text.titleLarge),
+              Text(
+                l10n.inputTitle(widget.playerName),
+                style: context.text.titleLarge,
+              ),
               Text(
                 l10n.inputContext(widget.round.roundNumber, widget.moveNumber),
                 style: context.text.bodyMedium,
@@ -176,18 +179,17 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
         _summaryRow(context, l10n.inputBase, '$base'),
         if (bonus != 0) _summaryRow(context, l10n.inputBonusLine, '+$bonus'),
         const Divider(),
-        _summaryRow(
-          context,
-          l10n.inputTotal,
-          '$total',
-          emphasize: true,
-        ),
+        _summaryRow(context, l10n.inputTotal, '$total', emphasize: true),
       ],
     );
   }
 
-  Widget _summaryRow(BuildContext context, String label, String value,
-      {bool emphasize = false}) {
+  Widget _summaryRow(
+    BuildContext context,
+    String label,
+    String value, {
+    bool emphasize = false,
+  }) {
     final style = emphasize
         ? context.text.headlineSmall?.copyWith(color: context.colors.primary)
         : context.text.bodyLarge;
@@ -195,7 +197,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label, style: style), Text(value, style: style)],
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
       ),
     );
   }
@@ -280,7 +285,9 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     final move = _previewMove;
     if (move == null) return;
     ref.read(hapticsProvider).medium();
-    await ref.read(gameControllerProvider).addPlay(
+    await ref
+        .read(gameControllerProvider)
+        .addPlay(
           game: widget.game,
           round: widget.round,
           playerId: widget.playerId,
@@ -291,7 +298,9 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Future<void> _confirmPenalty(MoveType type) async {
     ref.read(hapticsProvider).light();
-    await ref.read(gameControllerProvider).addPenalty(
+    await ref
+        .read(gameControllerProvider)
+        .addPenalty(
           game: widget.game,
           round: widget.round,
           playerId: widget.playerId,
@@ -304,7 +313,9 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     final parsed = int.tryParse(_handSumController.text.trim()) ?? 0;
     final sum = parsed < 0 ? 0 : parsed;
     ref.read(hapticsProvider).medium();
-    await ref.read(gameControllerProvider).endHand(
+    await ref
+        .read(gameControllerProvider)
+        .endHand(
           game: widget.game,
           round: widget.round,
           finisherId: widget.playerId,

@@ -67,7 +67,8 @@ class GamePage extends ConsumerWidget {
         final leader = seats.isEmpty
             ? null
             : seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
-        final thresholdReached = game.endMode == EndMode.scoreLimit &&
+        final thresholdReached =
+            game.endMode == EndMode.scoreLimit &&
             game.scoreLimit != null &&
             leader != null &&
             leader.totalScore >= game.scoreLimit!;
@@ -105,14 +106,14 @@ class GamePage extends ConsumerWidget {
                 onPressed: (activeSeat == null || round == null)
                     ? null
                     : () => _openSmartInput(
-                          context,
-                          ref,
-                          game: game,
-                          round: round,
-                          seat: activeSeat,
-                          moveNumber: moves.length + 1,
-                          isStarterMove: game.currentRound == 1 && moves.isEmpty,
-                        ),
+                        context,
+                        ref,
+                        game: game,
+                        round: round,
+                        seat: activeSeat,
+                        moveNumber: moves.length + 1,
+                        isStarterMove: game.currentRound == 1 && moves.isEmpty,
+                      ),
               ),
             ),
           ),
@@ -129,7 +130,9 @@ class GamePage extends ConsumerWidget {
                         const SizedBox(width: AppSpacing.x12),
                         Expanded(
                           child: Text(
-                            l10n.gameThresholdReached(leader.displayNameSnapshot),
+                            l10n.gameThresholdReached(
+                              leader.displayNameSnapshot,
+                            ),
                             style: context.text.titleLarge,
                           ),
                         ),
@@ -148,7 +151,8 @@ class GamePage extends ConsumerWidget {
                   child: PlayerScoreCard(
                     seat: seats[i],
                     active: i == activeIndex,
-                    colorHex: colors[seats[i].playerId] ??
+                    colorHex:
+                        colors[seats[i].playerId] ??
                         avatarColorFor(seats[i].displayNameSnapshot),
                   ),
                 ),
@@ -173,11 +177,15 @@ class GamePage extends ConsumerWidget {
 
   int _activeIndex(List<GamePlayer> seats, Round? round, List<MoveRow> moves) {
     if (seats.isEmpty || round == null) return 0;
-    final starter = seats.indexWhere((s) => s.playerId == round.starterPlayerId);
+    final starter = seats.indexWhere(
+      (s) => s.playerId == round.starterPlayerId,
+    );
     final base = starter < 0 ? 0 : starter;
     final turns = moves
-        .where((m) =>
-            m.moveType == MoveType.play || m.moveType == MoveType.passPenalty)
+        .where(
+          (m) =>
+              m.moveType == MoveType.play || m.moveType == MoveType.passPenalty,
+        )
         .length;
     return (base + turns) % seats.length;
   }
@@ -206,7 +214,11 @@ class GamePage extends ConsumerWidget {
     );
   }
 
-  Future<void> _finishNow(BuildContext context, WidgetRef ref, Game game) async {
+  Future<void> _finishNow(
+    BuildContext context,
+    WidgetRef ref,
+    Game game,
+  ) async {
     await ref.read(gameControllerProvider).finishNow(game);
   }
 

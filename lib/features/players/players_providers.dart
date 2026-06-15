@@ -70,8 +70,9 @@ class PlayersService {
   Future<void> delete(String id) => _dao.deleteById(id);
 }
 
-final playersServiceProvider =
-    Provider<PlayersService>((ref) => PlayersService(ref.watch(playersDaoProvider)));
+final playersServiceProvider = Provider<PlayersService>(
+  (ref) => PlayersService(ref.watch(playersDaoProvider)),
+);
 
 final playersStreamProvider = StreamProvider<List<Player>>(
   (ref) => ref.watch(playersDaoProvider).watchAll(),

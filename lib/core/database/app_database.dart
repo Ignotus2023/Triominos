@@ -20,15 +20,15 @@ part 'app_database.g.dart';
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase()
-      : super(
-          driftDatabase(
-            name: 'triomino_score',
-            web: DriftWebOptions(
-              sqlite3Wasm: Uri.parse('sqlite3.wasm'),
-              driftWorker: Uri.parse('drift_worker.js'),
-            ),
+    : super(
+        driftDatabase(
+          name: 'triomino_score',
+          web: DriftWebOptions(
+            sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+            driftWorker: Uri.parse('drift_worker.js'),
           ),
-        );
+        ),
+      );
 
   /// Konstruktor dla testów (baza w pamięci).
   AppDatabase.forTesting(super.executor);
@@ -38,11 +38,11 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) => m.createAll(),
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    onCreate: (m) => m.createAll(),
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 
   /// Usuwa wszystkie dane (gry i graczy) — opcja "Reset danych" w ustawieniach.
   Future<void> resetAllData() {

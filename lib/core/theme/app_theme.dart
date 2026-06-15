@@ -7,38 +7,38 @@ import 'app_typography.dart';
 /// Buduje motywy light/dark aplikacji.
 abstract class AppTheme {
   static ThemeData get light => _build(
-        brightness: Brightness.light,
-        scheme: const ColorScheme.light(
-          primary: AppColors.lightPrimary,
-          onPrimary: Colors.white,
-          secondary: AppColors.lightSecondary,
-          onSecondary: AppColors.lightText,
-          surface: AppColors.lightSurface,
-          onSurface: AppColors.lightText,
-          error: AppColors.error,
-        ),
-        background: AppColors.lightBackground,
-        textColor: AppColors.lightText,
-        secondaryText: AppColors.lightTextSecondary,
-        glass: GlassColors.light,
-      );
+    brightness: Brightness.light,
+    scheme: const ColorScheme.light(
+      primary: AppColors.lightPrimary,
+      onPrimary: Colors.white,
+      secondary: AppColors.lightSecondary,
+      onSecondary: AppColors.lightText,
+      surface: AppColors.lightSurface,
+      onSurface: AppColors.lightText,
+      error: AppColors.error,
+    ),
+    background: AppColors.lightBackground,
+    textColor: AppColors.lightText,
+    secondaryText: AppColors.lightTextSecondary,
+    glass: GlassColors.light,
+  );
 
   static ThemeData get dark => _build(
-        brightness: Brightness.dark,
-        scheme: const ColorScheme.dark(
-          primary: AppColors.darkPrimary,
-          onPrimary: AppColors.darkBackground,
-          secondary: AppColors.darkSecondary,
-          onSecondary: AppColors.darkText,
-          surface: AppColors.darkSurface,
-          onSurface: AppColors.darkText,
-          error: AppColors.error,
-        ),
-        background: AppColors.darkBackground,
-        textColor: AppColors.darkText,
-        secondaryText: AppColors.darkTextSecondary,
-        glass: GlassColors.dark,
-      );
+    brightness: Brightness.dark,
+    scheme: const ColorScheme.dark(
+      primary: AppColors.darkPrimary,
+      onPrimary: AppColors.darkBackground,
+      secondary: AppColors.darkSecondary,
+      onSecondary: AppColors.darkText,
+      surface: AppColors.darkSurface,
+      onSurface: AppColors.darkText,
+      error: AppColors.error,
+    ),
+    background: AppColors.darkBackground,
+    textColor: AppColors.darkText,
+    secondaryText: AppColors.darkTextSecondary,
+    glass: GlassColors.dark,
+  );
 
   static ThemeData _build({
     required Brightness brightness,

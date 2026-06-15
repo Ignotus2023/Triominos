@@ -68,8 +68,12 @@ class _MoveTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final total = move.baseScore + move.bonusScore;
-    final hasBonus = move.bonusScore != 0 &&
-        (move.isTriplet || move.isBridge || move.isHexagon || move.isDoubleHexagon);
+    final hasBonus =
+        move.bonusScore != 0 &&
+        (move.isTriplet ||
+            move.isBridge ||
+            move.isHexagon ||
+            move.isDoubleHexagon);
     final positive = total >= 0;
 
     return GlassContainer(
@@ -84,10 +88,7 @@ class _MoveTile extends StatelessWidget {
             child: Text.rich(
               TextSpan(
                 children: [
-                  TextSpan(
-                    text: '$name  ',
-                    style: context.text.bodyLarge,
-                  ),
+                  TextSpan(text: '$name  ', style: context.text.bodyLarge),
                   TextSpan(
                     text: _describe(context),
                     style: context.text.bodyMedium,

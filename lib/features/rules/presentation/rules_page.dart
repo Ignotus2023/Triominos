@@ -20,11 +20,17 @@ class RulesPage extends StatelessWidget {
       (l10n.inputBonusHexagon, '+${ScoringRules.hexagonBonus}'),
       (
         l10n.inputBonusDoubleHexagon,
-        '+${ScoringRules.hexagonBonus + ScoringRules.doubleHexagonBonus}'
+        '+${ScoringRules.hexagonBonus + ScoringRules.doubleHexagonBonus}',
       ),
       (l10n.inputEndHand, '+${ScoringRules.endOfHandBonus}'),
-      (l10n.inputDrawPile(ScoringRules.drawPenalty), '${ScoringRules.drawPenalty}'),
-      (l10n.inputPassPenalty(ScoringRules.passPenalty), '${ScoringRules.passPenalty}'),
+      (
+        l10n.inputDrawPile(ScoringRules.drawPenalty),
+        '${ScoringRules.drawPenalty}',
+      ),
+      (
+        l10n.inputPassPenalty(ScoringRules.passPenalty),
+        '${ScoringRules.passPenalty}',
+      ),
     ];
 
     return AppScaffold(
@@ -39,11 +45,15 @@ class RulesPage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.x16),
                 for (final row in rows) ...[
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.x8),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.x8,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(child: Text(row.$1, style: context.text.bodyLarge)),
+                        Flexible(
+                          child: Text(row.$1, style: context.text.bodyLarge),
+                        ),
                         Text(
                           row.$2,
                           style: context.text.titleLarge?.copyWith(
@@ -54,7 +64,9 @@ class RulesPage extends StatelessWidget {
                     ),
                   ),
                   if (row != rows.last)
-                    Divider(color: context.colors.onSurface.withValues(alpha: 0.1)),
+                    Divider(
+                      color: context.colors.onSurface.withValues(alpha: 0.1),
+                    ),
                 ],
               ],
             ),

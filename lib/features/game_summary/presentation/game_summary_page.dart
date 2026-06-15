@@ -28,7 +28,9 @@ class GameSummaryPage extends ConsumerWidget {
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
     if (game == null || seats.isEmpty) {
-      return const AppScaffold(body: Center(child: CircularProgressIndicator()));
+      return const AppScaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     final winner = seats.first;
@@ -66,9 +68,10 @@ class GameSummaryPage extends ConsumerWidget {
           Center(
             child: Column(
               children: [
-                const Text('🏆', style: TextStyle(fontSize: 64))
-                    .animate()
-                    .scale(duration: 400.ms, curve: Curves.elasticOut),
+                const Text(
+                  '🏆',
+                  style: TextStyle(fontSize: 64),
+                ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
                 const SizedBox(height: AppSpacing.x16),
                 Text(
                   l10n.summaryWinner(winner.displayNameSnapshot),
@@ -78,8 +81,9 @@ class GameSummaryPage extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.x4),
                 Text(
                   l10n.scoreUnit(winner.totalScore),
-                  style: context.text.displayMedium
-                      ?.copyWith(color: context.colors.primary),
+                  style: context.text.displayMedium?.copyWith(
+                    color: context.colors.primary,
+                  ),
                 ).animate().fadeIn(delay: 300.ms),
               ],
             ),
@@ -93,7 +97,8 @@ class GameSummaryPage extends ConsumerWidget {
               child: _ScoreboardRow(
                 seat: seats[i],
                 position: i,
-                colorHex: colors[seats[i].playerId] ??
+                colorHex:
+                    colors[seats[i].playerId] ??
                     avatarColorFor(seats[i].displayNameSnapshot),
               ),
             ),
@@ -127,7 +132,9 @@ class _ScoreboardRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const medals = ['🥇', '🥈', '🥉'];
-    final badge = position < medals.length ? medals[position] : '${position + 1}';
+    final badge = position < medals.length
+        ? medals[position]
+        : '${position + 1}';
 
     return GlassContainer(
       glow: position == 0,
@@ -148,7 +155,10 @@ class _ScoreboardRow extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.x16),
           Expanded(
-            child: Text(seat.displayNameSnapshot, style: context.text.titleLarge),
+            child: Text(
+              seat.displayNameSnapshot,
+              style: context.text.titleLarge,
+            ),
           ),
           Text(
             context.l10n.scoreUnit(seat.totalScore),

@@ -10,8 +10,9 @@ import 'package:triomino_score/core/theme/app_colors.dart';
 import 'package:triomino_score/features/game/presentation/widgets/smart_input_sheet.dart';
 
 void main() {
-  testWidgets('Smart Input liczy 5-5-5 jako triplet = 25 (bez startu)',
-      (tester) async {
+  testWidgets('Smart Input liczy 5-5-5 jako triplet = 25 (bez startu)', (
+    tester,
+  ) async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
 

@@ -89,10 +89,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
           final byId = {for (final p in list) p.id: p};
           return ListView(
             children: [
-              Text(
-                l10n.setupSelectPlayers,
-                style: context.text.titleLarge,
-              ),
+              Text(l10n.setupSelectPlayers, style: context.text.titleLarge),
               Text(
                 l10n.setupPlayersRange(
                   AppConstants.minPlayers,
@@ -252,14 +249,19 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
       return;
     }
 
-    final gameId = await ref.read(gameSetupControllerProvider).createGame(
+    final gameId = await ref
+        .read(gameSetupControllerProvider)
+        .createGame(
           players: selectedPlayers,
           endMode: _endMode,
           scoreLimit: _scoreLimit,
           totalRounds: _rounds,
         );
     if (mounted) {
-      context.pushReplacementNamed(AppRoutes.game, pathParameters: {'id': gameId});
+      context.pushReplacementNamed(
+        AppRoutes.game,
+        pathParameters: {'id': gameId},
+      );
     }
   }
 }
@@ -274,9 +276,17 @@ class _EndModeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final entries = <(EndMode, String, String)>[
-      (EndMode.scoreLimit, l10n.setupEndModeScoreLimit, l10n.setupEndModeScoreLimitDesc),
+      (
+        EndMode.scoreLimit,
+        l10n.setupEndModeScoreLimit,
+        l10n.setupEndModeScoreLimitDesc,
+      ),
       (EndMode.rounds, l10n.setupEndModeRounds, l10n.setupEndModeRoundsDesc),
-      (EndMode.freeform, l10n.setupEndModeFreeform, l10n.setupEndModeFreeformDesc),
+      (
+        EndMode.freeform,
+        l10n.setupEndModeFreeform,
+        l10n.setupEndModeFreeformDesc,
+      ),
     ];
     return Column(
       children: [
@@ -339,7 +349,9 @@ class _ThresholdSlider extends StatelessWidget {
               Expanded(child: Text(label, style: context.text.titleLarge)),
               Text(
                 '$value',
-                style: context.text.titleLarge?.copyWith(color: context.colors.primary),
+                style: context.text.titleLarge?.copyWith(
+                  color: context.colors.primary,
+                ),
               ),
             ],
           ),

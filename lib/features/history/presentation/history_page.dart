@@ -72,11 +72,12 @@ class _GameHistoryTile extends ConsumerWidget {
               ],
             ),
           ),
-          Text(
-            '${seats.length}',
-            style: context.text.bodyMedium,
+          Text('${seats.length}', style: context.text.bodyMedium),
+          Icon(
+            Icons.group_outlined,
+            size: 16,
+            color: context.text.bodyMedium?.color,
           ),
-          Icon(Icons.group_outlined, size: 16, color: context.text.bodyMedium?.color),
         ],
       ),
     );

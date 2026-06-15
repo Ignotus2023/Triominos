@@ -47,19 +47,32 @@ void main() {
     });
 
     test('most dodaje +40', () {
-      final move = Move.play(corner1: 5, corner2: 3, corner3: 2, isBridge: true);
+      final move = Move.play(
+        corner1: 5,
+        corner2: 3,
+        corner3: 2,
+        isBridge: true,
+      );
       expect(calculateMoveScore(move), 10 + ScoringRules.bridgeBonus);
     });
 
     test('hexagon dodaje +50', () {
-      final move =
-          Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true);
+      final move = Move.play(
+        corner1: 5,
+        corner2: 5,
+        corner3: 1,
+        isHexagon: true,
+      );
       expect(calculateMoveScore(move), 11 + ScoringRules.hexagonBonus);
     });
 
     test('podwójny hexagon dodaje 50 + 60 = 110', () {
-      final move =
-          Move.play(corner1: 2, corner2: 3, corner3: 4, isDoubleHexagon: true);
+      final move = Move.play(
+        corner1: 2,
+        corner2: 3,
+        corner3: 4,
+        isDoubleHexagon: true,
+      );
       expect(
         calculateMoveScore(move),
         9 + ScoringRules.hexagonBonus + ScoringRules.doubleHexagonBonus,

@@ -10,13 +10,15 @@ class PlayersDao extends DatabaseAccessor<AppDatabase> with _$PlayersDaoMixin {
   PlayersDao(super.db);
 
   Stream<List<Player>> watchAll() {
-    return (select(players)..orderBy([(p) => OrderingTerm(expression: p.name)]))
-        .watch();
+    return (select(
+      players,
+    )..orderBy([(p) => OrderingTerm(expression: p.name)])).watch();
   }
 
   Future<List<Player>> getAll() {
-    return (select(players)..orderBy([(p) => OrderingTerm(expression: p.name)]))
-        .get();
+    return (select(
+      players,
+    )..orderBy([(p) => OrderingTerm(expression: p.name)])).get();
   }
 
   Future<Player?> getById(String id) {

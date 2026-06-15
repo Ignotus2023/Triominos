@@ -52,8 +52,9 @@ class GameController {
     required MoveType type,
   }) async {
     assert(type == MoveType.drawPenalty || type == MoveType.passPenalty);
-    final move =
-        type == MoveType.drawPenalty ? Move.drawPenalty() : Move.passPenalty();
+    final move = type == MoveType.drawPenalty
+        ? Move.drawPenalty()
+        : Move.passPenalty();
     final index = (await _dao.getMoves(round.id)).length;
     await _dao.addMove(
       gameId: game.id,
@@ -117,11 +118,15 @@ class GameController {
     // Tylko tryb "liczba rund" kończy grę automatycznie. W trybie "limit
     // punktów" gracz kończy grę ręcznie (po osiągnięciu progu pojawia się
     // opcja zakończenia), dzięki czemu można dograć rundę do końca.
-    final shouldFinish = game.endMode == EndMode.rounds &&
+    final shouldFinish =
+        game.endMode == EndMode.rounds &&
         round.roundNumber >= (game.totalRounds ?? 1);
 
     if (shouldFinish) {
-      await _dao.finishGame(gameId: game.id, winnerId: _highest(seats).playerId);
+      await _dao.finishGame(
+        gameId: game.id,
+        winnerId: _highest(seats).playerId,
+      );
     } else {
       final next = round.roundNumber + 1;
       await _dao.startNextRound(
@@ -151,5 +156,6 @@ class GameController {
       seats.reduce((a, b) => b.totalScore > a.totalScore ? b : a);
 }
 
-final gameControllerProvider =
-    Provider<GameController>((ref) => GameController(ref.watch(gamesDaoProvider)));
+final gameControllerProvider = Provider<GameController>(
+  (ref) => GameController(ref.watch(gamesDaoProvider)),
+);

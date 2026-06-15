@@ -11,11 +11,14 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   return db;
 });
 
-final playersDaoProvider =
-    Provider<PlayersDao>((ref) => ref.watch(databaseProvider).playersDao);
+final playersDaoProvider = Provider<PlayersDao>(
+  (ref) => ref.watch(databaseProvider).playersDao,
+);
 
-final gamesDaoProvider =
-    Provider<GamesDao>((ref) => ref.watch(databaseProvider).gamesDao);
+final gamesDaoProvider = Provider<GamesDao>(
+  (ref) => ref.watch(databaseProvider).gamesDao,
+);
 
-final statsDaoProvider =
-    Provider<StatsDao>((ref) => ref.watch(databaseProvider).statsDao);
+final statsDaoProvider = Provider<StatsDao>(
+  (ref) => ref.watch(databaseProvider).statsDao,
+);

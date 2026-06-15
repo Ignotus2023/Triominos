@@ -94,21 +94,23 @@ void main() {
     expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 22 - 10);
   });
 
-  test('tryb scoreLimit NIE kończy się automatycznie po przekroczeniu progu',
-      () async {
-    await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
-    final (game, round) = await current();
+  test(
+    'tryb scoreLimit NIE kończy się automatycznie po przekroczeniu progu',
+    () async {
+      await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
+      final (game, round) = await current();
 
-    await controller.addPlay(
-      game: game,
-      round: round,
-      playerId: 'p1',
-      move: Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true),
-    );
+      await controller.addPlay(
+        game: game,
+        round: round,
+        playerId: 'p1',
+        move: Move.play(corner1: 5, corner2: 5, corner3: 1, isHexagon: true),
+      );
 
-    final updated = (await db.gamesDao.getGame('g1'))!;
-    expect(updated.status, GameStatus.inProgress);
-  });
+      final updated = (await db.gamesDao.getGame('g1'))!;
+      expect(updated.status, GameStatus.inProgress);
+    },
+  );
 
   test('finishNow kończy grę i wybiera lidera jako zwycięzcę', () async {
     await seed(endMode: EndMode.scoreLimit, scoreLimit: 30);
@@ -127,34 +129,36 @@ void main() {
     expect(updated.winnerId, 'p1');
   });
 
-  test('tryb rounds rozpoczyna kolejną rundę, dopóki nie osiągnie limitu',
-      () async {
-    await seed(endMode: EndMode.rounds, totalRounds: 2);
-    var (game, round) = await current();
+  test(
+    'tryb rounds rozpoczyna kolejną rundę, dopóki nie osiągnie limitu',
+    () async {
+      await seed(endMode: EndMode.rounds, totalRounds: 2);
+      var (game, round) = await current();
 
-    await controller.endHand(
-      game: game,
-      round: round,
-      finisherId: 'p1',
-      opponentsHandSum: 5,
-    );
+      await controller.endHand(
+        game: game,
+        round: round,
+        finisherId: 'p1',
+        opponentsHandSum: 5,
+      );
 
-    var updated = (await db.gamesDao.getGame('g1'))!;
-    expect(updated.status, GameStatus.inProgress);
-    expect(updated.currentRound, 2);
+      var updated = (await db.gamesDao.getGame('g1'))!;
+      expect(updated.status, GameStatus.inProgress);
+      expect(updated.currentRound, 2);
 
-    (game, round) = await current();
-    expect(round.roundNumber, 2);
+      (game, round) = await current();
+      expect(round.roundNumber, 2);
 
-    await controller.endHand(
-      game: game,
-      round: round,
-      finisherId: 'p2',
-      opponentsHandSum: 5,
-    );
-    updated = (await db.gamesDao.getGame('g1'))!;
-    expect(updated.status, GameStatus.finished);
-  });
+      await controller.endHand(
+        game: game,
+        round: round,
+        finisherId: 'p2',
+        opponentsHandSum: 5,
+      );
+      updated = (await db.gamesDao.getGame('g1'))!;
+      expect(updated.status, GameStatus.finished);
+    },
+  );
 
   test('prawo pierwszego ruchu rotuje między rundami', () async {
     await seed(endMode: EndMode.rounds, totalRounds: 3);

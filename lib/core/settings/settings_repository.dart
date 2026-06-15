@@ -44,8 +44,7 @@ class SettingsRepository {
 
   bool get onboardingCompleted => _prefs.getBool(_kOnboarding) ?? false;
 
-  Future<void> setOnboardingCompleted() =>
-      _prefs.setBool(_kOnboarding, true);
+  Future<void> setOnboardingCompleted() => _prefs.setBool(_kOnboarding, true);
 
   ThemeMode _themeFromString(String? value) {
     return switch (value) {

@@ -67,7 +67,10 @@ class SettingsPage extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(l10n.settingsLanguage, style: context.text.titleLarge),
+                  child: Text(
+                    l10n.settingsLanguage,
+                    style: context.text.titleLarge,
+                  ),
                 ),
                 DropdownButton<String>(
                   value: settings.locale?.languageCode ?? 'system',
@@ -77,12 +80,30 @@ class SettingsPage extends ConsumerWidget {
                       value: 'system',
                       child: Text(l10n.settingsThemeSystem),
                     ),
-                    DropdownMenuItem(value: 'pl', child: Text(l10n.languagePolish)),
-                    DropdownMenuItem(value: 'en', child: Text(l10n.languageEnglish)),
-                    DropdownMenuItem(value: 'de', child: Text(l10n.languageGerman)),
-                    DropdownMenuItem(value: 'fr', child: Text(l10n.languageFrench)),
-                    DropdownMenuItem(value: 'es', child: Text(l10n.languageSpanish)),
-                    DropdownMenuItem(value: 'it', child: Text(l10n.languageItalian)),
+                    DropdownMenuItem(
+                      value: 'pl',
+                      child: Text(l10n.languagePolish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text(l10n.languageEnglish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'de',
+                      child: Text(l10n.languageGerman),
+                    ),
+                    DropdownMenuItem(
+                      value: 'fr',
+                      child: Text(l10n.languageFrench),
+                    ),
+                    DropdownMenuItem(
+                      value: 'es',
+                      child: Text(l10n.languageSpanish),
+                    ),
+                    DropdownMenuItem(
+                      value: 'it',
+                      child: Text(l10n.languageItalian),
+                    ),
                   ],
                   onChanged: (code) => notifier.setLocale(
                     code == null || code == 'system' ? null : Locale(code),
@@ -125,7 +146,8 @@ class SettingsPage extends ConsumerWidget {
                   value: settings.defaultScoreLimit.toDouble(),
                   min: AppConstants.minScoreLimit.toDouble(),
                   max: AppConstants.maxScoreLimit.toDouble(),
-                  divisions: (AppConstants.maxScoreLimit -
+                  divisions:
+                      (AppConstants.maxScoreLimit -
                           AppConstants.minScoreLimit) ~/
                       AppConstants.scoreLimitStep,
                   label: '${settings.defaultScoreLimit}',
@@ -141,10 +163,15 @@ class SettingsPage extends ConsumerWidget {
               children: [
                 Text(l10n.settingsAbout, style: context.text.titleLarge),
                 const SizedBox(height: AppSpacing.x8),
-                Text(l10n.settingsVersion('1.0.0'), style: context.text.bodyMedium),
+                Text(
+                  l10n.settingsVersion('1.0.0'),
+                  style: context.text.bodyMedium,
+                ),
                 const SizedBox(height: AppSpacing.x16),
                 TextButton.icon(
-                  style: TextButton.styleFrom(foregroundColor: context.colors.error),
+                  style: TextButton.styleFrom(
+                    foregroundColor: context.colors.error,
+                  ),
                   icon: const Icon(Icons.delete_forever_outlined),
                   label: Text(l10n.settingsResetData),
                   onPressed: () => _confirmReset(context, ref),

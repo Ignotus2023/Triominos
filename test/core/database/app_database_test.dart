@@ -12,13 +12,13 @@ void main() {
   tearDown(() => db.close());
 
   PlayersCompanion player(String id, String name) => PlayersCompanion.insert(
-        id: id,
-        name: name,
-        avatarColor: '#6366F1',
-        initials: name.substring(0, 1),
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+    id: id,
+    name: name,
+    avatarColor: '#6366F1',
+    initials: name.substring(0, 1),
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+  );
 
   Future<void> seedGame() async {
     await db.playersDao.upsert(player('p1', 'Anna'));

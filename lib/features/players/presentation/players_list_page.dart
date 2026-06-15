@@ -53,7 +53,10 @@ class PlayersListPage extends ConsumerWidget {
                     ),
                     IconButton(
                       tooltip: l10n.commonDelete,
-                      icon: Icon(Icons.delete_outline, color: context.colors.error),
+                      icon: Icon(
+                        Icons.delete_outline,
+                        color: context.colors.error,
+                      ),
                       onPressed: () => _confirmDelete(context, ref, p),
                     ),
                   ],
@@ -76,7 +79,9 @@ class PlayersListPage extends ConsumerWidget {
 
     // Profil z historią gier jest chroniony kluczem obcym; twarde usunięcie
     // zniszczyłoby zapisane partie, więc takiego gracza nie kasujemy.
-    final played = await ref.read(gamesDaoProvider).countGamesForPlayer(player.id);
+    final played = await ref
+        .read(gamesDaoProvider)
+        .countGamesForPlayer(player.id);
     if (played > 0) {
       messenger.showSnackBar(SnackBar(content: Text(l10n.playerDeleteBlocked)));
       return;
@@ -241,7 +246,10 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
                     child: Text(l10n.commonCancel),
                   ),
                   const SizedBox(width: AppSpacing.x8),
-                  FilledButton(onPressed: _submit, child: Text(l10n.commonSave)),
+                  FilledButton(
+                    onPressed: _submit,
+                    child: Text(l10n.commonSave),
+                  ),
                 ],
               ),
             ],
