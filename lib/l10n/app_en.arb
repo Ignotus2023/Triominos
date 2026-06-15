@@ -7,6 +7,7 @@
   "commonDelete": "Delete",
   "commonConfirm": "Confirm",
   "commonClose": "Close",
+  "commonError": "Something went wrong",
   "commonStart": "Start",
   "commonAdd": "Add",
   "commonBack": "Back",
@@ -33,7 +34,6 @@
   "playerEdit": "Edit player",
   "playerColor": "Color",
   "playerDeleteConfirm": "Delete this player? Their game history stays intact.",
-  "playerDeleteBlocked": "Can't delete a player who has taken part in games.",
   "gameAbandon": "Abandon game",
   "gameAbandonConfirm": "Abandon this game without saving a result?",
   "playerErrorNameEmpty": "Enter a name",
@@ -117,7 +117,7 @@
   "statsEmpty": "Play a few games to see statistics",
   "statsTotalGames": "Games played",
   "statsBestScore": "Best score",
-  "statsMostHexagons": "Most hexagons in a game",
+  "statsTotalHexagons": "Hexagons total",
 
   "rulesTitle": "Rules",
 

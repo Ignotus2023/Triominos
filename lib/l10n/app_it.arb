@@ -7,6 +7,7 @@
   "commonDelete": "Elimina",
   "commonConfirm": "Conferma",
   "commonClose": "Chiudi",
+  "commonError": "Qualcosa è andato storto",
   "commonStart": "Inizia",
   "commonAdd": "Aggiungi",
   "commonBack": "Indietro",
@@ -32,7 +33,6 @@
   "playerEdit": "Modifica giocatore",
   "playerColor": "Colore",
   "playerDeleteConfirm": "Eliminare questo giocatore? La cronologia delle partite resta intatta.",
-  "playerDeleteBlocked": "Impossibile eliminare un giocatore che ha partecipato a partite.",
   "gameAbandon": "Abbandona partita",
   "gameAbandonConfirm": "Abbandonare questa partita senza salvare il risultato?",
   "playerErrorNameEmpty": "Inserisci un nome",
@@ -105,7 +105,7 @@
   "statsEmpty": "Gioca qualche partita per vedere le statistiche",
   "statsTotalGames": "Partite giocate",
   "statsBestScore": "Miglior punteggio",
-  "statsMostHexagons": "Più esagoni in una partita",
+  "statsTotalHexagons": "Esagoni in totale",
 
   "rulesTitle": "Regole",
 

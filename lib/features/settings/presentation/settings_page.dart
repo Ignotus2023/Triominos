@@ -186,6 +186,7 @@ class SettingsPage extends ConsumerWidget {
 
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -202,8 +203,11 @@ class SettingsPage extends ConsumerWidget {
         ],
       ),
     );
-    if (ok ?? false) {
+    if (!(ok ?? false)) return;
+    try {
       await ref.read(databaseProvider).resetAllData();
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError)));
     }
   }
 }

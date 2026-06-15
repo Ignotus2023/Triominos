@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/app_database.dart';
-import '../../../core/database/database_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../players_providers.dart';
@@ -29,7 +29,7 @@ class PlayersListPage extends ConsumerWidget {
       ),
       body: players.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => ErrorView(error: e),
         data: (list) {
           if (list.isEmpty) {
             return EmptyState(
@@ -77,17 +77,6 @@ class PlayersListPage extends ConsumerWidget {
     final l10n = context.l10n;
     final messenger = ScaffoldMessenger.of(context);
 
-    // Profil z historią gier jest chroniony kluczem obcym; twarde usunięcie
-    // zniszczyłoby zapisane partie, więc takiego gracza nie kasujemy.
-    final played = await ref
-        .read(gamesDaoProvider)
-        .countGamesForPlayer(player.id);
-    if (played > 0) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.playerDeleteBlocked)));
-      return;
-    }
-    if (!context.mounted) return;
-
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -104,8 +93,14 @@ class PlayersListPage extends ConsumerWidget {
         ],
       ),
     );
-    if (ok ?? false) {
+    if (!(ok ?? false)) return;
+
+    // Gracz z historią jest archiwizowany (soft-delete) w warstwie serwisu —
+    // historia gier pozostaje nienaruszona; gracz bez historii usuwany twardo.
+    try {
       await ref.read(playersServiceProvider).delete(player.id);
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.commonError)));
     }
   }
 
@@ -161,7 +156,14 @@ class _PlayerFormDialogState extends State<_PlayerFormDialog> {
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await widget.onSubmit(_controller.text.trim(), _color);
+    final messenger = ScaffoldMessenger.of(context);
+    final errorText = context.l10n.commonError;
+    try {
+      await widget.onSubmit(_controller.text.trim(), _color);
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(errorText)));
+      return;
+    }
     if (mounted) Navigator.pop(context);
   }
 

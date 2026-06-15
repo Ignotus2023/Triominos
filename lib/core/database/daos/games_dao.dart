@@ -104,6 +104,16 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
             ..orderBy([(m) => OrderingTerm(expression: m.moveIndex)]))
           .get();
 
+  /// Następny indeks ruchu w rundzie bez materializowania całej listy.
+  Future<int> nextMoveIndex(String roundId) async {
+    final maxIndex = moves.moveIndex.max();
+    final query = selectOnly(moves)
+      ..addColumns([maxIndex])
+      ..where(moves.roundId.equals(roundId));
+    final current = (await query.getSingleOrNull())?.read(maxIndex);
+    return current == null ? 0 : current + 1;
+  }
+
   // ---- Composite operations ----
 
   /// Tworzy nową grę wraz z graczami i pierwszą rundą w jednej transakcji.

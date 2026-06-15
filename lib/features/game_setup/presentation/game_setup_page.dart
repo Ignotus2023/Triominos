@@ -12,6 +12,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/player_avatar.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -68,7 +69,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
       ),
       body: players.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => ErrorView(error: e),
         data: (list) {
           if (list.isEmpty) {
             return Column(

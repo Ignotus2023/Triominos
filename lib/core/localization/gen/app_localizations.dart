@@ -142,6 +142,12 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get commonClose;
 
+  /// No description provided for @commonError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get commonError;
+
   /// No description provided for @commonStart.
   ///
   /// In en, this message translates to:
@@ -273,12 +279,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete this player? Their game history stays intact.'**
   String get playerDeleteConfirm;
-
-  /// No description provided for @playerDeleteBlocked.
-  ///
-  /// In en, this message translates to:
-  /// **'Can\'t delete a player who has taken part in games.'**
-  String get playerDeleteBlocked;
 
   /// No description provided for @gameAbandon.
   ///
@@ -676,11 +676,11 @@ abstract class AppLocalizations {
   /// **'Best score'**
   String get statsBestScore;
 
-  /// No description provided for @statsMostHexagons.
+  /// No description provided for @statsTotalHexagons.
   ///
   /// In en, this message translates to:
-  /// **'Most hexagons in a game'**
-  String get statsMostHexagons;
+  /// **'Hexagons total'**
+  String get statsTotalHexagons;
 
   /// No description provided for @rulesTitle.
   ///

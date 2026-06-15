@@ -19,7 +19,7 @@ class GameController {
     required String playerId,
     required Move move,
   }) async {
-    final index = (await _dao.getMoves(round.id)).length;
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
@@ -55,7 +55,7 @@ class GameController {
     final move = type == MoveType.drawPenalty
         ? Move.drawPenalty()
         : Move.passPenalty();
-    final index = (await _dao.getMoves(round.id)).length;
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: playerId,
@@ -80,7 +80,7 @@ class GameController {
     required int opponentsHandSum,
   }) async {
     final move = Move.endOfHand(opponentsHandSum: opponentsHandSum);
-    final index = (await _dao.getMoves(round.id)).length;
+    final index = await _dao.nextMoveIndex(round.id);
     await _dao.addMove(
       gameId: game.id,
       playerId: finisherId,

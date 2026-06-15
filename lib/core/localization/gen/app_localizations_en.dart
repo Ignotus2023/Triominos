@@ -27,6 +27,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonClose => 'Close';
 
   @override
+  String get commonError => 'Something went wrong';
+
+  @override
   String get commonStart => 'Start';
 
   @override
@@ -94,10 +97,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get playerDeleteConfirm =>
       'Delete this player? Their game history stays intact.';
-
-  @override
-  String get playerDeleteBlocked =>
-      'Can\'t delete a player who has taken part in games.';
 
   @override
   String get gameAbandon => 'Abandon game';
@@ -322,7 +321,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsBestScore => 'Best score';
 
   @override
-  String get statsMostHexagons => 'Most hexagons in a game';
+  String get statsTotalHexagons => 'Hexagons total';
 
   @override
   String get rulesTitle => 'Rules';

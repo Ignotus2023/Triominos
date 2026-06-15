@@ -22,12 +22,19 @@ class StatsDao extends DatabaseAccessor<AppDatabase> with _$StatsDaoMixin {
 
   Stream<int> watchBestScore() {
     final maxScore = gamePlayers.totalScore.max();
-    final query = selectOnly(gamePlayers)..addColumns([maxScore]);
+    final finishedGameIds = selectOnly(games)
+      ..addColumns([games.id])
+      ..where(games.status.equalsValue(GameStatus.finished));
+    final query = selectOnly(gamePlayers)
+      ..addColumns([maxScore])
+      ..where(gamePlayers.gameId.isInQuery(finishedGameIds));
     return query.map((row) => row.read(maxScore) ?? 0).watchSingle();
   }
 
   Stream<int> watchTotalHexagons() {
-    final cnt = countAll(filter: moves.isHexagon.equals(true));
+    final cnt = countAll(
+      filter: moves.isHexagon.equals(true) | moves.isDoubleHexagon.equals(true),
+    );
     final query = selectOnly(moves)..addColumns([cnt]);
     return query.map((row) => row.read(cnt) ?? 0).watchSingle();
   }

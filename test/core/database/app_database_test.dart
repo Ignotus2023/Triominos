@@ -1,9 +1,10 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:triomino_score/core/game/game_enums.dart';
 import 'package:triomino_score/core/game/move.dart';
 import 'package:triomino_score/core/database/app_database.dart';
+import 'package:triomino_score/features/players/players_providers.dart';
 
 void main() {
   late AppDatabase db;
@@ -136,5 +137,109 @@ void main() {
     final game = await db.gamesDao.getGame('g1');
     expect(game!.status, GameStatus.finished);
     expect(game.winnerId, 'p1');
+  });
+
+  test(
+    'soft-delete: gracz z historią jest archiwizowany, nie usuwany',
+    () async {
+      await seedGame();
+      final service = PlayersService(db.playersDao, db.gamesDao);
+
+      await service.delete('p1');
+
+      // Zniknął z list, ale wiersz i powiązanie w game_players pozostają.
+      expect((await db.playersDao.getAll()).any((p) => p.id == 'p1'), isFalse);
+      expect((await db.playersDao.getById('p1'))?.deletedAt, isNotNull);
+      final seats = await db.gamesDao.getGamePlayers('g1');
+      expect(seats.any((s) => s.playerId == 'p1'), isTrue);
+    },
+  );
+
+  test('hard-delete: gracz bez historii jest usuwany całkowicie', () async {
+    await db.playersDao.upsert(player('p9', 'Solo'));
+    final service = PlayersService(db.playersDao, db.gamesDao);
+
+    await service.delete('p9');
+
+    expect(await db.playersDao.getById('p9'), isNull);
+  });
+
+  test('nextMoveIndex rośnie i maleje po undo', () async {
+    await seedGame();
+    expect(await db.gamesDao.nextMoveIndex('r1'), 0);
+
+    final move = Move.play(corner1: 1, corner2: 2, corner3: 3);
+    await db.gamesDao.addMove(
+      gameId: 'g1',
+      playerId: 'p1',
+      delta: move.totalScore,
+      move: MovesCompanion.insert(
+        id: 'm1',
+        roundId: 'r1',
+        playerId: 'p1',
+        moveIndex: 0,
+        moveType: MoveType.play,
+        baseScore: move.baseScore,
+        createdAt: DateTime.now(),
+      ),
+    );
+    expect(await db.gamesDao.nextMoveIndex('r1'), 1);
+
+    await db.gamesDao.undoLastMove(roundId: 'r1', gameId: 'g1');
+    expect(await db.gamesDao.nextMoveIndex('r1'), 0);
+  });
+
+  test('watchBestScore liczy tylko gry zakończone', () async {
+    await seedGame();
+    final move = Move.play(corner1: 5, corner2: 5, corner3: 5, isStarter: true);
+    await db.gamesDao.addMove(
+      gameId: 'g1',
+      playerId: 'p1',
+      delta: move.totalScore,
+      move: MovesCompanion.insert(
+        id: 'm1',
+        roundId: 'r1',
+        playerId: 'p1',
+        moveIndex: 0,
+        moveType: MoveType.play,
+        baseScore: move.baseScore,
+        bonusScore: Value(move.bonusScore),
+        isTriplet: const Value(true),
+        isStarter: const Value(true),
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    expect(await db.statsDao.watchBestScore().first, 0);
+    await db.gamesDao.finishGame(gameId: 'g1', winnerId: 'p1');
+    expect(await db.statsDao.watchBestScore().first, 35);
+  });
+
+  test('watchTotalHexagons wlicza podwójny hexagon', () async {
+    await seedGame();
+    final move = Move.play(
+      corner1: 1,
+      corner2: 2,
+      corner3: 3,
+      isDoubleHexagon: true,
+    );
+    await db.gamesDao.addMove(
+      gameId: 'g1',
+      playerId: 'p1',
+      delta: move.totalScore,
+      move: MovesCompanion.insert(
+        id: 'm1',
+        roundId: 'r1',
+        playerId: 'p1',
+        moveIndex: 0,
+        moveType: MoveType.play,
+        baseScore: move.baseScore,
+        bonusScore: Value(move.bonusScore),
+        isDoubleHexagon: const Value(true),
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    expect(await db.statsDao.watchTotalHexagons().first, 1);
   });
 }

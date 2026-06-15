@@ -318,3 +318,28 @@ Zainstalowano Flutter stable, `flutter pub get` OK, ustalono zielony baseline (`
 | H-3 | Martwy kod startera | Usunięto `starter_resolver.dart`, `tile.dart` i ich test. Zaktualizowano `CLAUDE.md §2.3`: starter rundy 1 = 1. miejsce kolejności z setupu (drag-to-reorder), rotacja między rundami. |
 
 **Pozostaje do Sprintu 2+ (wg planu w sekcji 9):** szybkie zwycięstwa (A1–A6), soft-delete gracza (M-1), wydajność szkła (M-5), testy E2E/golden, oraz strategiczne decyzje zakresowe (M-7/M-8/M-9).
+
+## 12. Status realizacji — Sprint 2 (2026-06-15)
+
+> Każda zmiana zweryfikowana: `flutter analyze` (czysty), `flutter test` (**42 testy**, +5 regresyjnych), `gen-l10n` + `build_runner` (brak dryfu), `dart format` (zgodne). Klucze i18n dodane/zmienione we wszystkich 6 językach.
+
+### Faza 2 — Szybkie zwycięstwa ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| A1 | `intl: any` | Przypięto do `^0.20.2` (`pubspec.yaml`); zgodne z §4 „lock to minor", `pubspec.lock` bez zmian. |
+| A2 | Obsługa błędów (M-2/M-3) | Nowy `ErrorView` zastępuje surowe `Text('$e')` na 4 ekranach (game, players, history, setup). Akcje mutujące (usuwanie/edycja gracza, reset danych) opakowane w `try/catch` z `SnackBar` (`commonError` w 6 językach). |
+| A3 | Statystyki (M-4/M-6) | `watchBestScore` liczy tylko gry `finished` (subquery `isInQuery`). Licznik hexagonów wlicza podwójne hexy i ma poprawną etykietę `statsTotalHexagons` („Łącznie hexagonów"). |
+| A4 | `moveIndex` (M-6) | `GamesDao.nextMoveIndex` (`MAX(moveIndex)+1`) zamiast materializowania listy ruchów; użyte w `addPlay`/`addPenalty`/`endHand`. |
+
+### Faza 3 — Soft-delete gracza ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| M-1 | Integralność gracza | Dodano kolumnę `players.deletedAt` (nullable), **bump `schemaVersion` 1 → 2** + migracja `onUpgrade` (`addColumn`). Gracz z historią jest archiwizowany (`archiveById`), gracz bez historii usuwany twardo; listy filtrują `deletedAt IS NULL`. Usunięto blokadę usuwania w UI i obsolete klucz `playerDeleteBlocked`. Decyzja przeniesiona do warstwy serwisu (`PlayersService`). |
+
+**Testy regresyjne (+5):** soft-delete (archiwizacja + integralność `game_players`), hard-delete bez historii, `nextMoveIndex` (rośnie/maleje po undo), `watchBestScore` (tylko finished), `watchTotalHexagons` (wlicza podwójny hex).
+
+**Pozostaje do Sprintu 3+:** A5 (polityka prywatności M-10), A6 (egzekwowanie `maxDraws`/`maxUndoDepth`, magic numbers L-1, górny clamp sumy rąk L-2), M-5 (wydajność szkła), testy E2E/golden, oraz strategiczne M-7/M-8/M-9.
+
+> **Uwaga dot. migracji:** ścieżka `onCreate` (świeża baza v2) jest objęta testami; explicytny test migracji v1→v2 (snapshot schematu drift) odłożono do Sprintu 3 — sam `addColumn` to standardowy, bezpieczny wzorzec drift.

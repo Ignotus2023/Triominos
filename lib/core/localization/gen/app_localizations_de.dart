@@ -27,6 +27,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonClose => 'Schließen';
 
   @override
+  String get commonError => 'Etwas ist schiefgelaufen';
+
+  @override
   String get commonStart => 'Start';
 
   @override
@@ -94,10 +97,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get playerDeleteConfirm =>
       'Diesen Spieler löschen? Die Spielhistorie bleibt erhalten.';
-
-  @override
-  String get playerDeleteBlocked =>
-      'Ein Spieler, der an Spielen teilgenommen hat, kann nicht gelöscht werden.';
 
   @override
   String get gameAbandon => 'Spiel abbrechen';
@@ -322,7 +321,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get statsBestScore => 'Bester Punktestand';
 
   @override
-  String get statsMostHexagons => 'Meiste Hexagons in einem Spiel';
+  String get statsTotalHexagons => 'Hexagons insgesamt';
 
   @override
   String get rulesTitle => 'Regeln';

@@ -12,6 +12,7 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/error_view.dart';
 import '../../../shared/widgets/glass_container.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../players/players_providers.dart';
@@ -46,7 +47,7 @@ class GamePage extends ConsumerWidget {
     return gameAsync.when(
       loading: () =>
           const AppScaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => AppScaffold(body: Center(child: Text('$e'))),
+      error: (e, _) => AppScaffold(body: ErrorView(error: e)),
       data: (game) {
         if (game == null) {
           return AppScaffold(
