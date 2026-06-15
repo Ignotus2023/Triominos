@@ -299,3 +299,22 @@ Aplikacja **ma UI** → sekcja a11y/i18n istotna. **Nie ma backendu/sieci/auth**
 ---
 
 *Audyt statyczny, tryb tylko-do-odczytu. Żaden plik źródłowy ani konfiguracyjny nie został zmodyfikowany; jedynym artefaktem tego audytu jest niniejszy raport.*
+
+---
+
+## 11. Status realizacji — Sprint 1 (2026-06-15)
+
+> Toolchain został przywrócony w środowisku (Flutter 3.44.2 / Dart 3.12.2), więc poprawki zweryfikowano dynamicznie: `flutter analyze` (czysty), `flutter test` (37 testów przechodzi), `flutter gen-l10n` + `dart run build_runner build` (brak dryfu względem zacommitowanych plików generowanych), `dart format` (repo zgodne).
+
+### Faza 0 — Toolchain ✅
+Zainstalowano Flutter stable, `flutter pub get` OK, ustalono zielony baseline (`analyze` bez uwag, 42 → 37 testów po usunięciu testów martwego kodu).
+
+### Faza 1 — Blokery wydania ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| H-1 | Release na kluczu debug | `android/app/build.gradle.kts` wczytuje `android/key.properties` (gitignored) i definiuje `signingConfigs.release`; fallback do debug tylko gdy brak keystore (lokalny `flutter run --release`). Dodano `android/key.properties.example`. **Akcja właściciela:** wygenerować keystore i skonfigurować sekrety CI przed publikacją. |
+| H-2 | Brak CI | Dodano `.github/workflows/ci.yml`: `pub get` → `gen-l10n` → `build_runner` → bramka „pliki generowane aktualne" (`git diff --exit-code`) → `dart format --set-exit-if-changed` → `flutter analyze` → `flutter test --coverage`. Flutter przypięty do 3.44.2. Repo sformatowano `dart format`, by bramka formatu była zielona (§14.1). |
+| H-3 | Martwy kod startera | Usunięto `starter_resolver.dart`, `tile.dart` i ich test. Zaktualizowano `CLAUDE.md §2.3`: starter rundy 1 = 1. miejsce kolejności z setupu (drag-to-reorder), rotacja między rundami. |
+
+**Pozostaje do Sprintu 2+ (wg planu w sekcji 9):** szybkie zwycięstwa (A1–A6), soft-delete gracza (M-1), wydajność szkła (M-5), testy E2E/golden, oraz strategiczne decyzje zakresowe (M-7/M-8/M-9).
