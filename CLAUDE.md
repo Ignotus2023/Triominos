@@ -678,7 +678,7 @@ W bottom sheet, w dolnej części, **collapsible section "Inne akcje"**:
 - **Edycja dowolnego ruchu** — long-press na ruch w historii → otwiera Smart Input z istniejącymi danymi
 - Edycja **przelicza totalScore** wszystkich graczy automatycznie (transakcja DB)
 
-> **Stan implementacji (decyzja produktowa).** Jako pomocnik do liczenia (a nie cyfrowa gra), aplikacja **nie wymusza twardych limitów** dobierania (`ScoringRules.maxDraws` jest wartością konfiguracyjną/referencyjną, nie egzekwowaną) — gracz przy stole stosuje zasady, a aplikacja rejestruje wynik. Undo działa jako **wielokrotne cofanie ostatniego ruchu** (poprawianie pomyłek), bez sztywnego limitu „3 wstecz"; nieużywana stała `AppConstants.maxUndoDepth` została usunięta (audyt 2026-06-15, A6). Edycja long-press oraz pełne undo „3 wstecz" pozostają w roadmapie (M-8).
+> **Stan implementacji (decyzja produktowa).** Jako pomocnik do liczenia (a nie cyfrowa gra), aplikacja **nie wymusza twardych limitów** dobierania (`ScoringRules.maxDraws` jest wartością konfiguracyjną/referencyjną, nie egzekwowaną) — gracz przy stole stosuje zasady, a aplikacja rejestruje wynik. Undo działa jako **wielokrotne cofanie ostatniego ruchu** (poprawianie pomyłek), bez sztywnego limitu „3 wstecz"; nieużywana stała `AppConstants.maxUndoDepth` została usunięta (audyt 2026-06-15, A6). **Edycja zagrania long-pressem jest zaimplementowana** (audyt 2026-06-15, Sprint 4): przytrzymanie ruchu typu „play" w historii rundy otwiera Smart Input z istniejącymi danymi; zatwierdzenie wywołuje `GameController.editPlay` → `GamesDao.updateMove`, który koryguje `totalScore` gracza o różnicę w transakcji. Sztywny limit „3 wstecz" pozostaje świadomie pominięty.
 
 ---
 

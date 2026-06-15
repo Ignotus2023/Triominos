@@ -377,13 +377,15 @@ Zainstalowano Flutter stable, `flutter pub get` OK, ustalono zielony baseline (`
 | M-8 (5.3) | Szczegóły gry w historii | Nowy read-only ekran `HistoryDetailPage` + trasa `/history/:id` + `onTap` na kafelku historii. `GamesDao.getRounds` + `gameReplayProvider` zwracają tablicę wyników i ruchy per runda. |
 | M-7 | Konwencje vs kod | `CLAUDE.md` (§4, §5.2, §14.1) dostosowane do faktycznego stacku: `flutter_lints` (nie `very_good_analysis`), providery Riverpod ręczne (bez `@riverpod`), modele ręczne (bez `freezed`) — z uzasadnieniem. Zamiast ryzykownej migracji udokumentowano świadomą decyzję. |
 | M-9 | Build webowy w repo | Dodano ręczny workflow `deploy-web.yml` (GitHub Pages przez Actions, `flutter build web`). **Akcja właściciela:** przełączyć Settings → Pages na „GitHub Actions", po czym `docs/` (45 MB) można usunąć z repo. Katalog `docs/` zachowany do tego czasu, by nie zepsuć działającej strony. |
+| M-8 (§8.6) | Edycja zagrania (long-press) | Long-press na ruchu „play" w historii otwiera Smart Input z danymi ruchu; zatwierdzenie wywołuje `GameController.editPlay` → `GamesDao.updateMove`, korygując `totalScore` gracza o różnicę (transakcja). Tryb edycji ukrywa akcje kar/wyjścia. |
 
-**Test (+1):** `getRounds` zwraca rundy w kolejności (podstawa odtwarzania historii).
+**Testy (+3 łącznie w Sprincie 4):** `getRounds` (kolejność rund), `editPlay` (korekta punktów o różnicę + zapis nowych narożników), wcześniej migracja v1→v2 i `ErrorView`.
 
-**Pozostaje — wymaga zasobów lub decyzji produktowej:**
+**Pozostaje — wymaga zasobów lub decyzji właściciela:**
 - **Audio (§13)** — **zablokowane brakiem zasobów:** wymaga rzeczywistych sampli `.mp3` (tap/triplet/bridge/hexagon/win/round_end). Infrastruktury nie dodaję „na zapas" (byłby to martwy kod). Po dostarczeniu plików: `just_audio` + `AudioService` spięty z `prefs.soundsEnabled`.
-- **Edycja ruchu (long-press) + pełne undo „3 wstecz" (§8.6)** — istotna zmiana w rdzeniowym widgecie `SmartInputSheet` (tryb edycji + `updateMove` z korektą punktów); zasługuje na dedykowaną, osobno recenzowaną iterację z własnymi testami. Bieżące undo (wielokrotne cofanie ostatniego ruchu) działa.
+- **Usunięcie `docs/` (M-9)** — **wymaga akcji właściciela** (przełączenie źródła Pages na „GitHub Actions"); workflow gotowy.
+- **Pełne undo „3 wstecz" (§8.6)** — świadomie pominięte; bieżące undo (wielokrotne cofanie ostatniego ruchu) jest właściwym UX dla pomocnika.
 - **L-1 (magic numbers)** — pozostaje jako kosmetyka 🟢.
 
 ### Podsumowanie po 4 sprintach
-Zamknięto wszystkie ustalenia 🔴/🟠 oraz większość 🟡 z audytu. Otwarte pozostają wyłącznie: pozycje wymagające **zasobów** (audio), **decyzji właściciela** (przełączenie źródła Pages → usunięcie `docs/`), **dużej dedykowanej iteracji** (edycja ruchu) oraz **kosmetyka** (L-1). Stan jakości: `analyze` czysty, **45 testów** zielonych, CI egzekwuje format + generowane pliki + analizę + testy.
+Zamknięto **wszystkie** ustalenia 🔴/🟠 oraz **wszystkie istotne** 🟡 z audytu (w tym konfetti, replay historii i edycję ruchu). Otwarte pozostają wyłącznie: pozycja wymagająca **zasobów** (audio), **decyzji właściciela** (przełączenie źródła Pages → usunięcie `docs/`) oraz **kosmetyka** (L-1). Stan jakości: `analyze` czysty, **46 testów** zielonych, CI egzekwuje format + generowane pliki + analizę + testy.

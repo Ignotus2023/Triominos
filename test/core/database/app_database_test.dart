@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:triomino_score/core/game/game_enums.dart';
 import 'package:triomino_score/core/game/move.dart';
 import 'package:triomino_score/core/database/app_database.dart';
+import 'package:triomino_score/features/game/game_controller.dart';
 import 'package:triomino_score/features/players/players_providers.dart';
 
 void main() {
@@ -290,5 +291,51 @@ void main() {
 
     final rounds = await db.gamesDao.getRounds('g1');
     expect(rounds.map((r) => r.roundNumber), [1, 2]);
+  });
+
+  test('editPlay aktualizuje ruch i koryguje punkty o różnicę', () async {
+    await seedGame();
+    final controller = GameController(db.gamesDao);
+    final play = Move.play(corner1: 4, corner2: 4, corner3: 4); // 12 + 10 = 22
+    await db.gamesDao.addMove(
+      gameId: 'g1',
+      playerId: 'p1',
+      delta: play.totalScore,
+      move: MovesCompanion.insert(
+        id: 'm1',
+        roundId: 'r1',
+        playerId: 'p1',
+        moveIndex: 0,
+        moveType: MoveType.play,
+        corner1: const Value(4),
+        corner2: const Value(4),
+        corner3: const Value(4),
+        baseScore: play.baseScore,
+        bonusScore: Value(play.bonusScore),
+        isTriplet: const Value(true),
+        createdAt: DateTime.now(),
+      ),
+    );
+    expect(
+      (await db.gamesDao.getGamePlayers(
+        'g1',
+      )).firstWhere((s) => s.playerId == 'p1').totalScore,
+      22,
+    );
+
+    final original = (await db.gamesDao.getMoves('r1')).single;
+    await controller.editPlay(
+      game: (await db.gamesDao.getGame('g1'))!,
+      original: original,
+      move: Move.play(corner1: 1, corner2: 2, corner3: 3), // 6, bez bonusu
+    );
+
+    final anna = (await db.gamesDao.getGamePlayers(
+      'g1',
+    )).firstWhere((s) => s.playerId == 'p1');
+    expect(anna.totalScore, 6);
+    final edited = (await db.gamesDao.getMoves('r1')).single;
+    expect(edited.corner1, 1);
+    expect(edited.isTriplet, isFalse);
   });
 }

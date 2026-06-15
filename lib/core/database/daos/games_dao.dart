@@ -175,6 +175,20 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
     });
   }
 
+  /// Edytuje istniejący ruch i koryguje sumę punktów gracza o różnicę.
+  Future<void> updateMove({
+    required String moveId,
+    required String gameId,
+    required String playerId,
+    required MovesCompanion updated,
+    required int delta,
+  }) {
+    return transaction(() async {
+      await (update(moves)..where((m) => m.id.equals(moveId))).write(updated);
+      await _adjustScore(gameId, playerId, delta);
+    });
+  }
+
   Future<void> startNextRound({
     required String gameId,
     required RoundsCompanion round,

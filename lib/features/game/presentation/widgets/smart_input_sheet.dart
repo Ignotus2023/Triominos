@@ -21,6 +21,7 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.playerName,
     required this.moveNumber,
     required this.isStarterMove,
+    this.editMove,
     super.key,
   });
 
@@ -30,6 +31,9 @@ class SmartInputSheet extends ConsumerStatefulWidget {
   final String playerName;
   final int moveNumber;
   final bool isStarterMove;
+
+  /// Gdy ustawione, sheet edytuje istniejący ruch (a nie dodaje nowy).
+  final MoveRow? editMove;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -45,6 +49,22 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   bool _endHandMode = false;
   final _handSumController = TextEditingController();
 
+  bool get _isEditing => widget.editMove != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final edit = widget.editMove;
+    if (edit != null) {
+      _c1 = edit.corner1;
+      _c2 = edit.corner2;
+      _c3 = edit.corner3;
+      _bridge = edit.isBridge;
+      _hexagon = edit.isHexagon;
+      _doubleHex = edit.isDoubleHexagon;
+    }
+  }
+
   bool get _complete => _c1 != null && _c2 != null && _c3 != null;
 
   Move? get _previewMove => _complete
@@ -55,7 +75,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
           isBridge: _bridge,
           isHexagon: _hexagon,
           isDoubleHexagon: _doubleHex,
-          isStarter: widget.isStarterMove,
+          isStarter: widget.editMove?.isStarter ?? widget.isStarterMove,
         )
       : null;
 
@@ -109,8 +129,10 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
                   icon: Icons.check,
                   onPressed: _complete ? _confirmPlay : null,
                 ),
-                const SizedBox(height: AppSpacing.x12),
-                _buildOtherActions(context),
+                if (!_isEditing) ...[
+                  const SizedBox(height: AppSpacing.x12),
+                  _buildOtherActions(context),
+                ],
               ] else
                 _buildEndHand(context),
             ],
@@ -286,14 +308,18 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
     final move = _previewMove;
     if (move == null) return;
     ref.read(hapticsProvider).medium();
-    await ref
-        .read(gameControllerProvider)
-        .addPlay(
-          game: widget.game,
-          round: widget.round,
-          playerId: widget.playerId,
-          move: move,
-        );
+    final controller = ref.read(gameControllerProvider);
+    final edit = widget.editMove;
+    if (edit != null) {
+      await controller.editPlay(game: widget.game, original: edit, move: move);
+    } else {
+      await controller.addPlay(
+        game: widget.game,
+        round: widget.round,
+        playerId: widget.playerId,
+        move: move,
+      );
+    }
     if (mounted) Navigator.pop(context);
   }
 

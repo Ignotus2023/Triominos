@@ -169,6 +169,22 @@ class GamePage extends ConsumerWidget {
                   onUndoLast: () => ref
                       .read(gameControllerProvider)
                       .undo(game: game, round: round),
+                  onEditMove: (move) {
+                    final seat = seats.firstWhere(
+                      (s) => s.playerId == move.playerId,
+                      orElse: () => seats.first,
+                    );
+                    _openSmartInput(
+                      context,
+                      ref,
+                      game: game,
+                      round: round,
+                      seat: seat,
+                      moveNumber: move.moveIndex + 1,
+                      isStarterMove: move.isStarter,
+                      editMove: move,
+                    );
+                  },
                 ),
               const SizedBox(height: AppSpacing.x48),
             ],
@@ -201,6 +217,7 @@ class GamePage extends ConsumerWidget {
     required GamePlayer seat,
     required int moveNumber,
     required bool isStarterMove,
+    MoveRow? editMove,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -213,6 +230,7 @@ class GamePage extends ConsumerWidget {
         playerName: seat.displayNameSnapshot,
         moveNumber: moveNumber,
         isStarterMove: isStarterMove,
+        editMove: editMove,
       ),
     );
   }

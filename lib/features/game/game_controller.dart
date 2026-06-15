@@ -103,6 +103,33 @@ class GameController {
   Future<void> undo({required Game game, required Round round}) =>
       _dao.undoLastMove(roundId: round.id, gameId: game.id);
 
+  /// Edytuje istniejące zagranie (poprawa narożników/bonusów) i przelicza
+  /// punkty gracza o różnicę między nową a starą wartością ruchu.
+  Future<void> editPlay({
+    required Game game,
+    required MoveRow original,
+    required Move move,
+  }) async {
+    final oldTotal = original.baseScore + original.bonusScore;
+    await _dao.updateMove(
+      moveId: original.id,
+      gameId: game.id,
+      playerId: original.playerId,
+      delta: move.totalScore - oldTotal,
+      updated: MovesCompanion(
+        corner1: Value(move.corner1),
+        corner2: Value(move.corner2),
+        corner3: Value(move.corner3),
+        baseScore: Value(move.baseScore),
+        bonusScore: Value(move.bonusScore),
+        isTriplet: Value(move.isTriplet),
+        isBridge: Value(move.isBridge),
+        isHexagon: Value(move.isHexagon),
+        isDoubleHexagon: Value(move.isDoubleHexagon),
+      ),
+    );
+  }
+
   /// Ręczne zakończenie gry (tryb dowolny lub przerwanie przez użytkownika).
   Future<void> finishNow(Game game) async {
     final seats = await _dao.getGamePlayers(game.id);
