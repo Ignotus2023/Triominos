@@ -105,6 +105,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerColor => 'Color';
 
   @override
+  String get playerIcon => 'Icon';
+
+  @override
   String get playerDeleteConfirm =>
       'Delete this player? Their game history stays intact.';
 

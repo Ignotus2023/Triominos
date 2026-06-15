@@ -13,12 +13,14 @@ class PlayerScoreCard extends StatelessWidget {
     required this.seat,
     required this.active,
     required this.colorHex,
+    this.iconKey,
     super.key,
   });
 
   final GamePlayer seat;
   final bool active;
   final String colorHex;
+  final String? iconKey;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class PlayerScoreCard extends StatelessWidget {
           PlayerAvatar(
             initials: initialsFor(seat.displayNameSnapshot),
             colorHex: colorHex,
+            iconKey: iconKey,
             active: active,
             size: 44,
           ),

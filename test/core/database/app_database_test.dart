@@ -267,13 +267,26 @@ void main() {
       );
       addTearDown(migrated.close);
 
-      // Pierwsze zapytanie wyzwala onUpgrade (1 -> 2 = addColumn deletedAt).
+      // Pierwsze zapytanie wyzwala onUpgrade (1 -> 3: deletedAt + avatarIcon).
       await migrated.playersDao.upsert(player('pm', 'Mig'));
       final p = await migrated.playersDao.getById('pm');
       expect(p, isNotNull);
       expect(p!.deletedAt, isNull);
+      expect(p.avatarIcon, isNull);
     },
   );
+
+  test('PlayersService zapisuje i odczytuje ikonę awatara', () async {
+    final service = PlayersService(db.playersDao, db.gamesDao);
+    await service.create('Ada', '#6366F1', icon: 'star');
+
+    final created = (await db.playersDao.getAll()).single;
+    expect(created.avatarIcon, 'star');
+
+    await service.update(created, 'Ada', '#6366F1');
+    final cleared = await db.playersDao.getById(created.id);
+    expect(cleared!.avatarIcon, isNull);
+  });
 
   test('getRounds zwraca rundy w kolejności (odtwarzanie historii)', () async {
     await seedGame();

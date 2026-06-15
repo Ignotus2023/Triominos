@@ -111,6 +111,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
                         PlayerAvatar(
                           initials: p.initials,
                           colorHex: p.avatarColor,
+                          iconKey: p.avatarIcon,
                           active: selected,
                         ),
                         const SizedBox(width: AppSpacing.x16),
@@ -218,6 +219,7 @@ class _GameSetupPageState extends ConsumerState<GameSetupPage> {
             PlayerAvatar(
               initials: initials,
               colorHex: player?.avatarColor ?? '#6366F1',
+              iconKey: player?.avatarIcon,
               size: 36,
             ),
             const SizedBox(width: AppSpacing.x12),

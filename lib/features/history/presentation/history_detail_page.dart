@@ -22,6 +22,7 @@ class HistoryDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final replay = ref.watch(gameReplayProvider(gameId));
+    final icons = ref.watch(playerIconsProvider);
 
     return AppScaffold(
       title: l10n.historyTitle,
@@ -51,6 +52,7 @@ class HistoryDetailPage extends ConsumerWidget {
                         PlayerAvatar(
                           initials: initialsFor(s.displayNameSnapshot),
                           colorHex: avatarColorFor(s.displayNameSnapshot),
+                          iconKey: icons[s.playerId],
                         ),
                         const SizedBox(width: AppSpacing.x16),
                         Expanded(

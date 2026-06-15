@@ -45,6 +45,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
     final l10n = context.l10n;
     final game = ref.watch(gameProvider(widget.gameId)).value;
     final colors = ref.watch(playerColorsProvider);
+    final icons = ref.watch(playerIconsProvider);
     final seats = [...?ref.watch(gamePlayersProvider(widget.gameId)).value]
       ..sort((a, b) => b.totalScore.compareTo(a.totalScore));
 
@@ -122,6 +123,7 @@ class _GameSummaryPageState extends ConsumerState<GameSummaryPage> {
                     colorHex:
                         colors[seats[i].playerId] ??
                         avatarColorFor(seats[i].displayNameSnapshot),
+                    iconKey: icons[seats[i].playerId],
                   ),
                 ),
               const SizedBox(height: AppSpacing.x16),
@@ -170,11 +172,13 @@ class _ScoreboardRow extends StatelessWidget {
     required this.seat,
     required this.position,
     required this.colorHex,
+    this.iconKey,
   });
 
   final GamePlayer seat;
   final int position;
   final String colorHex;
+  final String? iconKey;
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +203,7 @@ class _ScoreboardRow extends StatelessWidget {
           PlayerAvatar(
             initials: initialsFor(seat.displayNameSnapshot),
             colorHex: colorHex,
+            iconKey: iconKey,
           ),
           const SizedBox(width: AppSpacing.x16),
           Expanded(

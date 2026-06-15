@@ -63,6 +63,7 @@ class GamePage extends ConsumerWidget {
             : ref.watch(roundMovesProvider(round.id)).value ?? [];
 
         final colors = ref.watch(playerColorsProvider);
+        final icons = ref.watch(playerIconsProvider);
         final activeIndex = _activeIndex(seats, round, moves);
         final activeSeat = seats.isEmpty ? null : seats[activeIndex];
         final leader = seats.isEmpty
@@ -156,6 +157,7 @@ class GamePage extends ConsumerWidget {
                       colorHex:
                           colors[seats[i].playerId] ??
                           avatarColorFor(seats[i].displayNameSnapshot),
+                      iconKey: icons[seats[i].playerId],
                     ),
                   ),
                 ),

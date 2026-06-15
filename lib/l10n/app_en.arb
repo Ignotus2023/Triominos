@@ -36,6 +36,7 @@
   "playerNew": "New player",
   "playerEdit": "Edit player",
   "playerColor": "Color",
+  "playerIcon": "Icon",
   "playerDeleteConfirm": "Delete this player? Their game history stays intact.",
   "gameAbandon": "Abandon game",
   "gameAbandonConfirm": "Abandon this game without saving a result?",

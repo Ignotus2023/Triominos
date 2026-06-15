@@ -292,6 +292,12 @@ abstract class AppLocalizations {
   /// **'Color'**
   String get playerColor;
 
+  /// No description provided for @playerIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get playerIcon;
+
   /// No description provided for @playerDeleteConfirm.
   ///
   /// In en, this message translates to:

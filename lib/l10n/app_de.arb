@@ -35,6 +35,7 @@
   "playerNew": "Neuer Spieler",
   "playerEdit": "Spieler bearbeiten",
   "playerColor": "Farbe",
+  "playerIcon": "Symbol",
   "playerDeleteConfirm": "Diesen Spieler löschen? Die Spielhistorie bleibt erhalten.",
   "gameAbandon": "Spiel abbrechen",
   "gameAbandonConfirm": "Dieses Spiel ohne Ergebnis abbrechen?",

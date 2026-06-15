@@ -35,6 +35,7 @@
   "playerNew": "Nouveau joueur",
   "playerEdit": "Modifier le joueur",
   "playerColor": "Couleur",
+  "playerIcon": "Icône",
   "playerDeleteConfirm": "Supprimer ce joueur ? Son historique de parties est conservé.",
   "gameAbandon": "Abandonner la partie",
   "gameAbandonConfirm": "Abandonner cette partie sans enregistrer le résultat ?",

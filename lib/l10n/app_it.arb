@@ -35,6 +35,7 @@
   "playerNew": "Nuovo giocatore",
   "playerEdit": "Modifica giocatore",
   "playerColor": "Colore",
+  "playerIcon": "Icona",
   "playerDeleteConfirm": "Eliminare questo giocatore? La cronologia delle partite resta intatta.",
   "gameAbandon": "Abbandona partita",
   "gameAbandonConfirm": "Abbandonare questa partita senza salvare il risultato?",

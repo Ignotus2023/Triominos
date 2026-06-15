@@ -105,6 +105,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get playerColor => 'Kolor';
 
   @override
+  String get playerIcon => 'Ikona';
+
+  @override
   String get playerDeleteConfirm =>
       'Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.';
 

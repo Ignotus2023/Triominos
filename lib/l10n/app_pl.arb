@@ -35,6 +35,7 @@
   "playerNew": "Nowy gracz",
   "playerEdit": "Edytuj gracza",
   "playerColor": "Kolor",
+  "playerIcon": "Ikona",
   "playerDeleteConfirm": "Usunąć tego gracza? Historia jego gier pozostanie nienaruszona.",
   "gameAbandon": "Porzuć grę",
   "gameAbandonConfirm": "Przerwać tę grę bez zapisywania wyniku?",

@@ -105,6 +105,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get playerColor => 'Farbe';
 
   @override
+  String get playerIcon => 'Symbol';
+
+  @override
   String get playerDeleteConfirm =>
       'Diesen Spieler löschen? Die Spielhistorie bleibt erhalten.';
 

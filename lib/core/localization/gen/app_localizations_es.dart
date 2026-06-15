@@ -106,6 +106,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get playerColor => 'Color';
 
   @override
+  String get playerIcon => 'Icono';
+
+  @override
   String get playerDeleteConfirm =>
       '¿Eliminar este jugador? Su historial de partidas se conserva.';
 

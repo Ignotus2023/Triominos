@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/database/app_database.dart';
@@ -40,7 +41,7 @@ class PlayersService {
   final PlayersDao _dao;
   final GamesDao _gamesDao;
 
-  Future<void> create(String name, String color) {
+  Future<void> create(String name, String color, {String? icon}) {
     final trimmed = name.trim();
     final now = DateTime.now();
     return _dao.upsert(
@@ -49,23 +50,33 @@ class PlayersService {
         name: trimmed,
         avatarColor: color,
         initials: initialsFor(trimmed),
+        avatarIcon: Value(icon),
         createdAt: now,
         updatedAt: now,
       ),
     );
   }
 
-  Future<void> update(Player player, String name, String color) {
+  Future<void> update(
+    Player player,
+    String name,
+    String color, {
+    String? icon,
+  }) {
     final trimmed = name.trim();
+    // toCompanion(false) — zapisujemy też wartości null (np. usunięcie ikony);
+    // toCompanion(true) zamieniłoby null na Value.absent() i nie wyczyściłoby
+    // kolumny avatarIcon.
     return _dao.upsert(
       player
           .copyWith(
             name: trimmed,
             avatarColor: color,
             initials: initialsFor(trimmed),
+            avatarIcon: Value(icon),
             updatedAt: DateTime.now(),
           )
-          .toCompanion(true),
+          .toCompanion(false),
     );
   }
 
@@ -96,4 +107,13 @@ final playersStreamProvider = StreamProvider<List<Player>>(
 final playerColorsProvider = Provider<Map<String, String>>((ref) {
   final players = ref.watch(playersStreamProvider).value ?? [];
   return {for (final p in players) p.id: p.avatarColor};
+});
+
+/// Mapa playerId -> klucz ikony awatara (do pokazania ikon w rozgrywce).
+final playerIconsProvider = Provider<Map<String, String>>((ref) {
+  final players = ref.watch(playersStreamProvider).value ?? [];
+  return {
+    for (final p in players)
+      if (p.avatarIcon != null) p.id: p.avatarIcon!,
+  };
 });
