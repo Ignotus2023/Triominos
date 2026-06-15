@@ -91,6 +91,13 @@ class GamesDao extends DatabaseAccessor<AppDatabase> with _$GamesDaoMixin {
             ..limit(1))
           .getSingleOrNull();
 
+  /// Wszystkie rundy gry w kolejności (do odtworzenia w historii).
+  Future<List<Round>> getRounds(String gameId) =>
+      (select(rounds)
+            ..where((r) => r.gameId.equals(gameId))
+            ..orderBy([(r) => OrderingTerm(expression: r.roundNumber)]))
+          .get();
+
   // ---- Moves ----
   Stream<List<MoveRow>> watchMoves(String roundId) =>
       (select(moves)

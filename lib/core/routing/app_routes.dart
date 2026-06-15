@@ -21,6 +21,9 @@ abstract class AppRoutes {
   static const history = 'history';
   static const historyPath = '/history';
 
+  static const historyDetail = 'historyDetail';
+  static const historyDetailPath = '/history/:id';
+
   static const statistics = 'statistics';
   static const statisticsPath = '/statistics';
 

@@ -363,4 +363,27 @@ Zainstalowano Flutter stable, `flutter pub get` OK, ustalono zielony baseline (`
 - **L-1 (magic numbers)** — czysto kosmetyczne (🟢); duży, ryzykowny diff bez realnej wartości — pozostaje.
 - **Twarde egzekwowanie `maxDraws`** — sprzeczne z filozofią pomocnika (papier-zamiennik nie powinien narzucać reguł); rozwiązane przez udokumentowanie decyzji.
 - **Testy E2E / golden** — wymagają urządzenia/emulatora i wygenerowanych obrazów referencyjnych (niedostępne w tym środowisku CI); dodano natomiast testy widgetów dla nowych elementów.
-- **Pełne undo „3 wstecz" + edycja long-press, szczegóły gry w historii, audio, konfetti (M-8)** — funkcje produktowe do osobnej iteracji/decyzji zakresowej.
+- **Pełne undo „3 wstecz" + edycja long-press, szczegóły gry w historii, audio, konfetti (M-8)** — domknięte częściowo w Sprincie 4 (patrz niżej).
+
+## 14. Status realizacji — Sprint 4 / „reszta" (2026-06-15)
+
+> Zweryfikowano: `flutter analyze` (czysty), `flutter test` (**45 testów**, +1), `gen-l10n` + `build_runner` (brak dryfu), `dart format` (zgodne).
+
+### Funkcje i dług — domknięcie ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| M-8 (5.2) | Konfetti przy wygranej | Dodano pakiet `confetti`; `GameSummaryPage` jest teraz stateful, odpala `ConfettiController` na wejściu (eksplozja z górnej krawędzi). Realizuje obietnicę §10.6. |
+| M-8 (5.3) | Szczegóły gry w historii | Nowy read-only ekran `HistoryDetailPage` + trasa `/history/:id` + `onTap` na kafelku historii. `GamesDao.getRounds` + `gameReplayProvider` zwracają tablicę wyników i ruchy per runda. |
+| M-7 | Konwencje vs kod | `CLAUDE.md` (§4, §5.2, §14.1) dostosowane do faktycznego stacku: `flutter_lints` (nie `very_good_analysis`), providery Riverpod ręczne (bez `@riverpod`), modele ręczne (bez `freezed`) — z uzasadnieniem. Zamiast ryzykownej migracji udokumentowano świadomą decyzję. |
+| M-9 | Build webowy w repo | Dodano ręczny workflow `deploy-web.yml` (GitHub Pages przez Actions, `flutter build web`). **Akcja właściciela:** przełączyć Settings → Pages na „GitHub Actions", po czym `docs/` (45 MB) można usunąć z repo. Katalog `docs/` zachowany do tego czasu, by nie zepsuć działającej strony. |
+
+**Test (+1):** `getRounds` zwraca rundy w kolejności (podstawa odtwarzania historii).
+
+**Pozostaje — wymaga zasobów lub decyzji produktowej:**
+- **Audio (§13)** — **zablokowane brakiem zasobów:** wymaga rzeczywistych sampli `.mp3` (tap/triplet/bridge/hexagon/win/round_end). Infrastruktury nie dodaję „na zapas" (byłby to martwy kod). Po dostarczeniu plików: `just_audio` + `AudioService` spięty z `prefs.soundsEnabled`.
+- **Edycja ruchu (long-press) + pełne undo „3 wstecz" (§8.6)** — istotna zmiana w rdzeniowym widgecie `SmartInputSheet` (tryb edycji + `updateMove` z korektą punktów); zasługuje na dedykowaną, osobno recenzowaną iterację z własnymi testami. Bieżące undo (wielokrotne cofanie ostatniego ruchu) działa.
+- **L-1 (magic numbers)** — pozostaje jako kosmetyka 🟢.
+
+### Podsumowanie po 4 sprintach
+Zamknięto wszystkie ustalenia 🔴/🟠 oraz większość 🟡 z audytu. Otwarte pozostają wyłącznie: pozycje wymagające **zasobów** (audio), **decyzji właściciela** (przełączenie źródła Pages → usunięcie `docs/`), **dużej dedykowanej iteracji** (edycja ruchu) oraz **kosmetyka** (L-1). Stan jakości: `analyze` czysty, **45 testów** zielonych, CI egzekwuje format + generowane pliki + analizę + testy.

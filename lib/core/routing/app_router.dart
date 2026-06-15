@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/game/presentation/game_page.dart';
 import '../../features/game_setup/presentation/game_setup_page.dart';
 import '../../features/game_summary/presentation/game_summary_page.dart';
+import '../../features/history/presentation/history_detail_page.dart';
 import '../../features/history/presentation/history_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
@@ -66,6 +67,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.historyPath,
         name: AppRoutes.history,
         builder: (context, state) => const HistoryPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.historyDetailPath,
+        name: AppRoutes.historyDetail,
+        builder: (context, state) =>
+            HistoryDetailPage(gameId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.statisticsPath,

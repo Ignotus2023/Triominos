@@ -273,4 +273,22 @@ void main() {
       expect(p!.deletedAt, isNull);
     },
   );
+
+  test('getRounds zwraca rundy w kolejności (odtwarzanie historii)', () async {
+    await seedGame();
+    await db.gamesDao.startNextRound(
+      gameId: 'g1',
+      newRoundNumber: 2,
+      round: RoundsCompanion.insert(
+        id: 'r2',
+        gameId: 'g1',
+        roundNumber: 2,
+        starterPlayerId: 'p2',
+        startedAt: DateTime.now(),
+      ),
+    );
+
+    final rounds = await db.gamesDao.getRounds('g1');
+    expect(rounds.map((r) => r.roundNumber), [1, 2]);
+  });
 }

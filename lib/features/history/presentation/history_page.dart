@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/database/app_database.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -53,6 +55,10 @@ class _GameHistoryTile extends ConsumerWidget {
     final winner = seats.where((s) => s.playerId == game.winnerId).firstOrNull;
 
     return GlassContainer(
+      onTap: () => context.pushNamed(
+        AppRoutes.historyDetail,
+        pathParameters: {'id': game.id},
+      ),
       child: Row(
         children: [
           Icon(Icons.emoji_events, color: context.colors.primary),
