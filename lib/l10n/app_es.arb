@@ -1,6 +1,9 @@
 {
   "@@locale": "es",
   "appTitle": "TriominoScore",
+  "settingsPrivacy": "Política de privacidad",
+  "privacyTitle": "Política de privacidad",
+  "privacyBody": "TriominoScore funciona 100 % sin conexión. La aplicación no recopila, envía ni comparte ningún dato: todo (jugadores, partidas, estadísticas) permanece solo en tu dispositivo. No usamos cuentas, anuncios ni analíticas. Puedes borrar todos los datos de forma permanente en cualquier momento en Ajustes → Restablecer datos.",
 
   "commonCancel": "Cancelar",
   "commonSave": "Guardar",

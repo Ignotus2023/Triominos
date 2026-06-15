@@ -1,6 +1,9 @@
 {
   "@@locale": "de",
   "appTitle": "TriominoScore",
+  "settingsPrivacy": "Datenschutz",
+  "privacyTitle": "Datenschutz",
+  "privacyBody": "TriominoScore funktioniert zu 100 % offline. Die App sammelt, sendet oder teilt keine Daten — alles (Spieler, Spiele, Statistiken) bleibt nur auf deinem Gerät. Keine Konten, keine Werbung, keine Analyse. Du kannst alle Daten jederzeit dauerhaft löschen unter Einstellungen → Daten zurücksetzen.",
 
   "commonCancel": "Abbrechen",
   "commonSave": "Speichern",

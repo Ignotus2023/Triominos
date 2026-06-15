@@ -12,6 +12,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get appTitle => 'TriominoScore';
 
   @override
+  String get settingsPrivacy => 'Informativa sulla privacy';
+
+  @override
+  String get privacyTitle => 'Informativa sulla privacy';
+
+  @override
+  String get privacyBody =>
+      'TriominoScore funziona al 100% offline. L\'app non raccoglie, invia né condivide alcun dato: tutto (giocatori, partite, statistiche) resta solo sul tuo dispositivo. Nessun account, nessuna pubblicità, nessuna analisi. Puoi cancellare definitivamente tutti i dati in qualsiasi momento in Impostazioni → Reimposta dati.';
+
+  @override
   String get commonCancel => 'Annulla';
 
   @override

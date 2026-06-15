@@ -1,6 +1,9 @@
 {
   "@@locale": "en",
   "appTitle": "TriominoScore",
+  "settingsPrivacy": "Privacy policy",
+  "privacyTitle": "Privacy policy",
+  "privacyBody": "TriominoScore works 100% offline. The app does not collect, send, or share any data — everything (players, games, statistics) stays only on your device. We use no accounts, ads, or analytics. You can permanently erase all data at any time in Settings → Reset data.",
 
   "commonCancel": "Cancel",
   "commonSave": "Save",

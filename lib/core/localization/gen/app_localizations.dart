@@ -112,6 +112,24 @@ abstract class AppLocalizations {
   /// **'TriominoScore'**
   String get appTitle;
 
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get settingsPrivacy;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'TriominoScore works 100% offline. The app does not collect, send, or share any data — everything (players, games, statistics) stays only on your device. We use no accounts, ads, or analytics. You can permanently erase all data at any time in Settings → Reset data.'**
+  String get privacyBody;
+
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:

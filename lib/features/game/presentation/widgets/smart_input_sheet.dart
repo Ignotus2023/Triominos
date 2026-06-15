@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/game/move.dart';
 import '../../../../core/game/scoring_rules.dart';
@@ -311,7 +312,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Future<void> _confirmEndHand() async {
     final parsed = int.tryParse(_handSumController.text.trim()) ?? 0;
-    final sum = parsed < 0 ? 0 : parsed;
+    final sum = parsed.clamp(0, AppConstants.maxOpponentsHandSum);
     ref.read(hapticsProvider).medium();
     await ref
         .read(gameControllerProvider)

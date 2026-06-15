@@ -242,4 +242,35 @@ void main() {
 
     expect(await db.statsDao.watchTotalHexagons().first, 1);
   });
+
+  test(
+    'migracja v1->v2 dodaje kolumnę deletedAt do istniejącej bazy',
+    () async {
+      // Symuluje bazę w schemacie v1 (bez kolumny deletedAt, user_version = 1).
+      final migrated = AppDatabase.forTesting(
+        NativeDatabase.memory(
+          setup: (raw) {
+            raw.execute('''
+            CREATE TABLE players (
+              id TEXT NOT NULL PRIMARY KEY,
+              name TEXT NOT NULL,
+              avatar_color TEXT NOT NULL,
+              initials TEXT NOT NULL,
+              created_at INTEGER NOT NULL,
+              updated_at INTEGER NOT NULL
+            );
+          ''');
+            raw.execute('PRAGMA user_version = 1;');
+          },
+        ),
+      );
+      addTearDown(migrated.close);
+
+      // Pierwsze zapytanie wyzwala onUpgrade (1 -> 2 = addColumn deletedAt).
+      await migrated.playersDao.upsert(player('pm', 'Mig'));
+      final p = await migrated.playersDao.getById('pm');
+      expect(p, isNotNull);
+      expect(p!.deletedAt, isNull);
+    },
+  );
 }

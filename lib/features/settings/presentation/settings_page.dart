@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../core/settings/settings_provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/extensions/build_context.dart';
@@ -167,7 +169,13 @@ class SettingsPage extends ConsumerWidget {
                   l10n.settingsVersion('1.0.0'),
                   style: context.text.bodyMedium,
                 ),
-                const SizedBox(height: AppSpacing.x16),
+                const SizedBox(height: AppSpacing.x8),
+                TextButton.icon(
+                  icon: const Icon(Icons.lock_outline),
+                  label: Text(l10n.settingsPrivacy),
+                  onPressed: () => context.pushNamed(AppRoutes.privacy),
+                ),
+                const SizedBox(height: AppSpacing.x8),
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: context.colors.error,

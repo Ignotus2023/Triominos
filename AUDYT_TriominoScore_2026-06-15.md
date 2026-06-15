@@ -343,3 +343,24 @@ Zainstalowano Flutter stable, `flutter pub get` OK, ustalono zielony baseline (`
 **Pozostaje do Sprintu 3+:** A5 (polityka prywatności M-10), A6 (egzekwowanie `maxDraws`/`maxUndoDepth`, magic numbers L-1, górny clamp sumy rąk L-2), M-5 (wydajność szkła), testy E2E/golden, oraz strategiczne M-7/M-8/M-9.
 
 > **Uwaga dot. migracji:** ścieżka `onCreate` (świeża baza v2) jest objęta testami; explicytny test migracji v1→v2 (snapshot schematu drift) odłożono do Sprintu 3 — sam `addColumn` to standardowy, bezpieczny wzorzec drift.
+
+## 13. Status realizacji — Sprint 3 (2026-06-15)
+
+> Zweryfikowano: `flutter analyze` (czysty), `flutter test` (**44 testy**, +2), `gen-l10n` + `build_runner` (brak dryfu po commicie), `dart format` (zgodne). Nowe klucze i18n we wszystkich 6 językach.
+
+### Faza 3 / Faza 2 — Jakość i wydajność ✅
+
+| # | Pozycja | Zmiana |
+| - | ------- | ------ |
+| A5 (M-10) | Polityka prywatności | Nowy ekran `PrivacyPage` + trasa `/privacy` + link w Ustawieniach → O aplikacji. Treść (offline-first, brak zbierania danych, prawo do usunięcia) w 6 językach (`privacyTitle`, `privacyBody`, `settingsPrivacy`). |
+| A6 (L-2) | Górny clamp sumy rąk | `_confirmEndHand` clampuje do `0..AppConstants.maxOpponentsHandSum` (999) — chroni przed literówką zawyżającą wynik. |
+| A6 (4.7/6.4) | Nieużywane stałe | Usunięto nieużywany `AppConstants.maxUndoDepth`; udokumentowano w `CLAUDE.md §8.6`, że helper **nie wymusza twardo** dobrań (`maxDraws` = wartość konfiguracyjna) ani limitu undo — zgodnie z filozofią „zastępujemy papier". |
+| M-5 | Wydajność „szkła" | `GlassContainer` zyskał flagę `enableBlur`; gęsta lista historii rundy renderuje się bez `BackdropFilter` (najwięcej jednoczesnych rozmyć), karty graczy owinięte w `RepaintBoundary`. Prominentne powierzchnie zachowują pełny glassmorphism. |
+
+**Testy (+2):** migracja v1→v2 (`addColumn deletedAt` na bazie w schemacie v1 z `user_version=1`), widget `ErrorView` (pokazuje zlokalizowany komunikat, ukrywa surowy błąd).
+
+**Świadomie odłożone (z uzasadnieniem):**
+- **L-1 (magic numbers)** — czysto kosmetyczne (🟢); duży, ryzykowny diff bez realnej wartości — pozostaje.
+- **Twarde egzekwowanie `maxDraws`** — sprzeczne z filozofią pomocnika (papier-zamiennik nie powinien narzucać reguł); rozwiązane przez udokumentowanie decyzji.
+- **Testy E2E / golden** — wymagają urządzenia/emulatora i wygenerowanych obrazów referencyjnych (niedostępne w tym środowisku CI); dodano natomiast testy widgetów dla nowych elementów.
+- **Pełne undo „3 wstecz" + edycja long-press, szczegóły gry w historii, audio, konfetti (M-8)** — funkcje produktowe do osobnej iteracji/decyzji zakresowej.

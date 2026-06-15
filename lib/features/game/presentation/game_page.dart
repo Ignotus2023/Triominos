@@ -147,14 +147,16 @@ class GamePage extends ConsumerWidget {
                   ),
                 ),
               for (var i = 0; i < seats.length; i++)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.x12),
-                  child: PlayerScoreCard(
-                    seat: seats[i],
-                    active: i == activeIndex,
-                    colorHex:
-                        colors[seats[i].playerId] ??
-                        avatarColorFor(seats[i].displayNameSnapshot),
+                RepaintBoundary(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.x12),
+                    child: PlayerScoreCard(
+                      seat: seats[i],
+                      active: i == activeIndex,
+                      colorHex:
+                          colors[seats[i].playerId] ??
+                          avatarColorFor(seats[i].displayNameSnapshot),
+                    ),
                   ),
                 ),
               const SizedBox(height: AppSpacing.x16),

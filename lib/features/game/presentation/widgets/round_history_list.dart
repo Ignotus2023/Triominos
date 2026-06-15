@@ -77,6 +77,7 @@ class _MoveTile extends StatelessWidget {
     final positive = total >= 0;
 
     return GlassContainer(
+      enableBlur: false,
       margin: const EdgeInsets.only(bottom: AppSpacing.x8),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.x16,

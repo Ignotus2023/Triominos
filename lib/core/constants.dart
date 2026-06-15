@@ -12,6 +12,7 @@ abstract class AppConstants {
 
   static const int maxPlayerNameLength = 32;
 
-  /// Maksymalna liczba ruchów wstecz dla szybkiego undo (§8.6).
-  static const int maxUndoDepth = 3;
+  /// Górny limit ręcznie wpisywanej sumy cyfr na rękach przeciwników —
+  /// zabezpiecza wynik finiszera przed literówką (np. wklejeniem).
+  static const int maxOpponentsHandSum = 999;
 }
