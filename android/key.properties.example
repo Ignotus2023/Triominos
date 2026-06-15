@@ -1,0 +1,18 @@
+# Szablon konfiguracji podpisu release dla Androida.
+#
+# 1. Skopiuj ten plik jako `android/key.properties` (NIE commituj go — jest w .gitignore).
+# 2. Wygeneruj keystore (przechowuj go bezpiecznie poza repozytorium):
+#
+#      keytool -genkey -v -keystore ~/triominoscore-release.jks \
+#        -keyalg RSA -keysize 2048 -validity 10000 -alias triominoscore
+#
+# 3. Uzupełnij poniższe wartości. `storeFile` może być ścieżką bezwzględną
+#    lub względną do katalogu `android/`.
+#
+# W CI przekaż te wartości przez sekrety (np. base64 keystore) i wygeneruj
+# key.properties na etapie build — nigdy nie zapisuj keystore w repozytorium.
+
+storePassword=zmien_mnie
+keyPassword=zmien_mnie
+keyAlias=triominoscore
+storeFile=/sciezka/do/triominoscore-release.jks

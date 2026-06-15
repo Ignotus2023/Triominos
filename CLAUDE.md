@@ -88,7 +88,7 @@ Pozostałe płytki tworzą **pulę dobierania (boneyard)**.
 
 ### 2.3 Pierwszy ruch
 
-Pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejność preferencji:
+Przy stole pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejność preferencji (zasada gry):
 
 1. (5,5,5) → start + **+10 premii za triplet** + **+10 bonusu startowego** = **+25 pkt** (15 + 10)
 2. (4,4,4) → +12 + 10 + 10 = **+32 pkt**
@@ -96,6 +96,8 @@ Pierwszy ruch wykonuje gracz, który ma **najwyższy triplet** w ręce. Kolejno�
 4. Jeśli nikt nie ma tripleta → startuje gracz z **najwyższą sumą narożników** dowolnej płytki, dostaje **+10 bonusu startowego**.
 
 > **Uwaga:** w literaturze istnieją drobne warianty (np. Goliath: 10 pkt bonusu, Pressman: brak osobnego bonusu, tylko premia za triplet). MVP implementuje wariant Goliath — wartości bonusów są **konfigurowalne** w `lib/core/game/scoring_rules.dart` aby łatwo dostosować do warianów lokalnych.
+
+> **Implementacja (decyzja produktowa).** TriominoScore jest pomocnikiem do liczenia punktów i **nie zna płytek w rękach graczy**, więc nie wyłania startera automatycznie wg najwyższego tripletu — wymagałoby to wpisywania wszystkich płytek startowych (sprzeczne z filozofią Smart Input). Zamiast tego **starterem pierwszej rundy jest gracz na 1. miejscu** ustawionej w ekranie setupu kolejności tury (sekcja „Kolejność", drag-to-reorder — `game_setup_page.dart`). Gracze fizycznie ustalają, kto ma najwyższy triplet, i przeciągają go na górę listy. Prawo pierwszego ruchu **rotuje** między rundami (`GameController._nextStarterId`). Bonus startowy (`+10`) naliczany jest pierwszemu ruchowi gry. *Poprzednia, nieużywana klasa `StarterResolver` (auto-detekcja po płytkach) została usunięta jako martwy kod — patrz audyt 2026-06-15, H-3.*
 
 ### 2.4 Przebieg tury
 
