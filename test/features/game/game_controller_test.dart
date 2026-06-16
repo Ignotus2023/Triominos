@@ -91,7 +91,8 @@ void main() {
     );
 
     final seats = await db.gamesDao.getGamePlayers('g1');
-    expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 22 - 10);
+    // 4-4-4 = 22, przymusowy pas = -25.
+    expect(seats.firstWhere((s) => s.playerId == 'p1').totalScore, 22 - 25);
   });
 
   test(

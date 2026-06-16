@@ -10,12 +10,8 @@ import 'package:triomino_score/core/theme/app_colors.dart';
 import 'package:triomino_score/features/game/presentation/widgets/smart_input_sheet.dart';
 
 void main() {
-  testWidgets('Smart Input liczy 5-5-5 jako triplet = 25 (bez startu)', (
-    tester,
-  ) async {
+  Future<(AppDatabase, Game, Round)> seed() async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
-    addTearDown(db.close);
-
     final now = DateTime.now();
     await db.gamesDao.createGame(
       game: GamesCompanion.insert(
@@ -35,8 +31,16 @@ void main() {
     );
     final game = (await db.gamesDao.getGame('g1'))!;
     final round = (await db.gamesDao.getCurrentRound('g1'))!;
+    return (db, game, round);
+  }
 
-    await tester.pumpWidget(
+  Future<void> pumpSheet(
+    WidgetTester tester,
+    Game game,
+    Round round, {
+    int drawsThisTurn = 0,
+  }) {
+    return tester.pumpWidget(
       ProviderScope(
         overrides: [
           hapticsProvider.overrideWithValue(const HapticsService(false)),
@@ -57,13 +61,21 @@ void main() {
               playerName: 'Anna',
               moveNumber: 1,
               isStarterMove: false,
+              drawsThisTurn: drawsThisTurn,
             ),
           ),
         ),
       ),
     );
+  }
 
-    // Trzy rzędy narożników, w każdym wybieramy "5".
+  testWidgets('Smart Input liczy 5-5-5 jako triplet = 25 (bez startu)', (
+    tester,
+  ) async {
+    final (db, game, round) = await seed();
+    addTearDown(db.close);
+    await pumpSheet(tester, game, round);
+
     final fives = find.widgetWithText(ChoiceChip, '5');
     expect(fives, findsNWidgets(3));
     for (var i = 0; i < 3; i++) {
@@ -73,5 +85,22 @@ void main() {
 
     // 5+5+5 = 15 bazy + 10 za triplet = 25 (bez bonusu startowego).
     expect(find.text('25'), findsOneWidget);
+  });
+
+  testWidgets('po 3 dobraniach: brak dobierania, pojawia się pas (-25)', (
+    tester,
+  ) async {
+    final (db, game, round) = await seed();
+    addTearDown(db.close);
+
+    // 0 dobrań — można dobierać, nie ma jeszcze pasu.
+    await pumpSheet(tester, game, round);
+    expect(find.textContaining('0/3'), findsOneWidget);
+    expect(find.textContaining('-25'), findsNothing);
+
+    // 3 dobrania — pojawia się przymusowy pas (-25).
+    await pumpSheet(tester, game, round, drawsThisTurn: 3);
+    expect(find.textContaining('3/3'), findsOneWidget);
+    expect(find.textContaining('-25'), findsOneWidget);
   });
 }

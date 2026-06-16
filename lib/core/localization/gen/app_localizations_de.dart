@@ -271,7 +271,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String inputPassPenalty(int penalty) {
-    return 'Passen ($penalty)';
+    return 'Kein Zug – aussetzen ($penalty)';
+  }
+
+  @override
+  String inputDrawsUsed(int used, int max) {
+    return 'Ziehen: $used/$max';
   }
 
   @override

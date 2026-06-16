@@ -106,12 +106,15 @@ void main() {
   });
 
   group('calculateMoveScore – kary i koniec rundy', () {
-    test('dobranie z puli = -5', () {
+    test('dobranie z puli = -5 (maks. 3 dobrania)', () {
       expect(calculateMoveScore(Move.drawPenalty()), ScoringRules.drawPenalty);
+      expect(ScoringRules.drawPenalty, -5);
+      expect(ScoringRules.maxDraws, 3);
     });
 
-    test('pas = -10', () {
+    test('przymusowy pas (po 3 dobraniach) = -25', () {
       expect(calculateMoveScore(Move.passPenalty()), ScoringRules.passPenalty);
+      expect(ScoringRules.passPenalty, -25);
     });
 
     test('koniec ręki = 25 + suma rąk przeciwników', () {
