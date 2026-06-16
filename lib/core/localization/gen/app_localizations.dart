@@ -589,8 +589,14 @@ abstract class AppLocalizations {
   /// No description provided for @inputPassPenalty.
   ///
   /// In en, this message translates to:
-  /// **'Pass ({penalty})'**
+  /// **'No move – pass ({penalty})'**
   String inputPassPenalty(int penalty);
+
+  /// No description provided for @inputDrawsUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Draws: {used}/{max}'**
+  String inputDrawsUsed(int used, int max);
 
   /// No description provided for @moveDraw.
   ///

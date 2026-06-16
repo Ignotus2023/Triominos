@@ -22,6 +22,7 @@ class SmartInputSheet extends ConsumerStatefulWidget {
     required this.moveNumber,
     required this.isStarterMove,
     this.editMove,
+    this.drawsThisTurn = 0,
     super.key,
   });
 
@@ -34,6 +35,10 @@ class SmartInputSheet extends ConsumerStatefulWidget {
 
   /// Gdy ustawione, sheet edytuje istniejący ruch (a nie dodaje nowy).
   final MoveRow? editMove;
+
+  /// Liczba dobrań wykonanych w bieżącej turze aktywnego gracza. Po
+  /// [ScoringRules.maxDraws] dobranie jest blokowane, a pojawia się pas.
+  final int drawsThisTurn;
 
   @override
   ConsumerState<SmartInputSheet> createState() => _SmartInputSheetState();
@@ -230,25 +235,41 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildOtherActions(BuildContext context) {
     final l10n = context.l10n;
-    return Wrap(
-      spacing: AppSpacing.x8,
-      runSpacing: AppSpacing.x8,
-      alignment: WrapAlignment.center,
+    final draws = widget.drawsThisTurn;
+    final canDraw = draws < ScoringRules.maxDraws;
+    // Pas jest możliwy dopiero po wyczerpaniu dobrań — nie ma dobrowolnego pasu.
+    final mustPass = draws >= ScoringRules.maxDraws;
+    return Column(
       children: [
-        OutlinedButton.icon(
-          icon: const Icon(Icons.download_outlined, size: 18),
-          label: Text(l10n.inputDrawPile(ScoringRules.drawPenalty)),
-          onPressed: () => _confirmPenalty(MoveType.drawPenalty),
+        Text(
+          l10n.inputDrawsUsed(draws, ScoringRules.maxDraws),
+          style: context.text.labelSmall,
         ),
-        OutlinedButton.icon(
-          icon: const Icon(Icons.skip_next_outlined, size: 18),
-          label: Text(l10n.inputPassPenalty(ScoringRules.passPenalty)),
-          onPressed: () => _confirmPenalty(MoveType.passPenalty),
-        ),
-        OutlinedButton.icon(
-          icon: const Icon(Icons.flag_outlined, size: 18),
-          label: Text(l10n.inputEndHand),
-          onPressed: () => setState(() => _endHandMode = true),
+        const SizedBox(height: AppSpacing.x8),
+        Wrap(
+          spacing: AppSpacing.x8,
+          runSpacing: AppSpacing.x8,
+          alignment: WrapAlignment.center,
+          children: [
+            OutlinedButton.icon(
+              icon: const Icon(Icons.download_outlined, size: 18),
+              label: Text(l10n.inputDrawPile(ScoringRules.drawPenalty)),
+              onPressed: canDraw
+                  ? () => _confirmPenalty(MoveType.drawPenalty)
+                  : null,
+            ),
+            if (mustPass)
+              OutlinedButton.icon(
+                icon: const Icon(Icons.block_outlined, size: 18),
+                label: Text(l10n.inputPassPenalty(ScoringRules.passPenalty)),
+                onPressed: () => _confirmPenalty(MoveType.passPenalty),
+              ),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.flag_outlined, size: 18),
+              label: Text(l10n.inputEndHand),
+              onPressed: () => setState(() => _endHandMode = true),
+            ),
+          ],
         ),
       ],
     );

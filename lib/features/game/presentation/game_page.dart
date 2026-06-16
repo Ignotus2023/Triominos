@@ -115,6 +115,7 @@ class GamePage extends ConsumerWidget {
                         seat: activeSeat,
                         moveNumber: moves.length + 1,
                         isStarterMove: game.currentRound == 1 && moves.isEmpty,
+                        drawsThisTurn: _drawsThisTurn(moves),
                       ),
               ),
             ),
@@ -211,6 +212,20 @@ class GamePage extends ConsumerWidget {
     return (base + turns) % seats.length;
   }
 
+  /// Liczba dobrań wykonanych w bieżącej turze aktywnego gracza = ciągłe
+  /// dobrania na końcu listy ruchów (dobranie nie kończy tury).
+  int _drawsThisTurn(List<MoveRow> moves) {
+    var count = 0;
+    for (var i = moves.length - 1; i >= 0; i--) {
+      if (moves[i].moveType == MoveType.drawPenalty) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
   Future<void> _openSmartInput(
     BuildContext context,
     WidgetRef ref, {
@@ -220,6 +235,7 @@ class GamePage extends ConsumerWidget {
     required int moveNumber,
     required bool isStarterMove,
     MoveRow? editMove,
+    int drawsThisTurn = 0,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -233,6 +249,7 @@ class GamePage extends ConsumerWidget {
         moveNumber: moveNumber,
         isStarterMove: isStarterMove,
         editMove: editMove,
+        drawsThisTurn: drawsThisTurn,
       ),
     );
   }

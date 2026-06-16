@@ -272,7 +272,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String inputPassPenalty(int penalty) {
-    return 'Pas ($penalty)';
+    return 'Brak ruchu – pas ($penalty)';
+  }
+
+  @override
+  String inputDrawsUsed(int used, int max) {
+    return 'Dobrania: $used/$max';
   }
 
   @override

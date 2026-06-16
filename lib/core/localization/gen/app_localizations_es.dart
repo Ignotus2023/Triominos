@@ -275,7 +275,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String inputPassPenalty(int penalty) {
-    return 'Pasar ($penalty)';
+    return 'Sin jugada – pasar ($penalty)';
+  }
+
+  @override
+  String inputDrawsUsed(int used, int max) {
+    return 'Robos: $used/$max';
   }
 
   @override

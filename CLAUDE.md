@@ -120,8 +120,10 @@ Gracz dokłada **jedną płytkę** tak, aby przylegała krawędzią do już uło
 Gracz, który **nie może wykonać ruchu**:
 
 1. **Dobiera 1 płytkę** z puli → kara **-5 pkt**
-2. Jeśli nadal nie może, dobiera ponownie → kolejne **-5 pkt** (do 3 dobrań)
-3. Jeśli po 3 dobraniach nadal nie może → **pasuje, kara -10 pkt** i tura przechodzi dalej
+2. Jeśli nadal nie może, dobiera ponownie → kolejne **-5 pkt**, **maksymalnie 3 dobrania** w turze
+3. Dopiero **po 3 dobraniach** bez ruchu → **przymusowy pas, kara -25 pkt** i tura przechodzi dalej
+
+> **Brak dobrowolnego pasu.** Gracz musi dobrać albo wykonać ruch — opcja „pas" pojawia się wyłącznie po wyczerpaniu 3 dobrań. Limit 3 dobrań jest **egzekwowany w UI** (`smart_input_sheet.dart` blokuje 4. dobranie i odsłania pas −25). Wartości: `ScoringRules.drawPenalty` (−5), `ScoringRules.passPenalty` (−25), `ScoringRules.maxDraws` (3).
 
 ### 2.7 Koniec rundy
 
@@ -667,9 +669,9 @@ Gdy wszystkie 3 chipy mają tę samą cyfrę → automatycznie:
 
 ### 8.5 Kary / specjalne ruchy
 
-W bottom sheet, w dolnej części, **collapsible section "Inne akcje"**:
-- **Dobranie z puli (-5)** — szybki guzik, dodaje karny ruch bez 3 cyfr
-- **Pas (-10)** — kończy turę z karą
+W bottom sheet, w dolnej części, **sekcja „Inne akcje"** z licznikiem dobrań (`Dobrania: x/3`):
+- **Dobranie z puli (-5)** — dodaje karny ruch bez 3 cyfr; **blokowane po 3 dobraniach**
+- **Pas (-25)** — pojawia się **dopiero po 3 dobraniach** (brak dobrowolnego pasu); kończy turę z karą
 - **Wyjście (wyczerpana ręka)** — kończy rundę, otwiera dialog: "Podaj sumy cyfr na rękach przeciwników"
 
 ### 8.6 Edycja i Undo
@@ -678,7 +680,7 @@ W bottom sheet, w dolnej części, **collapsible section "Inne akcje"**:
 - **Edycja dowolnego ruchu** — long-press na ruch w historii → otwiera Smart Input z istniejącymi danymi
 - Edycja **przelicza totalScore** wszystkich graczy automatycznie (transakcja DB)
 
-> **Stan implementacji (decyzja produktowa).** Jako pomocnik do liczenia (a nie cyfrowa gra), aplikacja **nie wymusza twardych limitów** dobierania (`ScoringRules.maxDraws` jest wartością konfiguracyjną/referencyjną, nie egzekwowaną) — gracz przy stole stosuje zasady, a aplikacja rejestruje wynik. Undo działa jako **wielokrotne cofanie ostatniego ruchu** (poprawianie pomyłek), bez sztywnego limitu „3 wstecz"; nieużywana stała `AppConstants.maxUndoDepth` została usunięta (audyt 2026-06-15, A6). **Edycja zagrania long-pressem jest zaimplementowana** (audyt 2026-06-15, Sprint 4): przytrzymanie ruchu typu „play" w historii rundy otwiera Smart Input z istniejącymi danymi; zatwierdzenie wywołuje `GameController.editPlay` → `GamesDao.updateMove`, który koryguje `totalScore` gracza o różnicę w transakcji. Sztywny limit „3 wstecz" pozostaje świadomie pominięty.
+> **Stan implementacji (decyzja produktowa).** Limit **3 dobrań** w turze jest **egzekwowany** (Smart Input blokuje 4. dobranie), a **dobrowolny pas nie istnieje** — pas (−25) pojawia się dopiero po 3 dobraniach (zmiana zasad 2026-06-16). Undo działa jako **wielokrotne cofanie ostatniego ruchu** (poprawianie pomyłek), bez sztywnego limitu „3 wstecz"; nieużywana stała `AppConstants.maxUndoDepth` została usunięta (audyt 2026-06-15, A6). **Edycja zagrania long-pressem jest zaimplementowana** (audyt 2026-06-15, Sprint 4): przytrzymanie ruchu typu „play" w historii rundy otwiera Smart Input z istniejącymi danymi; zatwierdzenie wywołuje `GameController.editPlay` → `GamesDao.updateMove`, który koryguje `totalScore` gracza o różnicę w transakcji. Sztywny limit „3 wstecz" pozostaje świadomie pominięty.
 
 ---
 
@@ -712,8 +714,8 @@ abstract class ScoringRules {
   static const int endOfHandBonus = 25;
 
   // Kary
-  static const int drawPenalty = -5;
-  static const int passPenalty = -10;
+  static const int drawPenalty = -5;   // do 3 dobrań w turze
+  static const int passPenalty = -25;  // przymusowy pas po 3 dobraniach
 
   // Limity
   static const int maxDraws = 3;

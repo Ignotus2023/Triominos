@@ -26,13 +26,15 @@ abstract class ScoringRules {
   /// Bonus za zakończenie rundy (wyczerpanie ręki).
   static const int endOfHandBonus = 25;
 
-  /// Kara za dobranie płytki z puli.
+  /// Kara za dobranie płytki z puli (do [maxDraws] razy w turze).
   static const int drawPenalty = -5;
 
-  /// Kara za spasowanie tury.
-  static const int passPenalty = -10;
+  /// Kara za przymusowy pas — dostępny dopiero po [maxDraws] dobraniach bez
+  /// wykonania ruchu. Dobrowolny pas nie istnieje (gracz musi dobrać lub zagrać).
+  static const int passPenalty = -25;
 
-  /// Maksymalna liczba dobrań zanim gracz musi spasować.
+  /// Maksymalna liczba dobrań w turze; po niej jedyną opcją bez ruchu jest pas.
+  /// Egzekwowane w UI (Smart Input blokuje 4. dobranie).
   static const int maxDraws = 3;
 
   /// Domyślny próg punktowy dla trybu "limit punktów".
