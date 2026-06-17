@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase()
     : super(
         driftDatabase(
-          name: 'triomino_score',
+          name: 'triomino_score_v3',
           web: DriftWebOptions(
             sqlite3Wasm: Uri.parse('sqlite3.wasm'),
             driftWorker: Uri.parse('drift_worker.js'),
