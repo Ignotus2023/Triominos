@@ -54,11 +54,16 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
   bool _endHandMode = false;
   final _handSumController = TextEditingController();
 
+  /// Dobrania wykonane w tej turze; rośnie z każdym dobraniem bez zamykania
+  /// arkusza. Startuje od liczby już zarejestrowanej przed otwarciem.
+  late int _draws;
+
   bool get _isEditing => widget.editMove != null;
 
   @override
   void initState() {
     super.initState();
+    _draws = widget.drawsThisTurn;
     final edit = widget.editMove;
     if (edit != null) {
       _c1 = edit.corner1;
@@ -235,7 +240,7 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
 
   Widget _buildOtherActions(BuildContext context) {
     final l10n = context.l10n;
-    final draws = widget.drawsThisTurn;
+    final draws = _draws;
     final canDraw = draws < ScoringRules.maxDraws;
     // Pas jest możliwy dopiero po wyczerpaniu dobrań — nie ma dobrowolnego pasu.
     final mustPass = draws >= ScoringRules.maxDraws;
@@ -354,7 +359,14 @@ class _SmartInputSheetState extends ConsumerState<SmartInputSheet> {
           playerId: widget.playerId,
           type: type,
         );
-    if (mounted) Navigator.pop(context);
+    if (!mounted) return;
+    // Dobranie nie kończy tury — zostań w arkuszu i zaktualizuj licznik, aby
+    // gracz mógł dobierać do 3× lub od razu zagrać. Pas (-25) kończy turę.
+    if (type == MoveType.drawPenalty) {
+      setState(() => _draws++);
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> _confirmEndHand() async {
