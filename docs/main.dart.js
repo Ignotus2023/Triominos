@@ -115073,7 +115073,7 @@ $S:136}
 A.aHB.prototype={}
 A.acX.prototype={}
 A.aW8.prototype={
-$1(a){var s=A.bs1("triomino_score",null,new A.alm(A.d4("sqlite3.wasm",0,null),A.d4("drift_worker.js",0,null))),r=new A.tp(s)
+$1(a){var s=A.bs1("triomino_score_v3",null,new A.alm(A.d4("sqlite3.wasm",0,null),A.d4("drift_worker.js",0,null))),r=new A.tp(s)
 a.aKU(r.giY())
 return r},
 $S:746}
