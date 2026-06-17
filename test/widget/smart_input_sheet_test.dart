@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:triomino_score/core/database/app_database.dart';
+import 'package:triomino_score/core/database/database_provider.dart';
 import 'package:triomino_score/core/game/game_enums.dart';
 import 'package:triomino_score/core/haptics/haptics_service.dart';
 import 'package:triomino_score/core/localization/gen/app_localizations.dart';
@@ -13,6 +14,16 @@ void main() {
   Future<(AppDatabase, Game, Round)> seed() async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     final now = DateTime.now();
+    await db.playersDao.upsert(
+      PlayersCompanion.insert(
+        id: 'p1',
+        name: 'Anna',
+        avatarColor: '#6366F1',
+        initials: 'A',
+        createdAt: now,
+        updatedAt: now,
+      ),
+    );
     await db.gamesDao.createGame(
       game: GamesCompanion.insert(
         id: 'g1',
@@ -20,7 +31,14 @@ void main() {
         status: GameStatus.inProgress,
         startedAt: now,
       ),
-      seats: const [],
+      seats: [
+        GamePlayersCompanion.insert(
+          gameId: 'g1',
+          playerId: 'p1',
+          seatIndex: 0,
+          displayNameSnapshot: 'Anna',
+        ),
+      ],
       firstRound: RoundsCompanion.insert(
         id: 'r1',
         gameId: 'g1',
@@ -36,6 +54,7 @@ void main() {
 
   Future<void> pumpSheet(
     WidgetTester tester,
+    AppDatabase db,
     Game game,
     Round round, {
     int drawsThisTurn = 0,
@@ -43,6 +62,7 @@ void main() {
     return tester.pumpWidget(
       ProviderScope(
         overrides: [
+          databaseProvider.overrideWithValue(db),
           hapticsProvider.overrideWithValue(const HapticsService(false)),
         ],
         child: MaterialApp(
@@ -55,6 +75,9 @@ void main() {
           ),
           home: Scaffold(
             body: SmartInputSheet(
+              // Klucz zależny od liczby dobrań — wymusza świeży State przy
+              // ponownym pompowaniu z inną wartością (initState ustawia _draws).
+              key: ValueKey(drawsThisTurn),
               game: game,
               round: round,
               playerId: 'p1',
@@ -74,7 +97,7 @@ void main() {
   ) async {
     final (db, game, round) = await seed();
     addTearDown(db.close);
-    await pumpSheet(tester, game, round);
+    await pumpSheet(tester, db, game, round);
 
     final fives = find.widgetWithText(ChoiceChip, '5');
     expect(fives, findsNWidgets(3));
@@ -94,13 +117,46 @@ void main() {
     addTearDown(db.close);
 
     // 0 dobrań — można dobierać, nie ma jeszcze pasu.
-    await pumpSheet(tester, game, round);
+    await pumpSheet(tester, db, game, round);
     expect(find.textContaining('0/3'), findsOneWidget);
     expect(find.textContaining('-25'), findsNothing);
 
     // 3 dobrania — pojawia się przymusowy pas (-25).
-    await pumpSheet(tester, game, round, drawsThisTurn: 3);
+    await pumpSheet(tester, db, game, round, drawsThisTurn: 3);
     expect(find.textContaining('3/3'), findsOneWidget);
     expect(find.textContaining('-25'), findsOneWidget);
+  });
+
+  testWidgets('dobranie nie zamyka arkusza i zwiększa licznik do pasu', (
+    tester,
+  ) async {
+    final (db, game, round) = await seed();
+    addTearDown(db.close);
+    await pumpSheet(tester, db, game, round);
+
+    expect(find.textContaining('0/3'), findsOneWidget);
+
+    Future<void> tapDraw() async {
+      final draw = find.textContaining('Dobranie z puli');
+      await tester.ensureVisible(draw);
+      await tester.tap(draw);
+      await tester.pumpAndSettle();
+    }
+
+    // Pierwsze dobranie: arkusz zostaje (przycisk dobierania nadal jest),
+    // licznik 1/3, brak jeszcze pasu.
+    await tapDraw();
+    expect(find.textContaining('1/3'), findsOneWidget);
+    expect(find.textContaining('Dobranie z puli'), findsOneWidget);
+    expect(find.textContaining('-25'), findsNothing);
+
+    // Drugie i trzecie dobranie → 3/3 i pojawia się pas (-25).
+    await tapDraw();
+    await tapDraw();
+    expect(find.textContaining('3/3'), findsOneWidget);
+    expect(find.textContaining('-25'), findsOneWidget);
+
+    // 3 ruchy karne zapisane w bazie (arkusz nie zamykał się po drodze).
+    expect((await db.gamesDao.getMoves('r1')).length, 3);
   });
 }
